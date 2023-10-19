@@ -1,5 +1,3 @@
-# Plantilla
-
 ![ISC Logo](http://iscracingteam.com/wp-content/uploads/2022/03/Picture5.jpg)
 
 # IFS06 - DRIVERLESS
