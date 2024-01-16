@@ -1,0 +1,532 @@
+##ID 612
+def calcular_velocidad_final(velocidad_inicial, engranajes):
+    """
+    Calcula la velocidad rotacional final de un tren de engranajes.
+
+    Parámetros:
+    velocidad_inicial: La velocidad rotacional inicial del primer engranaje.
+    engranajes: Una lista de tuplas donde cada tupla contiene el número de dientes de dos engranajes consecutivos en el tren.
+    
+    Retorna:
+    La velocidad rotacional final del último engranaje.
+    """
+    velocidad_actual = velocidad_inicial
+    for z_in, z_out in engranajes:
+        velocidad_actual *= (z_in / z_out)
+    
+    return round(velocidad_actual, 1)
+
+# Ejemplo de uso:
+# velocidad_inicial = 3600 min^-1
+# engranajes = [(z1, z2), (z3, z4), (z5, z6), (z7, z8)]
+velocidad_final = calcular_velocidad_final(3600, [(20, 45), (24, 55), (30, 26), (15, 53)])
+velocidad_final
+#ID 613
+def calcular_presion_seccion(p1, v1, A1, A2, rho):
+    """
+    Calcula la presión en la sección 2 de un conducto de fluido.
+
+    Parámetros:
+    p1: Presión en la sección 1 (en las mismas unidades que p2 será calculado).
+    v1: Velocidad del fluido en la sección 1 (en m/s).
+    A1: Área de la sección transversal 1 (en m^2).
+    A2: Área de la sección transversal 2 (en m^2).
+    rho: Densidad del fluido (en kg/m^3).
+    
+    Retorna:
+    La presión en la sección 2 (en las mismas unidades que p1).
+    """
+    # Convertir áreas a metros cuadrados si es necesario (por ejemplo, si están en cm^2)
+    A1_m2 = A1 / 10000 if A1 > 1 else A1
+    A2_m2 = A2 / 10000 if A2 > 1 else A2
+
+    # Calcular la velocidad en la sección 2 usando la continuidad del flujo
+    v2 = v1 * (A1_m2 / A2_m2)
+
+    # Aplicar la ecuación de Bernoulli para calcular la presión en la sección 2
+    p2 = p1 + 0.5 * rho * (v1**2 - v2**2)
+    
+    # Convertir la presión a bar si es necesario (por ejemplo, si está en Pascales)
+    p2_bar = p2 / 100000 if p2 > 1 else p2
+
+    return round(p2_bar, 2)
+
+# Ejemplo de uso:
+# p1 = 1.2 bar, v1 = 5 m/s, A1 = 2.55 cm^2, A2 = 7.1 cm^2, rho = 997 kg/m^3
+presion_final = calcular_presion_seccion(1.2, 5, 2.55, 7.1, 997)
+presion_final
+ #ID 615 
+def calcular_velocidad_resultante(masa_A, masa_B, velocidad_B):
+    """
+    Calcula la velocidad resultante del objeto A después de ejercer una fuerza sobre el objeto B.
+    
+    Parámetros:
+    masa_A: La masa del objeto A (en kg).
+    masa_B: La masa del objeto B (en kg).
+    velocidad_B: La velocidad del objeto B después de la fuerza (en m/s).
+    
+    Retorna:
+    La velocidad resultante del objeto A (en m/s).
+    """
+    # La velocidad resultante del objeto A es en la dirección opuesta a la de B
+    velocidad_A = -(masa_B / masa_A) * velocidad_B
+    return velocidad_A
+
+# Ejemplo de uso:
+masa_coco = 3.5  # masa de Coco en kg
+masa_yarn = 0.05  # masa del ovillo de lana en kg
+velocidad_yarn = 2.3  # velocidad del ovillo después de ser pateado en m/s
+
+velocidad_coco = calcular_velocidad_resultante(masa_coco, masa_yarn, velocidad_yarn)
+velocidad_coco
+#ID 620 revisar, no mismo procedimiento que en word
+def calcular_perdida_peso_para_aceleracion(mejora_aceleracion_porcentaje):
+    """
+    Calcula el porcentaje de peso que debe perder un objeto para lograr una mejora deseada en la aceleración.
+
+    Parámetros:
+    mejora_aceleracion_porcentaje: El porcentaje de mejora deseada en la aceleración.
+
+    Retorna:
+    El porcentaje de peso que debe perderse.
+    """
+    # Convertir la mejora deseada de porcentaje a decimal
+    mejora_aceleracion_decimal = mejora_aceleracion_porcentaje / 100
+
+    # Calcular la nueva masa en relación con la masa original
+    nueva_masa = 1 / (1 + mejora_aceleracion_decimal)
+
+    # Calcular la fracción de la masa que debe perderse
+    fraccion_masa_perdida = 1 - nueva_masa
+
+    # Convertir la fracción a porcentaje
+    porcentaje_masa_perdida = fraccion_masa_perdida * 100
+
+    # Redondear al porcentaje más cercano
+    return round(porcentaje_masa_perdida)
+
+# Ejemplo de uso de la función:
+# Calcular el porcentaje de peso que debe perderse para mejorar la aceleración en un 13%
+porcentaje_masa_perdida = calcular_perdida_peso_para_aceleracion(13)
+porcentaje_masa_perdida
+#ID 621--NO ESTA BIEN HECHO, COMPROBAR
+import math
+
+def calcular_angulo_encendido(stroke, connecting_rod_length, ignition_point):
+    """
+    Calcula el ángulo de encendido en grados del cigüeñal antes del TDC.
+
+    Parámetros:
+    stroke: La carrera del pistón (en mm).
+    connecting_rod_length: La longitud de la biela (en mm).
+    ignition_point: El desplazamiento del pistón en el punto de encendido desde el TDC (en mm).
+
+    Retorna:
+    El ángulo de encendido en grados antes del TDC.
+    """
+    # Radio del cigüeñal es la mitad de la carrera del pistón
+    r = stroke / 2
+    # Convertir todo a metros para los cálculos
+    r_m = r / 1000
+    l_m = connecting_rod_length / 1000
+    ignition_point_m = ignition_point / 1000
+
+    # Inicializamos theta con un valor para comenzar las iteraciones (método numérico)
+    theta = math.radians(10)  # Un valor inicial para theta en radianes
+    
+    # Usamos el método de Newton-Raphson para resolver para theta
+    for i in range(100):  # 100 iteraciones deberían ser suficientes para la convergencia
+        f_theta = r_m * (1 - math.cos(theta)) + (l_m / 2) * (1 - math.cos(2 * theta)) - ignition_point_m
+        df_theta = r_m * math.sin(theta) + l_m * math.sin(2 * theta)
+        theta = theta - f_theta / df_theta
+
+    # Convertir theta de radianes a grados
+    theta_degrees = math.degrees(theta)
+
+    # Redondear a un decimal
+    return round(theta_degrees, 1)
+
+# Ejemplo de uso:
+stroke = 52  # carrera del pistón en mm
+connecting_rod_length = 66  # longitud de la biela en mm
+ignition_point = 2  # desplazamiento del pistón en el punto de encendido desde el TDC en mm
+
+# Calcular el ángulo de encendido
+angulo_encendido = calcular_angulo_encendido(stroke, connecting_rod_length, ignition_point)
+angulo_encendido
+#ID 447 
+def calcular_diferencia_vueltas(diametro_rueda, anchura_pista, numero_vueltas):
+    """
+    Calcula la diferencia en el número de vueltas entre la rueda derecha e izquierda de un vehículo en un circuito circular.
+
+    Parámetros:
+    diametro_rueda: El diámetro de la rueda en centímetros.
+    anchura_pista: La anchura de la pista del vehículo en metros.
+    numero_vueltas: El número de vueltas que el vehículo da en el circuito.
+
+    Retorna:
+    La diferencia en el número de vueltas como un número flotante redondeado a un decimal.
+    """
+    # Convertir el diámetro de la rueda a metros para los cálculos
+    diametro_rueda_m = diametro_rueda / 100
+
+    # Calcular la circunferencia de la rueda en metros
+    circunferencia_rueda_m = math.pi * diametro_rueda_m
+
+    # Calcular la longitud de la trayectoria para cada rueda
+    # La rueda interna (izquierda) tiene un radio de trayectoria de R
+    # La rueda externa (derecha) tiene un radio de trayectoria de R + anchura de la pista
+    longitud_trayectoria_izq = 2 * math.pi * (anchura_pista / 2) * numero_vueltas
+    longitud_trayectoria_der = 2 * math.pi * (anchura_pista / 2 + anchura_pista) * numero_vueltas
+
+    # Calcular el número de vueltas para cada rueda
+    vueltas_izq = longitud_trayectoria_izq / circunferencia_rueda_m
+    vueltas_der = longitud_trayectoria_der / circunferencia_rueda_m
+
+    # Calcular la diferencia en el número de vueltas
+    diferencia_vueltas = vueltas_der - vueltas_izq
+
+    # Redondear la solución a un decimal
+    return round(diferencia_vueltas, 1)
+
+# Ejemplo de uso
+# Calcular la diferencia en el número de vueltas para un diámetro de rueda de 42 cm,
+# una anchura de pista de 1.5 m, después de completar 1 vuelta en el circuito
+diametro_rueda = 42  # cm
+anchura_pista = 1.5  # m
+numero_vueltas = 1  # asumiendo 1 vuelta completa en el skidpad
+
+diferencia = calcular_diferencia_vueltas(diametro_rueda, anchura_pista, numero_vueltas)
+diferencia
+#ID 451 REPASAR, NO ME DA LO MISMO
+import math
+
+def calcular_presion_frenado(masa, velocidad_inicial, dp_front, dp_rear, rm_front, rm_rear, mk, rdyn, distancia_detencion=10):
+    """
+    Calcula la presión mínima requerida en el sistema hidráulico de frenos.
+
+    Parámetros:
+    masa: Masa total del vehículo en kg.
+    velocidad_inicial: Velocidad inicial cuando se activa el sistema de frenos en km/h.
+    dp_front: Diámetro del pistón del calibrador delantero en mm.
+    dp_rear: Diámetro del pistón del calibrador trasero en mm.
+    rm_front: Radio medio de aplicación de la fuerza del freno delantero en mm.
+    rm_rear: Radio medio de aplicación de la fuerza del freno trasero en mm.
+    mk: Coeficiente de fricción entre el disco y las pastillas de freno.
+    rdyn: Radio dinámico de la rueda en mm.
+    distancia_detencion: Distancia de detención en metros. Por defecto es 10 metros, según la norma IN 11.2.
+
+    Retorna:
+    La presión mínima requerida en el sistema hidráulico en bar, redondeada a un decimal.
+    """
+    # Convertir la velocidad inicial a m/s desde km/h
+    velocidad_inicial /= 3.6
+
+    # Calcular la desaceleración usando la ecuación de movimiento uniformemente acelerado (v^2 = u^2 + 2as)
+    a = -velocidad_inicial**2 / (2 * distancia_detencion)
+
+    # Número de pistones de freno por rueda
+    n_front = 4
+    n_rear = 2
+
+    # Calcular la fuerza de frenado requerida en cada eje (fuerza total dividida por el coeficiente de fricción y radio dinámico)
+    # Asumimos una distribución igual de fuerza de frenado entre los ejes delantero y trasero
+    fuerza_frenado_total = masa * abs(a)
+    fuerza_frenado_eje = fuerza_frenado_total / 2
+
+    # Calcular el área de los pistones de freno en cada eje
+    area_piston_front = (math.pi * (dp_front / 1000)**2 / 4) * n_front
+    area_piston_rear = (math.pi * (dp_rear / 1000)**2 / 4) * n_rear
+
+    # Calcular la presión requerida en cada eje usando la fórmula de la presión (P = F/A)
+    presion_front = (fuerza_frenado_eje * mk) / (area_piston_front * rm_front / 1000)
+    presion_rear = (fuerza_frenado_eje * mk) / (area_piston_rear * rm_rear / 1000)
+
+    # Asumimos que la presión es la misma en ambos circuitos (delantero y trasero)
+    presion_sistema = max(presion_front, presion_rear)
+
+    # Convertir la presión a bar (1 Pascal = 1e-5 bar)
+    presion_sistema_bar = presion_sistema * 1e-5
+
+    return round(presion_sistema_bar, 1)
+
+# Datos del problema
+masa = 195  # kg
+velocidad_inicial = 41  # km/h
+dp_front = 28  # mm
+dp_rear = 20  # mm
+rm_front = 105  # mm
+rm_rear = 90  # mm
+mk = 0.9  # Coeficiente de fricción disco-pastilla
+rdyn = 225  # mm
+
+# Calcular la presión mínima requerida
+presion_minima = calcular_presion_frenado(masa, velocidad_inicial, dp_front, dp_rear, rm_front, rm_rear, mk, rdyn)
+presion_minima
+#ID 155
+def calcular_temperatura_t3_t4(p1, v1, t1, p4):
+    """
+    Calcula las temperaturas T3 y T4 para un ciclo termodinámico de un gas ideal.
+
+    Parámetros:
+    p1: Presión en el estado 1 (en bar).
+    v1: Volumen en el estado 1 (en m^3).
+    t1: Temperatura en el estado 1 (en Kelvin).
+    p4: Presión en el estado 4 (en bar).
+
+    Retorna:
+    La temperatura T3 y T4 en Kelvin, redondeada a un decimal.
+    """
+    # Convertir presión de bar a Pascal para usar en la ecuación de los gases ideales (1 bar = 100 kPa)
+    p1_pascals = p1 * 1e5
+    p4_pascals = p4 * 1e5
+
+    # Calcular la constante R usando la ley de los gases ideales
+    r = p1_pascals * v1 / t1
+
+    # Calcular T4 usando la ley de los gases ideales en el estado 4 (V4 = V1 para proceso isotérmico)
+    t4 = p4_pascals * v1 / r
+
+    # T3 es igual a T4 para un proceso isotérmico
+    t3 = t4
+
+    return round(t3, 1), round(t4, 1)
+
+# Datos del problema según la imagen proporcionada
+p1_bar = 6.5  # en bar
+v1_m3 = 0.7  # en m^3
+t1_kelvin = 800  # en Kelvin
+p4_bar = 1.2  # en bar
+
+# Calcular las temperaturas T3 y T4
+t3_kelvin, t4_kelvin = calcular_temperatura_t3_t4(p1_bar, v1_m3, t1_kelvin, p4_bar)
+t3_kelvin, t4_kelvin
+#ID 158
+import math
+
+def calcular_diametro_nucleo_tornillo(fuerza_total, tension_permisible, numero_tornillos):
+    """
+    Calcula el diámetro del núcleo de un tornillo basado en una carga de tensión máxima y la tensión permisible.
+
+    Parámetros:
+    fuerza_total: La fuerza total que deben soportar todos los tornillos en Newtons (N).
+    tension_permisible: La tensión permisible en N/mm².
+    numero_tornillos: El número de tornillos que soportan la carga.
+
+    Retorna:
+    El diámetro del núcleo del tornillo en milímetros, redondeado a dos decimales.
+    """
+    # Convertir la fuerza total en kN a N
+    fuerza_total_n = fuerza_total * 1e3
+
+    # Calcular la fuerza por tornillo
+    fuerza_por_tornillo = fuerza_total_n / numero_tornillos
+
+    # Calcular el área requerida del núcleo del tornillo
+    area_requerida = fuerza_por_tornillo / tension_permisible
+
+    # Calcular el diámetro a partir del área
+    diametro_nucleo = math.sqrt((4 * area_requerida) / math.pi)
+
+    return round(diametro_nucleo, 2)
+
+# Datos del problema
+fuerza_total_kn = 80  # en kN
+tension_permisible_n_mm2 = 32  # en N/mm²
+numero_tornillos = 4  # cantidad de tornillos
+
+# Calcular el diámetro del núcleo del tornillo
+diametro_nucleo = calcular_diametro_nucleo_tornillo(fuerza_total_kn, tension_permisible_n_mm2, numero_tornillos)
+diametro_nucleo
+#ID 160
+def calcular_radio_minimo_doblado(diametro_externo):
+    """
+    Calcula el radio mínimo de doblado para un tubo según el diámetro externo.
+
+    Parámetros:
+    diametro_externo: El diámetro externo del tubo en milímetros.
+
+    Retorna:
+    El radio mínimo de doblado en milímetros.
+    """
+    # De acuerdo con la regla, el radio mínimo de doblado es tres veces el diámetro externo
+    radio_minimo = 3 * diametro_externo
+    return radio_minimo
+
+# Ejemplo de uso:
+# Calcular el radio mínimo de doblado para un tubo con diámetro externo de 30 mm
+diametro_externo_tubo = 30  # en mm
+radio_minimo_doblado = calcular_radio_minimo_doblado(diametro_externo_tubo)
+radio_minimo_doblado
+#ID 162
+def calcular_nuevo_diametro(diametro_inicial):
+    """
+    Calcula el diámetro necesario de un tubo para que la velocidad del flujo se duplique.
+
+    Parámetros:
+    diametro_inicial: El diámetro inicial del tubo en milímetros.
+
+    Retorna:
+    El nuevo diámetro en milímetros, redondeado a un decimal.
+    """
+    # Convertir diámetro inicial a metros para calcular el área
+    diametro_inicial_m = diametro_inicial / 1000
+
+    # Calcular el área inicial
+    area_inicial = math.pi * (diametro_inicial_m / 2)**2
+
+    # Calcular la nueva área para duplicar la velocidad del flujo
+    nueva_area = area_inicial / 2
+
+    # Calcular el nuevo diámetro a partir de la nueva área
+    nuevo_diametro_m = 2 * math.sqrt(nueva_area / math.pi)
+
+    # Convertir el nuevo diámetro de vuelta a milímetros y redondear a un decimal
+    nuevo_diametro_mm = round(nuevo_diametro_m * 1000, 1)
+
+    return nuevo_diametro_mm
+
+# Ejemplo de uso:
+# Calcular el nuevo diámetro para un tubo con diámetro inicial de 27 mm
+diametro_inicial_mm = 27
+nuevo_diametro = calcular_nuevo_diametro(diametro_inicial_mm)
+nuevo_diametro
+def calcular_expansion_lineal(potencia, tiempo, alpha, c, densidad, seccion_transversal):
+    """
+    Calcula la expansión lineal de un alambre de aluminio debido al calor generado por la corriente.
+
+    Parámetros:
+    potencia: Potencia en watts (Joules por segundo).
+    tiempo: Tiempo en segundos.
+    alpha: Coeficiente de expansión lineal en 1/K.
+    c: Capacidad calorífica específica en J/(g*K).
+    densidad: Densidad del material en g/cm³.
+    seccion_transversal: Sección transversal del alambre en mm².
+
+    Retorna:
+    La expansión lineal del alambre en milímetros, redondeada a un decimal.
+    """
+    # Convertir sección transversal de mm² a cm²
+    seccion_transversal_cm2 = seccion_transversal / 100
+
+    # Calcular el volumen asumiendo una longitud de 1 cm (arbitraria, ya que buscamos la expansión por cm)
+    volumen_cm3 = seccion_transversal_cm2 * 1  # Longitud de 1 cm
+
+    # Calcular la masa del alambre
+    masa_g = volumen_cm3 * densidad
+
+    # Calcular la energía total (calor) absorbida por el alambre
+    energia_joules = potencia * tiempo
+
+    # Calcular el cambio de temperatura
+    delta_t = energia_joules / (masa_g * c)
+
+    # Calcular la expansión lineal
+    expansion_lineal_cm = alpha * delta_t * 1  # Longitud de 1 cm
+
+    # Convertir la expansión de cm a mm
+    expansion_lineal_mm = expansion_lineal_cm * 10
+
+    return round(expansion_lineal_mm, 1)
+
+# Datos del problema
+potencia_w = 16  # en watts
+tiempo_s = 60  # en segundos
+alpha = 23e-6  # en 1/K
+c = 0.896  # en J/(g*K)
+densidad = 2.7  # en g/cm³
+seccion_transversal_mm2 = 5  # en mm²
+
+# Calcular la expansión lineal del alambre
+expansion = calcular_expansion_lineal(potencia_w, tiempo_s, alpha, c, densidad, seccion_transversal_mm2)
+expansion
+#ID 165 COMPRONAR PORQUE NO ME CUADRA 
+import math
+
+def calcular_tiempo_caida_y_giro(h, g, I_total, I_tail, omega_max):
+    """
+    Calcula el tiempo de caída libre y el tiempo de giro de un gato que cae.
+
+    Parámetros:
+    h: Altura de la caída en metros.
+    g: Aceleración debida a la gravedad en m/s².
+    I_total: Momento de inercia total del gato alrededor del eje x en kg·m².
+    I_tail: Momento de inercia de la cola del gato alrededor del eje x en kg·m².
+    omega_max: Velocidad angular máxima que el gato puede alcanzar en rad/s.
+
+    Retorna:
+    Tiempo de caída libre y tiempo de giro en segundos, redondeados a dos decimales.
+    """
+    # Calcular el tiempo de caída libre
+    tiempo_caida = math.sqrt(2 * h / g)
+    
+    # Calcular el tiempo de giro (asumiendo que el torque necesario se genera instantáneamente)
+    # y que el gato alcanza la velocidad angular máxima instantáneamente
+    # El momento de inercia del resto del cuerpo del gato es I_total - I_tail
+    if omega_max > 0:
+        theta = 2 * math.pi  # Radianes para un giro completo
+        # Usamos el momento de inercia del resto del cuerpo para calcular el tiempo de giro
+        tiempo_giro = theta / omega_max
+    else:
+        tiempo_giro = 0  # Si la velocidad angular es 0, no hay giro
+    
+    return round(tiempo_caida, 2), round(tiempo_giro, 2)
+
+# Datos del problema
+altura_caida = 15  # en metros
+aceleracion_gravedad = 9.9  # en m/s²
+# El momento de inercia total y de la cola no se especifican en el problema, se asumen valores arbitrarios
+momento_inercia_total = 0.1  # en kg·m² (valor asumido)
+momento_inercia_cola = 0.01  # en kg·m² (valor asumido)
+# La velocidad angular máxima que el gato puede alcanzar se asume arbitrariamente
+velocidad_angular_maxima = 10  # en rad/s (valor asumido)
+
+# Calcular el tiempo de caída y tiempo de giro
+tiempo_caida_libre, tiempo_giro = calcular_tiempo_caida_y_giro(
+    altura_caida, aceleracion_gravedad, momento_inercia_total, momento_inercia_cola, velocidad_angular_maxima
+)
+tiempo_caida_libre, tiempo_giro
+#ID 70 NO DA LA RESPUESTA, QUE ALGUN MECANICO REVISE 
+def calcular_segundo_momento_area(t, a):
+    """
+    Calcula el segundo momento de área de una sección transversal con paredes delgadas.
+
+    Parámetros:
+    t: Espesor de la pared delgada.
+    a: Longitud del lado a (distancia central en la dirección y).
+
+    Retorna:
+    El segundo momento de área con respecto al eje x.
+    """
+    # Calcular las áreas de las paredes verticales (simetría en la parte superior e inferior)
+    altura_vertical = 3 * a  # Altura total de las dos paredes verticales
+    area_vertical = altura_vertical * t  # Área de una de las paredes verticales
+    distancia_vertical = 1.5 * a  # Distancia desde el eje x al centro de la pared vertical
+
+    # Calcular las áreas de las paredes horizontales (simetría en los lados izquierdo y derecho)
+    anchura_horizontal = a  # Anchura total de las dos paredes horizontales
+    area_horizontal = anchura_horizontal * t  # Área de una de las paredes horizontales
+    distancia_horizontal = 0.625 * a  # Distancia desde el eje x al centro de la pared horizontal
+
+    # Calcular el segundo momento de área para las paredes verticales y horizontales
+    ix_vertical = 2 * (area_vertical * distancia_vertical**2)  # Factor de 2 por simetría
+    ix_horizontal = 2 * (area_horizontal * distancia_horizontal**2)  # Factor de 2 por simetría
+
+    # Sumar los segundos momentos de área de las partes individuales
+    ix_total = ix_vertical + ix_horizontal
+
+    return ix_total
+
+# Datos del problema
+t_milimetros = 4  # Espesor en milímetros
+a_milimetros = 30  # Longitud del lado a en milímetros
+
+# Convertir milímetros a metros para el cálculo
+t_metros = t_milimetros / 1000
+a_metros = a_milimetros / 1000
+
+# Calcular el segundo momento de área
+segundo_momento_area = calcular_segundo_momento_area(t_metros, a_metros)
+# Convertir metros^4 a milímetros^4 para el resultado final
+segundo_momento_area_mm4 = segundo_momento_area * (1000**4)
+segundo_momento_area_mm4
