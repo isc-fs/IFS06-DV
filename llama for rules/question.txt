@@ -1,3 +1,9 @@
-Tell me everything you know about bending radius of hoops, dont confuse ten with three
+One of the most common errors found during the technical inspection process at Formula Student Netherlands is the use of positive locking mechanisms. Which
+of the following is not allowed?
+DIN 6923 Jet Nuts
+DIN 463 Tab Washer
+DIN 934 Hex Nut
+DIN 11024 Cotter Pin
 
 
+Mention every article that would be useful for answering this question. Give its number and state it
