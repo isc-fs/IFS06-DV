@@ -6,6 +6,7 @@ run wsl on command prompt by typing wsl
 
 run following commands:
 curl https://ollama.ai/install.sh | sh
+
 ollama pull llama2
 
 go to directory and run (might have to install python and pip first):
