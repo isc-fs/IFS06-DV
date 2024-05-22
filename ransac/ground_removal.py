@@ -1,27 +1,61 @@
-from ransac import ransac
+from ransac import ransac, sk_ransac, ransac2
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn import linear_model
+import timeit
 
 
-def sk_ransac(data):
-    X = data[:, :-1]
-    y = data[:, -1]
-    ransac = linear_model.RANSACRegressor()
-    ransac.fit(X, y)
-    inlier_mask = ransac.inlier_mask_
-    # outlier_mask = np.logical_not(inlier_mask)
-    return inlier_mask
+def benchmark(func, data):
+    for ts_data in data:
+        if func.__name__ == "ransac2":
+            ts_data = np.c_[np.ones(ts_data.shape[0]), ts_data]
+        func(ts_data)
+
+
+def performance_test(path):
+    data = read_lidar_data(path)
+    execution_time = timeit.timeit(
+        lambda: benchmark(sk_ransac, data),
+        globals=globals(),
+        number=1,
+    )
+
+    print(f"Execution time sklearn: {execution_time} seconds")
+    execution_time = timeit.timeit(
+        lambda: benchmark(ransac, data),
+        globals=globals(),
+        number=1,
+    )
+
+    print(f"Execution time normal: {execution_time} seconds")
+
+    execution_time = timeit.timeit(
+        lambda: benchmark(ransac2, data),
+        globals=globals(),
+        number=1,
+    )
+
+    print(f"Execution time numba: {execution_time} seconds")
+
+    execution_time = timeit.timeit(
+        lambda: benchmark(ransac2, data),
+        globals=globals(),
+        number=1,
+    )
+
+    print(f"Execution time numba (after 1st iter): {execution_time} seconds")
 
 
 def ground_removal(path):
     data = read_lidar_data(path)
     for ts_data in data:
 
-        inliers = ransac(ts_data, threshold=0.25 * np.std(ts_data[:, -1]), prob=0.9999)
+        inliers = ransac(ts_data, prob=0.9999)
         plot_3d_points(ts_data, inliers)
         inliers_sk = sk_ransac(ts_data)
         plot_3d_points(ts_data, inliers_sk)
+        inliers = ransac2(np.c_[np.ones(ts_data.shape[0]), ts_data], prob=0.9999)
+        plot_3d_points(ts_data, inliers)
 
 
 def read_lidar_data(path):
@@ -67,4 +101,5 @@ def plot_3d_points(data, inliers):
 
 
 if __name__ == "__main__":
-    ground_removal("puntos_lidar.txt")
+    # ground_removal("puntos_lidar.txt")
+    performance_test("puntos_lidar.txt")

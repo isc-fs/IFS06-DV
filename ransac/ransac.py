@@ -16,6 +16,7 @@ sobre todo en la version de numba
 # Dependencias
 import numpy as np
 import numba
+from numba.np.extensions import cross2d
 from sklearn import datasets, linear_model
 import matplotlib.pyplot as plt
 import timeit
@@ -40,11 +41,10 @@ def ransac(data, m=3, prob=0.999, threshold=None, max_iter=15000):
         np.ndarray: Devuelve las posiciones de los puntos que se consideran inliers
     """
     if not threshold:
-        # sacado del ransac regressor de scikit-learn.El std parece que funciona bien (lo he tenido que añadir)
-        # porque parece que no sacaba bien el threshold sin ese termino (probablemente temas de estandarizacion)
-        threshold = np.median(np.abs(data[:, -1] - np.median(data[:, -1])))  # / np.std(
-        #     data[:, -1]
-        # )
+        # He usado el MSE como threshold. Los resultados parece que son buenos
+        # En la version de sklearn usan median absolute deviation (MAD) porque luego usan el MAE
+        # en vez de distancia euclidea
+        threshold = np.mean((data[:, -1] - np.mean(data[:, -1])) ** 2)  # / np.std(
 
     # Añadimos una columna de unos para el sesgo
     A = np.c_[np.ones(data.shape[0]), data]
@@ -81,7 +81,7 @@ def ransac(data, m=3, prob=0.999, threshold=None, max_iter=15000):
 
 
 @numba.jit(nopython=True)
-def ransac2(data, m=3, prob=0.999, threshold=0.5, max_iter=15000):
+def ransac2(data, m=3, prob=0.999, threshold=None, max_iter=15000):
     """
     Funciona exactamente igual que la funcion anterior, pero utiliza numba
     Esto da una ligera mejora en el rendimiento, pero por facilidad de cambiar
@@ -103,9 +103,7 @@ def ransac2(data, m=3, prob=0.999, threshold=0.5, max_iter=15000):
     """
 
     if not threshold:
-        threshold = np.median(np.abs(data[:, -1] - np.median(data[:, -1]))) / np.std(
-            data[:, -1]
-        )
+        threshold = np.mean((data[:, -1] - np.mean(data[:, -1])) ** 2)  # MSE
     # Solo se van a comentar las diferencias con la funcion original
     # Los datos ahora ya se pasan con la columna de 1s. Mantenemos A para hacer que la nomenclatura sea la misma
     A = data
@@ -121,7 +119,7 @@ def ransac2(data, m=3, prob=0.999, threshold=0.5, max_iter=15000):
         # Se calcula el hiperplano con producto vectorial en vez de svd (numba no lo ejecuta bien con svd)
         vectors = points[1:][:, 1:] - points[0][1:]
 
-        if len(vectors) > 1:
+        if m > 2:
             normal_vector = np.cross(vectors[0], vectors[1])
         else:
             normal_vector = np.array([-1 * vectors[0][1], vectors[0][0]])
@@ -131,6 +129,7 @@ def ransac2(data, m=3, prob=0.999, threshold=0.5, max_iter=15000):
         bias = -np.dot(normal_vector, points[0][1:])
 
         coefs = np.array([bias] + list(normal_vector))
+
         support_aux = 0
         for i in A.dot(coefs):
             if abs(i) < threshold:
@@ -141,7 +140,6 @@ def ransac2(data, m=3, prob=0.999, threshold=0.5, max_iter=15000):
             def_coefs = coefs
             k = np.log(1 - prob) / np.log(1 - (support / data_size) ** m)
         iters += 1
-
     return np.where(np.abs(A.dot(def_coefs)) < threshold)
 
 
@@ -196,7 +194,7 @@ if __name__ == "__main__":
     )
 
     print(f"Execution time sklearn: {execution_time} seconds")
-
+    ransac2(A, m=2)
     execution_time = timeit.timeit(
         lambda: ransac2(
             A,
@@ -211,7 +209,8 @@ if __name__ == "__main__":
         lambda: ransac2(A, m=2), globals=globals(), number=1000
     )
     print(f"Execution time numba x1000: {execution_time} seconds")
-    positions = ransac2(A, m=2)
+    # positions = ransac(data, m=2)
+    positions = sk_ransac(data)
     plt.figure(figsize=(8, 6))
     plt.scatter(data[:, 0], data[:, 1], color="blue", label="Normal Points")
     plt.scatter(
