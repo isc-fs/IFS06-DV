@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn import linear_model
 import timeit
+from rotaciones import vectors2matrix
 
 
 def benchmark(func, data):
@@ -48,14 +49,30 @@ def performance_test(path):
 
 def ground_removal(path):
     data = read_lidar_data(path)
+    k = np.zeros(data[0].shape[1])
+    k[-1] = 1
     for ts_data in data:
 
-        inliers = ransac(ts_data, prob=0.9999)
-        plot_3d_points(ts_data, inliers)
-        inliers_sk = sk_ransac(ts_data)
-        plot_3d_points(ts_data, inliers_sk)
-        inliers = ransac2(np.c_[np.ones(ts_data.shape[0]), ts_data], prob=0.9999)
-        plot_3d_points(ts_data, inliers)
+        inliers, def_coefs = ransac(ts_data, prob=0.9999)
+        pass
+        ts_data1 = ts_data @ vectors2matrix(
+            k, def_coefs[1:] / np.linalg.norm(def_coefs[1:])
+        )
+        plot_3d_points(ts_data1, inliers)
+        inliers_sk, def_coefs = sk_ransac(ts_data)
+        pass
+        ts_data2 = ts_data @ vectors2matrix(
+            k, def_coefs[1:] / np.linalg.norm(def_coefs[1:])
+        )
+        plot_3d_points(ts_data2, inliers_sk)
+        inliers, def_coefs = ransac2(
+            np.c_[np.ones(ts_data.shape[0]), ts_data], prob=0.9999
+        )
+        pass
+        ts_data3 = ts_data @ vectors2matrix(
+            k, def_coefs[1:] / np.linalg.norm(def_coefs[1:])
+        )
+        plot_3d_points(ts_data3, inliers)
 
 
 def read_lidar_data(path):
@@ -101,5 +118,5 @@ def plot_3d_points(data, inliers):
 
 
 if __name__ == "__main__":
-    # ground_removal("puntos_lidar.txt")
-    performance_test("puntos_lidar.txt")
+    ground_removal("puntos_lidar.txt")
+    # performance_test("puntos_lidar.txt")
