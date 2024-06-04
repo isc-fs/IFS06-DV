@@ -1,0 +1,51 @@
+[0.323s] Invoking command in '/home/jaime/Documents/puente_ros': PYTHONPATH=/home/jaime/Documents/puente_ros/build/puente_ros/prefix_override:/home/jaime/Documents/puente_ros/install/puente_ros/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base build/puente_ros build --build-base /home/jaime/Documents/puente_ros/build/puente_ros/build install --record /home/jaime/Documents/puente_ros/build/puente_ros/install.log --single-version-externally-managed install_data
+[0.450s] running egg_info
+[0.450s] creating build/puente_ros/puente_ros.egg-info
+[0.450s] writing build/puente_ros/puente_ros.egg-info/PKG-INFO
+[0.450s] writing dependency_links to build/puente_ros/puente_ros.egg-info/dependency_links.txt
+[0.450s] writing entry points to build/puente_ros/puente_ros.egg-info/entry_points.txt
+[0.450s] writing requirements to build/puente_ros/puente_ros.egg-info/requires.txt
+[0.450s] writing top-level names to build/puente_ros/puente_ros.egg-info/top_level.txt
+[0.450s] writing manifest file 'build/puente_ros/puente_ros.egg-info/SOURCES.txt'
+[0.451s] reading manifest file 'build/puente_ros/puente_ros.egg-info/SOURCES.txt'
+[0.451s] adding license file 'LICENSE'
+[0.451s] writing manifest file 'build/puente_ros/puente_ros.egg-info/SOURCES.txt'
+[0.451s] running build
+[0.452s] running build_py
+[0.452s] creating /home/jaime/Documents/puente_ros/build/puente_ros/build
+[0.452s] creating /home/jaime/Documents/puente_ros/build/puente_ros/build/lib
+[0.452s] creating /home/jaime/Documents/puente_ros/build/puente_ros/build/lib/puente_ros
+[0.452s] copying puente_ros/__init__.py -> /home/jaime/Documents/puente_ros/build/puente_ros/build/lib/puente_ros
+[0.452s] copying puente_ros/puente_ros.py -> /home/jaime/Documents/puente_ros/build/puente_ros/build/lib/puente_ros
+[0.452s] creating /home/jaime/Documents/puente_ros/build/puente_ros/build/lib/puente_ros/fsds
+[0.452s] copying puente_ros/fsds/client.py -> /home/jaime/Documents/puente_ros/build/puente_ros/build/lib/puente_ros/fsds
+[0.452s] copying puente_ros/fsds/__init__.py -> /home/jaime/Documents/puente_ros/build/puente_ros/build/lib/puente_ros/fsds
+[0.452s] copying puente_ros/fsds/types.py -> /home/jaime/Documents/puente_ros/build/puente_ros/build/lib/puente_ros/fsds
+[0.452s] copying puente_ros/fsds/utils.py -> /home/jaime/Documents/puente_ros/build/puente_ros/build/lib/puente_ros/fsds
+[0.452s] running install
+[0.452s] running install_lib
+[0.453s] creating /home/jaime/Documents/puente_ros/install/puente_ros/lib/python3.10/site-packages/puente_ros
+[0.453s] copying /home/jaime/Documents/puente_ros/build/puente_ros/build/lib/puente_ros/__init__.py -> /home/jaime/Documents/puente_ros/install/puente_ros/lib/python3.10/site-packages/puente_ros
+[0.453s] copying /home/jaime/Documents/puente_ros/build/puente_ros/build/lib/puente_ros/puente_ros.py -> /home/jaime/Documents/puente_ros/install/puente_ros/lib/python3.10/site-packages/puente_ros
+[0.453s] creating /home/jaime/Documents/puente_ros/install/puente_ros/lib/python3.10/site-packages/puente_ros/fsds
+[0.453s] copying /home/jaime/Documents/puente_ros/build/puente_ros/build/lib/puente_ros/fsds/client.py -> /home/jaime/Documents/puente_ros/install/puente_ros/lib/python3.10/site-packages/puente_ros/fsds
+[0.453s] copying /home/jaime/Documents/puente_ros/build/puente_ros/build/lib/puente_ros/fsds/__init__.py -> /home/jaime/Documents/puente_ros/install/puente_ros/lib/python3.10/site-packages/puente_ros/fsds
+[0.453s] copying /home/jaime/Documents/puente_ros/build/puente_ros/build/lib/puente_ros/fsds/types.py -> /home/jaime/Documents/puente_ros/install/puente_ros/lib/python3.10/site-packages/puente_ros/fsds
+[0.453s] copying /home/jaime/Documents/puente_ros/build/puente_ros/build/lib/puente_ros/fsds/utils.py -> /home/jaime/Documents/puente_ros/install/puente_ros/lib/python3.10/site-packages/puente_ros/fsds
+[0.453s] byte-compiling /home/jaime/Documents/puente_ros/install/puente_ros/lib/python3.10/site-packages/puente_ros/__init__.py to __init__.cpython-310.pyc
+[0.453s] byte-compiling /home/jaime/Documents/puente_ros/install/puente_ros/lib/python3.10/site-packages/puente_ros/puente_ros.py to puente_ros.cpython-310.pyc
+[0.454s] byte-compiling /home/jaime/Documents/puente_ros/install/puente_ros/lib/python3.10/site-packages/puente_ros/fsds/client.py to client.cpython-310.pyc
+[0.455s] byte-compiling /home/jaime/Documents/puente_ros/install/puente_ros/lib/python3.10/site-packages/puente_ros/fsds/__init__.py to __init__.cpython-310.pyc
+[0.455s] byte-compiling /home/jaime/Documents/puente_ros/install/puente_ros/lib/python3.10/site-packages/puente_ros/fsds/types.py to types.cpython-310.pyc
+[0.457s] byte-compiling /home/jaime/Documents/puente_ros/install/puente_ros/lib/python3.10/site-packages/puente_ros/fsds/utils.py to utils.cpython-310.pyc
+[0.457s] running install_data
+[0.458s] creating /home/jaime/Documents/puente_ros/install/puente_ros/share/ament_index
+[0.458s] creating /home/jaime/Documents/puente_ros/install/puente_ros/share/ament_index/resource_index
+[0.458s] creating /home/jaime/Documents/puente_ros/install/puente_ros/share/ament_index/resource_index/packages
+[0.458s] copying resource/puente_ros -> /home/jaime/Documents/puente_ros/install/puente_ros/share/ament_index/resource_index/packages
+[0.458s] copying package.xml -> /home/jaime/Documents/puente_ros/install/puente_ros/share/puente_ros
+[0.458s] running install_egg_info
+[0.459s] Copying build/puente_ros/puente_ros.egg-info to /home/jaime/Documents/puente_ros/install/puente_ros/lib/python3.10/site-packages/puente_ros-0.0.0-py3.10.egg-info
+[0.459s] running install_scripts
+[0.472s] writing list of installed files to '/home/jaime/Documents/puente_ros/build/puente_ros/install.log'
+[0.487s] Invoked command in '/home/jaime/Documents/puente_ros' returned '0': PYTHONPATH=/home/jaime/Documents/puente_ros/build/puente_ros/prefix_override:/home/jaime/Documents/puente_ros/install/puente_ros/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base build/puente_ros build --build-base /home/jaime/Documents/puente_ros/build/puente_ros/build install --record /home/jaime/Documents/puente_ros/build/puente_ros/install.log --single-version-externally-managed install_data

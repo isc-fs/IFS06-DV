@@ -1,0 +1,27 @@
+[1.039s] Invoking command in '/home/jaime/Documents/puente_ros': PYTHONPATH=/home/jaime/Documents/puente_ros/build/puente_ros/prefix_override:/home/jaime/Documents/puente_ros/install/puente_ros/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base build/puente_ros build --build-base /home/jaime/Documents/puente_ros/build/puente_ros/build install --record /home/jaime/Documents/puente_ros/build/puente_ros/install.log --single-version-externally-managed install_data
+[1.425s] running egg_info
+[1.426s] writing build/puente_ros/puente_ros.egg-info/PKG-INFO
+[1.427s] writing dependency_links to build/puente_ros/puente_ros.egg-info/dependency_links.txt
+[1.427s] writing entry points to build/puente_ros/puente_ros.egg-info/entry_points.txt
+[1.428s] writing requirements to build/puente_ros/puente_ros.egg-info/requires.txt
+[1.428s] writing top-level names to build/puente_ros/puente_ros.egg-info/top_level.txt
+[1.430s] reading manifest file 'build/puente_ros/puente_ros.egg-info/SOURCES.txt'
+[1.436s] adding license file 'LICENSE'
+[1.438s] writing manifest file 'build/puente_ros/puente_ros.egg-info/SOURCES.txt'
+[1.438s] running build
+[1.438s] running build_py
+[1.439s] copying puente_ros/puente_ros.py -> /home/jaime/Documents/puente_ros/build/puente_ros/build/lib/puente_ros
+[1.439s] running install
+[1.440s] running install_lib
+[1.441s] copying /home/jaime/Documents/puente_ros/build/puente_ros/build/lib/puente_ros/puente_ros.py -> /home/jaime/Documents/puente_ros/install/puente_ros/lib/python3.10/site-packages/puente_ros
+[1.443s] byte-compiling /home/jaime/Documents/puente_ros/install/puente_ros/lib/python3.10/site-packages/puente_ros/puente_ros.py to puente_ros.cpython-310.pyc
+[1.445s] running install_data
+[1.446s] running install_egg_info
+[1.448s] removing '/home/jaime/Documents/puente_ros/install/puente_ros/lib/python3.10/site-packages/puente_ros-0.0.0-py3.10.egg-info' (and everything under it)
+[1.449s] Copying build/puente_ros/puente_ros.egg-info to /home/jaime/Documents/puente_ros/install/puente_ros/lib/python3.10/site-packages/puente_ros-0.0.0-py3.10.egg-info
+[1.450s] running install_scripts
+[1.487s] Installing puente_ros_camara script to /home/jaime/Documents/puente_ros/install/puente_ros/lib/puente_ros
+[1.487s] Installing puente_ros_lidar script to /home/jaime/Documents/puente_ros/install/puente_ros/lib/puente_ros
+[1.488s] Installing puente_ros_odom script to /home/jaime/Documents/puente_ros/install/puente_ros/lib/puente_ros
+[1.488s] writing list of installed files to '/home/jaime/Documents/puente_ros/build/puente_ros/install.log'
+[1.528s] Invoked command in '/home/jaime/Documents/puente_ros' returned '0': PYTHONPATH=/home/jaime/Documents/puente_ros/build/puente_ros/prefix_override:/home/jaime/Documents/puente_ros/install/puente_ros/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base build/puente_ros build --build-base /home/jaime/Documents/puente_ros/build/puente_ros/build install --record /home/jaime/Documents/puente_ros/build/puente_ros/install.log --single-version-externally-managed install_data
