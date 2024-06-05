@@ -1,7 +1,25 @@
+"""
+========================
+ground_removal.py (v1.1)
+========================
+
+Elaborado por Sergio Jimenez para el ISC
+Contiene varias funciones utilizadas en el proceso de percepcion,
+más específicamente para la percepción con LIDAR. Es posible que 
+en un futuro este archivo se separe en varios archivos
+
+Incluye funciones para:
+- Evaluar el rendimiento de las implementaciones de RANSAC
+
+
+Cambios v1.1:
+- Inclusion de numba en algunas funciones
+- Cambios menores por compatinilidad con cone_detection
+"""
+
 from ransac import ransac, sk_ransac, ransac2
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn import linear_model
 import timeit
 from rotaciones import vectors2matrix
 from sklearn.cluster import (
@@ -12,7 +30,11 @@ from sklearn.cluster import (
     BisectingKMeans,
 )
 from sklearn.mixture import GaussianMixture
+from scipy.optimize import minimize, least_squares
+import numba
 
+
+# No todos los modelos se usan, estan para hacer el benchmarking
 modelos = [
     KMeans,
     # SpectralClustering,
@@ -23,17 +45,33 @@ modelos = [
     BisectingKMeans,
     GaussianMixture,
 ]
-from scipy.optimize import minimize
 
 
 def benchmark(func, data):
+    """
+    Esta funcion sirve para evaluar el rendimiento de las implementaciones
+    de ransac en un dataset que viene en la variable data (en principio puntos_lidar.txt)
+
+    Args:
+        func (func): la implementacion de ransac
+        data (np.ndarray): el array de numpy con los datos
+    """
     for ts_data in data:
         if func.__name__ == "ransac2":
+            # Si es ransac2 añadimos la columna del sesgo porque numba no deja
+            # añadirla en la propia funcion (que yo sepa)
             ts_data = np.c_[np.ones(ts_data.shape[0]), ts_data]
         func(ts_data)
 
 
 def performance_test(path):
+    """
+    Funcion que sirve para evaluar todas las implementaciones de
+    RANSAC juntas. Carga los datos y cronometra la ejecucion
+
+    Args:
+        path (str): la ruta al fichero con los datos
+    """
     data = read_lidar_data(path)
     models = {
         "sklearn": sk_ransac,
@@ -52,13 +90,46 @@ def performance_test(path):
 
 
 def clustering(path, model, plot=False, threeD=False):
+    """
+    Funcion que permite realizar el clustering para cada
+    instante de tiempo dado un modelo de clustering y la
+    ruta a los datos
+
+    Args:
+        path (str): ruta a los datos
+        model (sklearn_model): el modelo de clustering de sklearn. Podría usarse una implementación propia si
+                               se implementa como una clase con un metodo fit_predict que hace el ajuste y devuelve
+                               las predicciones
+        plot (bool, optional): Si se deben representar los datos. Defaults to False.
+        threeD (bool, optional): Si la representacion de los datos debe ser 3D. Defaults to False.
+    """
     data = read_lidar_data(path)
     for ts_data in data:
         clustering_separation(ts_data, model, plot, threeD)
 
 
-def clustering_separation(data, model, plot=False, threeD=False):
+def clustering_separation(data, model=DBSCAN, plot=False, threeD=False):
+    """
+    Realiza la separación en clusters mediante un modelo de clustering. Primero hace ransac
+    (se podría cambiar por cualquiera de las otras implementaciones), deshace las posibles rotaciones
+    de los datos por el movimiento del coche y despues hace el clustering. Si se indica, representa los
+    datos (en 2D/3D)
+
+    Args:
+        data (np.ndarray): los datos
+        model (sklearn_model): el modelo de clustering de sklearn. Podría usarse una implementación propia si
+                               se implementa como una clase con un metodo fit_predict que hace el ajuste y devuelve
+                               las predicciones
+        plot (bool, optional): Si se deben representar los datos. Defaults to False.
+        threeD (bool, optional): Si la representacion de los datos debe ser 3D. Defaults to False.
+
+    Returns:
+        np.ndarray, np.ndarray, np.ndarray: las etiquetas para saber a que cluster pertenece cada cono,
+                                            los datos con la correccion de rotacion y los coeficientes
+                                            del plano sacado por ransac
+    """
     inliers, def_coefs = ransac(data, prob=0.9999)
+    # Correccion de rotacion (transformamos el vector normal al plano en un vector vertical, solo componente z)
     k = np.zeros(data.shape[1])
     k[-1] = 1
 
@@ -67,7 +138,7 @@ def clustering_separation(data, model, plot=False, threeD=False):
     data = (data @ vectors2matrix(k, def_coefs[1:] / np.linalg.norm(def_coefs[1:])))[
         outliers
     ]
-
+    # OTRAS OPCIONES DE MODELOS (por ahora he puesto DBSCAN)
     # clust_model = model()
     # clust_model = AgglomerativeClustering(
     #     n_clusters=None,
@@ -112,39 +183,125 @@ def clustering_separation(data, model, plot=False, threeD=False):
     return labels, data, def_coefs
 
 
+@numba.njit
 def cone_model(params, x, y):
+    """
+    Formula del cono empleada en la implementacion del ajuste del
+    cono. Sirve para que scipy.minimize sepa cual es la formula del cono
+
+    Args:
+        params (list): la lista de los parametros
+        x (np.ndarray): lass posiciones x de los datos
+        y (np.ndarray): las posiciones y de los datos
+
+    Returns:
+        np.ndarray: la posicion z de los puntos
+    """
     a, b, c, d = params
+    # Formula generalizada de un cono
     return d - c * np.sqrt((x - a) ** 2 + (y - b) ** 2)
 
 
+@numba.njit
 def objective_function(params, x, y, z):
+    """
+    Funcion a minimizar por minimize. Para el ajuste de
+    un cono buscamos que su error cuadratico medio sea lo
+    mas pequeño posible
+
+    Args:
+        params (list): lista de los parametros del cono
+        x (np.ndarray): los valores de las x de los puntos
+        y (np.ndarray): los valores de las y de los puntos
+        z (np.ndarray): Los valores de las z de los puntos
+
+    Returns:
+        float: el error cuadratico medio
+    """
     z_pred = cone_model(params, x, y)
     return np.mean((z - z_pred) ** 2)
 
 
-def cone_fit(data):
+def residuals(params, x, y, z):
+    return z - cone_model(params, x, y)
+
+
+def ls_cone_fit(data):
+    """
+    Realiza el ajuste de un cono a los datos
+    minimizando el error cuadratico medio, con leastsq
+    en vez de minimize
+
+    Args:
+        data (np.ndarray): los datos
+
+    Returns:
+        float, float, float, float: Los parametros del cono
+    """
     x = data[:, 0]
     y = data[:, 1]
-    z = data[:, -1]
+    z = data[:, 2]
 
+    # Estos son los parametros con los que empieza
+    # (estan puestos asi porque no estan muy lejos de los valores reales)
     a = np.mean(x)
     b = np.mean(y)
-    c = 6
-    d = 0.225
+    c = 5.5
+    d = 0.35
 
-    result = minimize(objective_function, [a, b, c, d], args=(x, y, z))
+    result = least_squares(residuals, [a, b, c, d], args=(x, y, z))
 
-    # Extract the optimal parameters
+    a, b, c, d = result.x
+
+    return a, b, c, d
+
+
+def cone_fit(data, solver="L-BFGS-B"):
+    """
+    Realiza el ajuste de un cono a los datos
+    minimizando el error cuadratico medio
+
+    Args:
+        data (np.ndarray): los datos
+
+    Returns:
+        float, float, float, float: Los parametros del cono
+    """
+    x = data[:, 0]
+    y = data[:, 1]
+    z = data[:, 2]
+
+    # Estos son los parametros con los que empieza
+    # (estan puestos asi porque no estan muy lejos de los valores reales)
+    a = np.mean(x)
+    b = np.mean(y)
+    c = 5.5
+    d = 0.35
+
+    result = minimize(objective_function, [a, b, c, d], args=(x, y, z), method=solver)
+
     a, b, c, d = result.x
 
     return a, b, c, d
 
 
 def plot_cone_vs_data(cone_params, data, fig=None):
+    """
+    Crea un grafico en el que se muestra el cono estimado y los puntos del lidar
+
+
+    Args:
+        cone_params (list): los parametros del cono (a,b,c,d)
+        data (np.ndarray): Los datos del lidar
+        fig (plt.figure, optional): Grafico al que plotear (para poder acumular
+                                    varios conos en la misma grafica). Defaults to None.
+    """
+    plot = False
     a, b, c, d = cone_params
     x, y, z = generate_cone_plot_points(a, b, c, d)
     if not fig:
         fig = plt.figure()
+        plot = True
     ax = fig.add_subplot(projection="3d")
     cone_val = d - c * np.sqrt(((data[:, 0] - a) ** 2 + (data[:, 1] - b) ** 2))
     ax.scatter(
@@ -168,6 +325,7 @@ def plot_cone_vs_data(cone_params, data, fig=None):
         color="blue",
         label="Puntos",
     )
+    # OTROS GRAFICOS EN COORDENADAS CILINDRICAS Y ESFERICAS
     # ax.scatter(
     #     x**2 + y**2,
     #     y / x,
@@ -189,12 +347,25 @@ def plot_cone_vs_data(cone_params, data, fig=None):
     #     color="red",
     #     label="Conos",
     # )
-    # if not fig:
-    plt.show()
+    if plot:
+        plt.show()
 
 
 def generate_cone_plot_points(a, b, c, d, num_slices=50):
+    """
+    Genera los puntos para dibujar el cono
 
+    Args:
+        a (float): posicion x de la punta del cono
+        b (float): posicion y de la punta del cono
+        c (float): como de ancho/estrecho es el cono
+        d (float): altura a la que se encuntra el cono
+        num_slices (int, optional): numero de puntos para generar el cono tanto para
+                                    cuantos son verticalmente como horizontalmente. Defaults to 50.
+
+    Returns:
+        float, float, float: los puntos del cono
+    """
     # Create the data for the cone
     theta = np.linspace(0, 2 * np.pi, num_slices)
     z = np.linspace(-0.1, d, num_slices)
@@ -206,7 +377,17 @@ def generate_cone_plot_points(a, b, c, d, num_slices=50):
     return x, y, z
 
 
-def final_cone_result(data, model=DBSCAN):
+def final_cone_result_file(path, model=DBSCAN):
+    """
+    Permite sacar los conos a partir de los datos del lidar. Esta version no es para
+    Real Time, es para datos recopilados (lee de un fichero y plotea). Aplica RANSAC
+    hace clustering y ajusta los conos para sacar las posiciones de estos
+
+    Args:
+        path (str): ruta a los datos
+        model (sklearn.model, optional): modelo de clustering empleado. Sirve una implementacion
+                                         propia si es una clase con metodo fit_transform. Defaults to DBSCAN.
+    """
     data = read_lidar_data(path)
     for ts_data in data:
         labels, clean_data, def_coefs = clustering_separation(ts_data, model)
@@ -215,18 +396,21 @@ def final_cone_result(data, model=DBSCAN):
         ]
         for cone in separated_data:
             if len(cone) > 3:
-                """
-                meter def_coefs para quitar los puntos que esten cerca del suelo
-                """
+
                 # print(cone[cone[:, -1] > -0.05][:, -1])
                 params = cone_fit(cone[cone[:, -1] > -0.05])
                 # print(params)
                 plot_cone_vs_data(params, cone)  # [cone[:, -1] > -0.05])
 
-        pass
-
 
 def clustering_benchmark(path):
+    """
+    Permite hacer un benchmark a los distintos modelos de clustering. Tener en
+    cuenta que el tiempo tambien incluye lectura de los datos
+
+    Args:
+        path (str): ruta al fichero con los datos
+    """
     for model in modelos:
         print(model)
         execution_time = timeit.timeit(
@@ -239,26 +423,45 @@ def clustering_benchmark(path):
 
 
 def plot_clustering(path):
+    """
+    Hace el clustering para cada modelo. Hace todos los frames para cada modelo, por lo que
+    no es muy util para comparar si el dataset es muy largo. Se recomienda usar unas 5 muestras
+
+    Args:
+        path (str): ruta al fichero
+    """
     for model in modelos:
         clustering(path, model, plot=True, threeD=True)
 
 
 def ground_removal(path):
+    """
+    Compara el RANSAC aplicado a ground removal de las 3 implementaciones de
+    ransac.py
+
+    Args:
+        path (str): la ruta al fichero de los datos
+    """
     data = read_lidar_data(path)
+    # Para corregir la rotacion
     k = np.zeros(data[0].shape[1])
     k[-1] = 1
     for ts_data in data:
-
+        # Version normal
         inliers, def_coefs = ransac(ts_data, prob=0.9999)
+        # Correccion rotacion
         ts_data1 = ts_data @ vectors2matrix(
             k, def_coefs[1:] / np.linalg.norm(def_coefs[1:])
         )
+        # plot
         plot_3d_points(ts_data1, inliers)
+        # Version sklearn
         inliers_sk, def_coefs = sk_ransac(ts_data)
         ts_data2 = ts_data @ vectors2matrix(
             k, def_coefs[1:] / np.linalg.norm(def_coefs[1:])
         )
         plot_3d_points(ts_data2, inliers_sk)
+        # Version numba
         inliers, def_coefs = ransac2(
             np.c_[np.ones(ts_data.shape[0]), ts_data], prob=0.9999
         )
@@ -269,6 +472,17 @@ def ground_removal(path):
 
 
 def read_lidar_data(path):
+    """
+    Carga los datos del lidar de un txt. Los datos de distintos
+    instantes de tiempo tienen que estar separados por tres guiones
+    (---) para que se separen
+
+    Args:
+        path (str): ruta al fichero con los datos
+
+    Returns:
+        list: lista con los arrays de datos
+    """
     with open(path, "r") as file:
         data = file.read()
 
@@ -282,6 +496,14 @@ def read_lidar_data(path):
 
 
 def plot_3d_points(data, inliers):
+    """
+    Representa los puntos de RANSAC en 3D, separando
+    inliers de outliers
+
+    Args:
+        data (np.ndarray): los datos
+        inliers (np.ndarray): cuales son inliers de los datos
+    """
     outliers = np.ones(data.shape[0], dtype=bool)
     outliers[inliers] = False
 
@@ -311,9 +533,10 @@ def plot_3d_points(data, inliers):
 
 
 if __name__ == "__main__":
+    # Las funciones hacen distintas cosas, consultar la que se necesite
     path = "puntos_lidar.txt"
     # ground_removal(path)
     # performance_test(path)
     # clustering_benchmark(path)
     # plot_clustering(path)
-    final_cone_result(path)
+    final_cone_result_file(path)
