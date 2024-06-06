@@ -1,4 +1,5 @@
 # Puente entre FSDS a ros2 Humble
+(Desactualizado)
 Paquete de ROS2 Humble para publicar los datos del simulador FSDS como topics.
 Usando la API de paython
 
@@ -14,6 +15,7 @@ https://github.com/FS-Driverless/Formula-Student-Driverless-Simulator/releases
 5. `pip install -r requirements.txt`
 
 ## Instalacion del puente ros
+1.`sudo apt-get install ros-humble-pointcloud-to-laserscan`
 1. Entrar en la carpeta del paquete de ros (cd puente_ros) Puede estar donde sea...
 2. Compilar con `colon build`
 3. `source install/setup.sh`     No olvidar
