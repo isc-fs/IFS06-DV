@@ -1,4 +1,5 @@
 [console_scripts]
+cone = puente_ros.puente_ros:cone_detection
 puente_ros_camara = puente_ros.puente_ros:camara
 puente_ros_laser = puente_ros.puente_ros:laser_stamp
 puente_ros_lidar = puente_ros.puente_ros:lidar

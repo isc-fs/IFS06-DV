@@ -10,7 +10,11 @@ build/puente_ros/puente_ros.egg-info/requires.txt
 build/puente_ros/puente_ros.egg-info/top_level.txt
 build/puente_ros/puente_ros.egg-info/zip-safe
 puente_ros/__init__.py
+puente_ros/cone_detection.py
+puente_ros/ground_removal.py
 puente_ros/puente_ros.py
+puente_ros/ransac.py
+puente_ros/rotaciones.py
 puente_ros/fsds/__init__.py
 puente_ros/fsds/client.py
 puente_ros/fsds/types.py

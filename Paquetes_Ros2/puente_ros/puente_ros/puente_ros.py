@@ -18,12 +18,43 @@ from cv_bridge import CvBridge
 from tf2_ros import TransformBroadcaster
 from geometry_msgs.msg import TransformStamped
 
+from visualization_msgs.msg import Marker
+from visualization_msgs.msg import MarkerArray
+
 from sensor_msgs.msg import PointCloud2
 from sensor_msgs.msg import LaserScan
 from nav_msgs.msg import Odometry
 import sensor_msgs.msg as sensor_msgs
 import std_msgs.msg as std_msgs
 
+from puente_ros.cone_detection import *
+
+class Cone_Detection(Node):
+
+    def __init__(self):
+        super().__init__('Cone_Detection')
+
+        self.subscription = self.create_subscription(
+            PointCloud2,
+            'cloud_in',
+            self.listener_callback,10)
+        self.subscription
+
+    def listener_callback(self, msg):
+        points = parse_lidarData(numpy.asarray(msg.data))
+        print("point 0  X: %f  Y: %f  Z: %f" % (points[0][0], points[0][1], points[0][2]))
+        #print(len(data)/3)
+        #print(final_cone_result_rt())
+        #print(len(msg.data))
+        #dfasf
+        #self.publisher_Laser.publish(laser)
+
+def parse_lidarData(point_cloud):
+    """
+    Takes an array of float points and converts it into an array with 3-item arrays representing x, y and z
+    """
+    points = numpy.array(point_cloud, dtype=numpy.dtype('f4'))
+    return numpy.reshape(points, (int(points.shape[0]/3), 3))
 
 class LaserScan_stamp(Node):
 
@@ -53,6 +84,7 @@ class Publicar_Lidar(Node):
     def __init__(self):
         super().__init__('Publicar_Lidar')
         self.publisher_PointCloud = self.create_publisher(PointCloud2, 'cloud_in',10)
+        self.publisher_MarkerArray = self.create_publisher(MarkerArray, 'Conos',10)
 
         client = fsds.FSDSClient()
         tiempo=0
@@ -62,21 +94,57 @@ class Publicar_Lidar(Node):
             msg = PointCloud2()
             laser=LaserScan()
 
+            #try:
+            lidardata = client.getLidarData(lidar_name = 'Lidar')
+            lidardata.point_cloud
+
+            msg = point_cloud(numpy.asarray(lidardata.point_cloud), 'base_footprint')
+            self.publisher_PointCloud.publish(msg)
+
+            points = parse_lidarData(lidardata.point_cloud)
             try:
-                lidardata = client.getLidarData(lidar_name = 'Lidar')
-                lidardata.point_cloud
-
-                msg = point_cloud(numpy.asarray(lidardata.point_cloud), 'base_footprint')
-                self.publisher_PointCloud.publish(msg)
-
-                self.get_logger().debug('Mesnaje enviado Lidar. Actualizaciones por seg:'+str(1/(time.time()-tiempo)))
+                conos = final_cone_result_rt(points)
             except:
+                pass
+            
+            self.get_logger().error(str(len(conos)))
+            markerArray = MarkerArray()
+            i=0
+            for (a,b) in conos:
+                self.get_logger().error("x: "+str(a)+" Y: "+str(b))
+                marker = Marker()
+                marker.header.frame_id = "/base_footprint"
+                marker.type = marker.CUBE
+                if i==0:
+                    marker.action = 3 #ELIMINAR TODO
+                else:
+                    marker.action = marker.ADD
+                marker.scale.x = 0.5
+                marker.scale.y = 0.5
+                marker.scale.z = 0.5
+                marker.color.a = 1.0
+                marker.color.r = 1.0
+                marker.color.g = 1.0
+                marker.color.b = 0.0
+                marker.pose.orientation.w = 1.0
+                marker.pose.position.x = a
+                marker.pose.position.y = b
+                marker.pose.position.z = 0.0
+                marker.id=i
+                i+=1
+
+                markerArray.markers.append(marker)
+
+            self.publisher_MarkerArray.publish(markerArray)
+
+            self.get_logger().debug('Mesnaje enviado Lidar. Actualizaciones por seg:'+str(1/(time.time()-tiempo)))
+            """except:
                 time.sleep(1)
                 self.get_logger().error('Error Lidar')
                 try:
                     client = fsds.FSDSClient()
                 except:
-                    pass
+                    pass"""
 
 def point_cloud(points, parent_frame):
     #Esto no se como funciona
@@ -262,4 +330,10 @@ def camara(args=None):
 
     Publicar_camara=Publicar_Camara()
     rclpy.spin(Publicar_camara)
+
+def cone_detection(args=None):
+    rclpy.init(args=args)
+
+    cone = Cone_Detection()
+    rclpy.spin(cone)
 

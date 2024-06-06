@@ -23,7 +23,8 @@ setup(
             'puente_ros_lidar = puente_ros.puente_ros:lidar',
             'puente_ros_laser = puente_ros.puente_ros:laser_stamp',
             'puente_ros_odom = puente_ros.puente_ros:odom',
-            'puente_ros_camara = puente_ros.puente_ros:camara'
+            'puente_ros_camara = puente_ros.puente_ros:camara',
+            'cone = puente_ros.puente_ros:cone_detection'
         ],
     },
 )

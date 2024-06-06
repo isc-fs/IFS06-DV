@@ -51,6 +51,14 @@ def generate_launch_description():
         arguments=['--ros-args', '--log-level', log]
     )
 
+    CONE = Node( #
+        package='puente_ros',
+        namespace='',
+        executable='cone',
+        name='cone',
+        arguments=['--ros-args', '--log-level', log]
+    )
+
     SLAM_PARAM_FILE = DeclareLaunchArgument(
         'slam_params_file',
         default_value='/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/mapper_params_online_async.yaml'
@@ -73,8 +81,10 @@ def generate_launch_description():
     ld.add_action(LASER)
     ld.add_action(LASER_STAMP)
 
-    ld.add_action(SLAM_PARAM_FILE)
-    ld.add_action(SLAM_TOOLBOX)
+    #ld.add_action(SLAM_PARAM_FILE)
+    #ld.add_action(SLAM_TOOLBOX)
+
+    #ld.add_action(CONE)
 
     return ld
 
