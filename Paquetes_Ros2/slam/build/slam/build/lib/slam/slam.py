@@ -21,12 +21,17 @@ from nav_msgs.msg import Odometry
 import sensor_msgs.msg as sensor_msgs
 import std_msgs.msg as std_msgs
 
+from visualization_msgs.msg import Marker
+from visualization_msgs.msg import MarkerArray
+
 from slam.cone_detection import *
 
 class Cone_Detection(Node):
 
     def __init__(self):
         super().__init__('Cone_Detection')
+
+        self.publisher_MarkerArray = self.create_publisher(MarkerArray, 'Conos',10)
 
         self.subscription = self.create_subscription(
             PointCloud2,
@@ -35,18 +40,46 @@ class Cone_Detection(Node):
         self.subscription
 
     def listener_callback(self, msg):
-        points = parse_lidarData(numpy.asarray(msg.data))
-        print("point 0  X: %f  Y: %f  Z: %f" % (points[0][0], points[0][1], points[0][2]))
-        #print(len(data)/3)
-        #print(final_cone_result_rt())
-        #print(len(msg.data))
-        #dfasf
-        #self.publisher_Laser.publish(laser)
+        x=np.frombuffer(msg.data, dtype=numpy.float32)
+        point_cloud = parse_lidarData(x)
 
-def parse_lidarData(self, point_cloud):
-    """
-    Takes an array of float points and converts it into an array with 3-item arrays representing x, y and z
-    """
+        conos=[]
+        try:
+            conos = final_cone_result_rt(point_cloud)
+        except:
+            pass
+            
+        self.get_logger().debug(str(len(conos)))
+        markerArray = MarkerArray()
+        i=0
+        for (a,b) in conos:
+            self.get_logger().debug("x: "+str(a)+" Y: "+str(b))
+            marker = Marker()
+            marker.header.frame_id = "/base_footprint"
+            marker.type = marker.CUBE
+            if i==0:
+                marker.action = 3 #ELIMINAR TODO
+            else:
+                marker.action = marker.ADD
+            marker.scale.x = 0.5
+            marker.scale.y = 0.5
+            marker.scale.z = 0.5
+            marker.color.a = 1.0
+            marker.color.r = 1.0
+            marker.color.g = 1.0
+            marker.color.b = 0.0
+            marker.pose.orientation.w = 1.0
+            marker.pose.position.x = a
+            marker.pose.position.y = b
+            marker.pose.position.z = 0.0
+            marker.id=i
+            i+=1
+
+            markerArray.markers.append(marker)
+
+        self.publisher_MarkerArray.publish(markerArray)
+
+def parse_lidarData(point_cloud):
     points = numpy.array(point_cloud, dtype=numpy.dtype('f4'))
     return numpy.reshape(points, (int(points.shape[0]/3), 3))
 

@@ -1,4 +1,6 @@
 from setuptools import find_packages, setup
+import os
+from glob import glob
 
 package_name = 'puente_ros'
 
@@ -7,9 +9,9 @@ setup(
     version='0.0.0',
     packages=find_packages(exclude=['test']),
     data_files=[
-        ('share/ament_index/resource_index/packages',
-            ['resource/' + package_name]),
+        ('share/ament_index/resource_index/packages',['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        (os.path.join('share', package_name), glob('launch/*.launch.py'))
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -23,8 +25,7 @@ setup(
             'puente_ros_lidar = puente_ros.puente_ros:lidar',
             'puente_ros_laser = puente_ros.puente_ros:laser_stamp',
             'puente_ros_odom = puente_ros.puente_ros:odom',
-            'puente_ros_camara = puente_ros.puente_ros:camara',
-            'cone = puente_ros.puente_ros:cone_detection'
+            'puente_ros_camara = puente_ros.puente_ros:camara'
         ],
     },
 )
