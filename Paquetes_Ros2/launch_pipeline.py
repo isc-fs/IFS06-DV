@@ -16,6 +16,7 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from ament_index_python.packages import get_package_share_directory
 
 ##Esto no funciona
+## Y no esta termiado
 
 def generate_launch_description():
     ld=LaunchDescription()

@@ -1,3 +1,15 @@
+"""
+========================
+puente_ros.py (v1.0)
+========================
+
+Elaborado por Jaime Perez para el ISC
+Permite conectar el simulador FSDS a ROS2 mediante la API de Python.
+Publica Odometria(/odom), TF coche-odom,
+Datos de Lidar en formato nube de puntos(3D)(/cloud_in) y LaserScan(2D)(/scan)
+La conversion de nube de puntos a Laser se hace con el paquete pointcloud-to-laserscan que se deve instalar(readme.md)
+"""
+
 import sys
 import os
 import time
@@ -55,7 +67,6 @@ class Publicar_Lidar(Node):
     def __init__(self):
         super().__init__('Publicar_Lidar')
         self.publisher_PointCloud = self.create_publisher(PointCloud2, 'cloud_in',10)
-        self.publisher_MarkerArray = self.create_publisher(MarkerArray, 'Conos',10)
 
         client = fsds.FSDSClient()
         tiempo=0
@@ -63,7 +74,6 @@ class Publicar_Lidar(Node):
         while(True):
             tiempo=time.time()
             msg = PointCloud2()
-            laser=LaserScan()
 
             try:
                 lidardata = client.getLidarData(lidar_name = 'Lidar')
@@ -134,7 +144,6 @@ class Publicar_Camara(Node):
     def __init__(self):
         super().__init__('Publicar_Camara')
         self.publisher_ = self.create_publisher(Image, 'camara', 10)
-        self.publisher_info = self.create_publisher(CameraInfo, 'camera_info', 10)
 
         client = fsds.FSDSClient()
         self.br = CvBridge()
@@ -231,7 +240,7 @@ class Publicar_Odom(Node):
 
                 self.publisher_.publish(msg)
                 self.get_logger().debug('Mesnaje enviado Odom')
-                time.sleep(0.1)
+                #time.sleep(0.1)
             except:
                 time.sleep(1)
                 self.get_logger().error('Error Odom')

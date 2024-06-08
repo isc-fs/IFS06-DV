@@ -1,11 +1,13 @@
 /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/python3.10/site-packages/slam/ransac.py
 /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/python3.10/site-packages/slam/__init__.py
+/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/python3.10/site-packages/slam/mapa.py
 /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/python3.10/site-packages/slam/rotaciones.py
 /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/python3.10/site-packages/slam/slam.py
 /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/python3.10/site-packages/slam/cone_detection.py
 /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/python3.10/site-packages/slam/ground_removal.py
 /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/python3.10/site-packages/slam/__pycache__/ransac.cpython-310.pyc
 /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/python3.10/site-packages/slam/__pycache__/__init__.cpython-310.pyc
+/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/python3.10/site-packages/slam/__pycache__/mapa.cpython-310.pyc
 /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/python3.10/site-packages/slam/__pycache__/rotaciones.cpython-310.pyc
 /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/python3.10/site-packages/slam/__pycache__/slam.cpython-310.pyc
 /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/python3.10/site-packages/slam/__pycache__/cone_detection.cpython-310.pyc
@@ -20,3 +22,5 @@
 /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/python3.10/site-packages/slam-0.0.0-py3.10.egg-info/entry_points.txt
 /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/python3.10/site-packages/slam-0.0.0-py3.10.egg-info/top_level.txt
 /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/slam/Cone_Detection
+/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/slam/Cone_Laser
+/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/slam/Publicar_Mapa

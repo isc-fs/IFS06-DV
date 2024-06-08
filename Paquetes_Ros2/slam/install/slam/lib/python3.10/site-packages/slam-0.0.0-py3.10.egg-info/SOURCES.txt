@@ -13,6 +13,7 @@ resource/slam
 slam/__init__.py
 slam/cone_detection.py
 slam/ground_removal.py
+slam/mapa.py
 slam/ransac.py
 slam/rotaciones.py
 slam/slam.py

@@ -1,6 +1,6 @@
 """
 ========================
-cone_detection.py (v1.0)
+cone_detection.py (v1.1)
 ========================
 
 Elaborado por Sergio Jiménez para el ISC
@@ -8,6 +8,9 @@ Permite detectar las posiciones de los conos dados los
 datos de un LIDAR. Este archivo tiene distintos benchmarks, 
 ademas de permitir visualizar la comparacion entre lo predicho 
 y los datos
+
+Novedades 1.1:
+- Añadida rect2polars
 """
 
 from slam.ransac import ransac, ransac2
@@ -19,6 +22,8 @@ import cProfile
 import time
 import matplotlib.pyplot as plt
 import timeit
+#import numba
+import math
 
 
 def final_cone_result_rt(data, model=DBSCAN):
@@ -55,6 +60,21 @@ def final_cone_result_rt(data, model=DBSCAN):
             if params[2] < 6 and params[2] > 5 and params[3] < 0.4 and params[3] > 0.3:
                 cone_positions.append((params[0], params[1]))
     return cone_positions
+
+
+#@numba.njit
+def rect2polars(x, y):
+    s=0
+    if(x>0 and y >0):
+        s= np.arctan(y / x)
+    elif(x>0 and y<0):
+        s= -np.arctan(y / x)
+    elif(x<0 and y<0):
+        s= np.arctan(y / x)-math.pi/2
+    elif(x<0 and y>0):
+        s= np.arctan(y / x)+math.pi/2
+        
+    return np.sqrt(x**2 + y**2), np.arctan(y / x)
 
 
 def clustering_separation_rt(data, model):

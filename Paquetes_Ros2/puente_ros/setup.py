@@ -15,9 +15,9 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='jaime',
-    maintainer_email='jaime@todo.todo',
-    description='TODO: Package description',
+    maintainer='JaimePerez',
+    maintainer_email='JaimePerez@todo.todo',
+    description='PuenteFSDSaROS',
     license='Apache-2.0',
     tests_require=['pytest'],
     entry_points={
