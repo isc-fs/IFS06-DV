@@ -64,17 +64,8 @@ def final_cone_result_rt(data, model=DBSCAN):
 
 #@numba.njit
 def rect2polars(x, y):
-    s=0
-    if(x>0 and y >0):
-        s= np.arctan(y / x)
-    elif(x>0 and y<0):
-        s= -np.arctan(y / x)
-    elif(x<0 and y<0):
-        s= np.arctan(y / x)-math.pi/2
-    elif(x<0 and y>0):
-        s= np.arctan(y / x)+math.pi/2
         
-    return np.sqrt(x**2 + y**2), np.arctan(y / x)
+    return np.sqrt(x**2 + y**2), np.arctan2(y,x)
 
 
 def clustering_separation_rt(data, model):
