@@ -68,18 +68,82 @@ class Publicar_Lidar(Node):
         super().__init__('Publicar_Lidar')
         self.publisher_PointCloud = self.create_publisher(PointCloud2, 'cloud_in',10)
 
+        self.publisher_ = self.create_publisher(Odometry, 'odom', 10)
+        self.tf_broadcaster = TransformBroadcaster(self)
+
         client = fsds.FSDSClient()
         tiempo=0
 
         while(True):
+            msg = Odometry()
+            t = TransformStamped()
+
+            try:
+                state = client.getCarState()
+
+                #######TF#######
+                # ros2 run tf2_ros static_transform_publisher 0 0 0 0 0 0 base_footprint base_link
+                # ros2 run tf2_ros static_transform_publisher 0 0 0 0 0 0 base_link base_scan
+                # ros2 run tf2_ros static_transform_publisher 0 0 0 0 0 0 map odom
+
+                #)9.17 nacho 6 miguel
+
+                t.header.stamp = self.get_clock().now().to_msg()
+                t.header.frame_id = 'odom'
+                t.child_frame_id = 'base_footprint'
+
+                t.transform.translation.x = state.kinematics_estimated.position.x_val
+                t.transform.translation.y = state.kinematics_estimated.position.y_val
+                t.transform.translation.z = 0.0
+
+                t.transform.rotation.x = state.kinematics_estimated.orientation.x_val
+                t.transform.rotation.y = state.kinematics_estimated.orientation.y_val
+                t.transform.rotation.z = state.kinematics_estimated.orientation.z_val
+                t.transform.rotation.w = state.kinematics_estimated.orientation.w_val
+
+                self.tf_broadcaster.sendTransform(t)
+
+                #######ODOM#######
+
+                msg.header.stamp = self.get_clock().now().to_msg()
+
+                msg.header.frame_id='odom'
+                msg.child_frame_id= 'base_footprint'
+
+                msg.pose.pose.position.x = state.kinematics_estimated.position.x_val
+                msg.pose.pose.position.y = state.kinematics_estimated.position.y_val
+                msg.pose.pose.position.z = 0.0
+
+                msg.pose.pose.orientation.x = state.kinematics_estimated.orientation.x_val
+                msg.pose.pose.orientation.y = state.kinematics_estimated.orientation.y_val
+                msg.pose.pose.orientation.z = state.kinematics_estimated.orientation.z_val
+                msg.pose.pose.orientation.w = state.kinematics_estimated.orientation.w_val
+
+
+                self.publisher_.publish(msg)
+                self.get_logger().debug('Mesnaje enviado Odom')
+                #time.sleep(0.1)
+            except Exception as e:
+                time.sleep(1)
+                self.get_logger().error('Error Odom: '+e)
+                error_acx_x=0.0
+                error_acx_y=0.0
+                try:
+                    client = fsds.FSDSClient()
+                except:
+                    pass
+
+            tiempo_odom=msg.header.stamp
+
             tiempo=time.time()
             msg = PointCloud2()
 
+            
             try:
                 lidardata = client.getLidarData(lidar_name = 'Lidar')
-                lidardata.point_cloud
 
                 msg = point_cloud(numpy.asarray(lidardata.point_cloud), 'base_footprint')
+                msg.header.stamp=self.get_clock().now().to_msg()
                 self.publisher_PointCloud.publish(msg)
 
                 self.get_logger().debug('Mesnaje enviado Lidar. Actualizaciones por seg:'+str(1/(time.time()-tiempo)))
@@ -90,6 +154,8 @@ class Publicar_Lidar(Node):
                     client = fsds.FSDSClient()
                 except:
                     pass
+
+            self.get_logger().error(str((msg.header.stamp.nanosec-tiempo_odom.nanosec)/1000000))
 
 def point_cloud(points, parent_frame):
     #Esto no se como funciona

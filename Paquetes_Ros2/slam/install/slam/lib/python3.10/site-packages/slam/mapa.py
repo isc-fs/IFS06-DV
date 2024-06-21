@@ -65,7 +65,7 @@ class Mapa():    ###Mapa de features
         cono_nuevo.y=point_source.point.y
         
         for cono in self.conos:  
-            if(distancia(cono,cono_nuevo.x,cono_nuevo.y)<1):
+            if(distancia(cono,cono_nuevo.x,cono_nuevo.y)<0.1):
                 cono.n_visto+=1
                 f=True
                 break
@@ -75,6 +75,7 @@ class Mapa():    ###Mapa de features
 
         if f==False:
             cono_nuevo.n_visto+=1
-            if len(self.conos)<100:              ###Maximo numero de conos permitidos para evitar que se crashe si se le va la pinza
-                self.conos.append(cono_nuevo)
+            if len(self.conos)>100:              ###Maximo numero de conos permitidos para evitar que se crashe si se le va la pinza
+                self.conos.pop(0)
+            self.conos.append(cono_nuevo)
             

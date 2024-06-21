@@ -78,13 +78,35 @@ class Cone_Detection(Node):
             
         self.get_logger().debug(str(len(conos)))
         markerArray = MarkerArray()
-        ###Aprovechar el metodo MarkerArray() pero no es compatible con RVIZ
+        ###Aprovechar el metodo MarkerArray() para mandar resultados de final_cone_result_rt()
+        i=0
         for (a,b) in conos:
             self.get_logger().debug("x: "+str(a)+" Y: "+str(b))
             marker = Marker()
             marker.pose.position.x = a
             marker.pose.position.y = b
             marker.pose.position.z = 0.0
+
+            ###Hacer compatible con RVIZ####
+            marker.header.frame_id = "base_footprint" ##El mapa esta en el sistema de referencia Odom no el coche
+            marker.type = marker.CUBE
+            if i==0:  ##En el pimer elemeto se le dice a RVIZ que elimine los registros. Mas info en Wiki RVIZ MarkerArray
+                marker.action = 3  #ELIMINAR TODO 3
+                marker.header.stamp=msg.header.stamp
+            else:
+                marker.action = marker.ADD  #Añadir marcardo
+
+            marker.scale.x = 0.1
+            marker.scale.y = 0.1
+            marker.scale.z = 0.1
+            marker.color.a = 1.0
+            marker.color.r = 1.0
+            marker.color.g = 0.0
+            marker.color.b = 1.0
+            marker.pose.orientation.w = 1.0
+            marker.id=i
+            i+=1
+            ###Hacer compatible con RVIZ####
 
             markerArray.markers.append(marker)
 
@@ -119,7 +141,7 @@ class Publicar_Mapa(Node):
             t = self.tf_buffer.lookup_transform(
                 'odom',
                 'base_footprint',
-                rclpy.time.Time())
+                msg.markers[0].header.stamp) ###rclpy.time.Time()
         except TransformException as ex:
             return
         
@@ -136,9 +158,9 @@ class Publicar_Mapa(Node):
             else:
                 marker.action = marker.ADD  #Añadir marcardo
 
-            marker.scale.x = 0.5
-            marker.scale.y = 0.5
-            marker.scale.z = 0.5
+            marker.scale.x = 0.1
+            marker.scale.y = 0.1
+            marker.scale.z = 0.1
             marker.color.a = 1.0
             marker.color.r = 1.0
             marker.color.g = 1.0

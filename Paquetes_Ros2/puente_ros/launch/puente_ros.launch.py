@@ -77,12 +77,12 @@ def generate_launch_description():
     )
 
     ld.add_action(CAMARA)
-    ld.add_action(ODOMETRIA)
+    #ld.add_action(ODOMETRIA)
     ld.add_action(LIDAR)
-    ld.add_action(LASER)
-    ld.add_action(LASER_STAMP)
+    #ld.add_action(LASER)
+    #ld.add_action(LASER_STAMP)
 
-    ld.add_action(SLAM_PARAM_FILE)  ##SlamToolBox
-    ld.add_action(SLAM_TOOLBOX)
+    #ld.add_action(SLAM_PARAM_FILE)  ##SlamToolBox
+    #ld.add_action(SLAM_TOOLBOX)
 
     return ld
