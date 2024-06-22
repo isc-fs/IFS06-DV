@@ -99,6 +99,7 @@ class Cone_Detection(Node):
             else:
                 marker.action = marker.ADD  #Añadir marcardo
 
+            marker.header.stamp=msg.header.stamp
             marker.scale.x = 0.1
             marker.scale.y = 0.1
             marker.scale.z = 0.1
@@ -136,12 +137,15 @@ class Publicar_Mapa(Node):
         self.mapa=Mapa()
 
     def listener_callback(self, msg):
+        if len(msg.markers)==0: ###Si no se han detectado conos parar
+            return
+        
         markerArray = MarkerArray()
         try:        ###Generar Objeto de transformada entre Odom y el coche
             t = self.tf_buffer.lookup_transform(
                 'odom',
                 'fsds/FSCar',
-                rclpy.time.Time()) ###rclpy.time.Time()
+                msg.markers[0].header.stamp) #Coger tiempo del escaneo para interpolar
         except TransformException as ex:
             return
         
@@ -150,6 +154,8 @@ class Publicar_Mapa(Node):
 
         i=0
         for cono in self.mapa.conos:        ###Mostrar el mapa completo
+            if cono.n_visto<2:
+                continue
             marker = Marker()
             marker.header.frame_id = "odom" ##El mapa esta en el sistema de referencia Odom no el coche
             marker.type = marker.CUBE
@@ -234,7 +240,7 @@ class Publicar_Track(Node):
     def __init__(self):
         super().__init__('Publicar_Laser')
         #Publicar
-        self.publisher_Laser = self.create_publisher(MarkerArray, 'Track',10)
+        self.publisher_MarkerArray = self.create_publisher(MarkerArray, 'Track',10)
         #Subscripcion
         self.subscription = self.create_subscription(
             Track,
@@ -244,10 +250,9 @@ class Publicar_Track(Node):
     def listener_callback(self, msg):
         Cone_list = MarkerArray()
 
-        print(msg)
-"""
         i=0
-        for cono in msg:        ###Mostrar el mapa completo
+        for cone in msg.track:
+
             marker = Marker()
             marker.header.frame_id = "odom" ##El mapa esta en el sistema de referencia Odom no el coche
             marker.type = marker.CUBE
@@ -260,19 +265,20 @@ class Publicar_Track(Node):
             marker.scale.y = 0.1
             marker.scale.z = 0.1
             marker.color.a = 1.0
-            marker.color.r = 1.0
+            marker.color.r = 0.0
             marker.color.g = 1.0
             marker.color.b = 0.0
             marker.pose.orientation.w = 1.0
-            marker.pose.position.x = cono.x
-            marker.pose.position.y = cono.y
+            marker.pose.position.x = cone.location.x
+            marker.pose.position.y = cone.location.y
             marker.pose.position.z = 0.0
             marker.id=i
             i+=1
 
-            markerArray.markers.append(marker)
+            Cone_list.markers.append(marker)
 
-        self.publisher_MarkerArray.publish(markerArray)"""
+        self.publisher_MarkerArray.publish(Cone_list)
+        print(len(Cone_list.markers))
 
 """
 Llamadas a Objetos para ROS2

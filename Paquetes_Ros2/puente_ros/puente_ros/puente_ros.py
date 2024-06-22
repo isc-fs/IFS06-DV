@@ -83,7 +83,7 @@ class Publicar_TF(Node):
 
         #######Publicar Transformadad####### 
 
-        t.header.stamp = self.get_clock().now().to_msg()
+        t.header.stamp = odom.header.stamp
         t.header.frame_id = 'odom'
         t.child_frame_id = 'fsds/FSCar'
 
