@@ -1,0 +1,17 @@
+###No se puede ejecutar archivo desde terminal
+
+##Lanzar Simulacion
+cd ~/Formula-Student-Driverless-Simulator
+./FSDS.sh
+
+##Lanzar Puente
+source ~/Formula-Student-Driverless-Simulator/ros2/install/setup.sh
+cd ~/Formula-Student-Driverless-Simulator/ros2
+ros2 launch fsds_ros2_bridge fsds_ros2_bridge.launch.py manual_mode:=True
+
+##Lanzar el otro puente
+source install/setup.sh
+ros2 launch puente_ros puente_ros.launch.py
+
+##
+

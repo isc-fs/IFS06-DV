@@ -143,7 +143,7 @@ class Publicar_Lidar(Node):
                 lidardata = client.getLidarData(lidar_name = 'Lidar')
 
                 msg = point_cloud(numpy.asarray(lidardata.point_cloud), 'base_footprint')
-                #msg.header.stamp=self.get_clock().now().to_msg()
+                msg.header.stamp=self.get_clock().now().to_msg()
                 self.publisher_PointCloud.publish(msg)
 
                 self.get_logger().debug('Mesnaje enviado Lidar. Actualizaciones por seg:'+str(1/(time.time()-tiempo)))
@@ -206,116 +206,39 @@ def point_cloud(points, parent_frame):
         data=data
     )
 
-class Publicar_Camara(Node):
-    def __init__(self):
-        super().__init__('Publicar_Camara')
-        self.publisher_ = self.create_publisher(Image, 'camara', 10)
-
-        client = fsds.FSDSClient()
-        self.br = CvBridge()
-        tiempo=0
-
-        while(True):
-            tiempo=time.time()
-            try:
-                [image] = client.simGetImages([fsds.ImageRequest(camera_name = 'cam', image_type = fsds.ImageType.Scene, pixels_as_float = False, compress = True)], vehicle_name = 'FSCar')
-                #print(time.time()-tiempo)
-                x = numpy.fromstring(image.image_data_uint8, dtype='uint8')
-                img = cv.imdecode(x, cv.IMREAD_UNCHANGED)
-                #cv.imshow("imagedfdfan",img); 
-                #if cv.waitKey(1) & 0xFF == ord('q'): 
-                    #pass
-                
-                msg=self.br.cv2_to_imgmsg(img)
-                msg.header.stamp=self.get_clock().now().to_msg()
-                msg.header.frame_id='base_footprint'
-
-                self.publisher_.publish(msg)
-
-                #if True:
-                self.get_logger().debug('Publicando camara. FPS:'+str(1/(time.time()-tiempo)))
-            except:
-                time.sleep(1)
-                self.get_logger().error('Error Camara')
-                try:
-                    client = fsds.FSDSClient()
-                except:
-                    pass
-
-
-class Publicar_Odom(Node):
+class Publicar_TF(Node):
     def __init__(self):
         super().__init__('Publicar_Odom')
-        self.publisher_ = self.create_publisher(Odometry, 'odom', 10)
-
-        client = fsds.FSDSClient()
+        #Publicacion
         self.tf_broadcaster = TransformBroadcaster(self)
 
-        tiempo=0
+        #Subscricion
+        self.posicion = self.create_subscription(
+            Odometry,
+            '/testing_only/odom',              ##Mensaje de Odometria---Mas adelante cambiar a estimacion VREL
+            self.listener_callback,
+            10)
 
-        error_acx_x=0.0
-        error_acx_y=0.0
+    def listener_callback(self, odom):
+        msg = Odometry()
+        t = TransformStamped()
 
-        while(True):
-            tiempo=time.time()
-            msg = Odometry()
-            t = TransformStamped()
+        #######Publicar Transformadad####### 
 
-            #error_acx_x+=0.01  ##Simular drift de odometria
-            #error_acx_y-=0.01
+        t.header.stamp = self.get_clock().now().to_msg()
+        t.header.frame_id = 'odom'
+        t.child_frame_id = 'fsds/FSCar'
 
-            try:
-                state = client.getCarState()
+        t.transform.translation.x = odom.pose.pose.position.x 
+        t.transform.translation.y = odom.pose.pose.position.y 
+        t.transform.translation.z = 0.0
 
-                #######TF####### 
-                # ros2 run tf2_ros static_transform_publisher 0 0 0 0 0 0 base_footprint base_link
-                # ros2 run tf2_ros static_transform_publisher 0 0 0 0 0 0 base_link base_scan
-                # ros2 run tf2_ros static_transform_publisher 0 0 0 0 0 0 map odom
+        t.transform.rotation.x = odom.pose.pose.orientation.x
+        t.transform.rotation.y = odom.pose.pose.orientation.y
+        t.transform.rotation.z = odom.pose.pose.orientation.z
+        t.transform.rotation.w = odom.pose.pose.orientation.w
 
-                t.header.stamp = self.get_clock().now().to_msg()
-                t.header.frame_id = 'odom'
-                t.child_frame_id = 'base_footprint'
-
-                t.transform.translation.x = state.kinematics_estimated.position.x_val+error_acx_x
-                t.transform.translation.y = state.kinematics_estimated.position.y_val+error_acx_y
-                t.transform.translation.z = 0.0
-
-                t.transform.rotation.x = state.kinematics_estimated.orientation.x_val
-                t.transform.rotation.y = state.kinematics_estimated.orientation.y_val
-                t.transform.rotation.z = state.kinematics_estimated.orientation.z_val
-                t.transform.rotation.w = state.kinematics_estimated.orientation.w_val
-
-                self.tf_broadcaster.sendTransform(t)
-
-                #######ODOM#######
-
-                msg.header.stamp = self.get_clock().now().to_msg()
-
-                msg.header.frame_id='odom'
-                msg.child_frame_id= 'base_footprint'
-
-                msg.pose.pose.position.x = state.kinematics_estimated.position.x_val+error_acx_x
-                msg.pose.pose.position.y = state.kinematics_estimated.position.y_val+error_acx_y
-                msg.pose.pose.position.z = 0.0
-
-                msg.pose.pose.orientation.x = state.kinematics_estimated.orientation.x_val
-                msg.pose.pose.orientation.y = state.kinematics_estimated.orientation.y_val
-                msg.pose.pose.orientation.z = state.kinematics_estimated.orientation.z_val
-                msg.pose.pose.orientation.w = state.kinematics_estimated.orientation.w_val
-
-
-                self.publisher_.publish(msg)
-                self.get_logger().debug('Mesnaje enviado Odom')
-                #time.sleep(0.1)
-            except:
-                time.sleep(1)
-                self.get_logger().error('Error Odom')
-                error_acx_x=0.0
-                error_acx_y=0.0
-                try:
-                    client = fsds.FSDSClient()
-                except:
-                    pass
+        self.tf_broadcaster.sendTransform(t)
 
 def lidar(args=None):
     rclpy.init(args=args)
@@ -329,15 +252,9 @@ def laser_stamp(args=None):
     Laser_stam = LaserScan_stamp()
     rclpy.spin(Laser_stam)
 
-def odom(args=None):
+def TF(args=None):
     rclpy.init(args=args)
 
-    Publicar_odom=Publicar_Odom()
+    Publicar_odom=Publicar_TF()
     rclpy.spin(Publicar_odom)
-
-def camara(args=None):
-    rclpy.init(args=args)
-
-    Publicar_camara=Publicar_Camara()
-    rclpy.spin(Publicar_camara)
 

@@ -24,8 +24,8 @@ def generate_launch_description():
     ODOMETRIA = Node(   #ODOMETRIA
         package='puente_ros',
         namespace='',
-        executable='puente_ros_odom',
-        name='puente_ros_odom',
+        executable='puente_ros_TF',
+        name='puente_ros_TF',
         arguments=['--ros-args', '--log-level', log]
     )
 
@@ -76,9 +76,9 @@ def generate_launch_description():
         namespace=''
     )
 
-    ld.add_action(CAMARA)
-    #ld.add_action(ODOMETRIA)
-    ld.add_action(LIDAR)
+    #ld.add_action(CAMARA)
+    ld.add_action(ODOMETRIA)
+    #ld.add_action(LIDAR)
     #ld.add_action(LASER)
     #ld.add_action(LASER_STAMP)
 

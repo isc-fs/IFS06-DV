@@ -22,10 +22,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'puente_ros_lidar = puente_ros.puente_ros:lidar',
             'puente_ros_laser = puente_ros.puente_ros:laser_stamp',
-            'puente_ros_odom = puente_ros.puente_ros:odom',
-            'puente_ros_camara = puente_ros.puente_ros:camara'
+            'puente_ros_TF = puente_ros.puente_ros:TF',
         ],
     },
 )

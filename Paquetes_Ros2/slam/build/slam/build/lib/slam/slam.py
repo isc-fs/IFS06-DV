@@ -45,7 +45,9 @@ from visualization_msgs.msg import Marker
 from visualization_msgs.msg import MarkerArray
 
 from slam.cone_detection import *
-from slam.mapa import Mapa, Cono
+from slam.mapa import *
+
+from fs_msgs.msg import Track, Cone
 
 from tf2_ros import TransformException
 from tf2_ros.buffer import Buffer
@@ -57,23 +59,24 @@ class Cone_Detection(Node):
     """
     def __init__(self):
         super().__init__('Cone_Detection')
-
+        #Publicar
         self.publisher_MarkerArray = self.create_publisher(MarkerArray, 'Conos_raw',10)
-
+        #Subscribir
         self.subscription = self.create_subscription(
             PointCloud2,
-            'cloud_in',
+            '/lidar/Lidar1',
             self.listener_callback,10)
-        self.subscription
 
     def listener_callback(self, msg):
-        x=np.frombuffer(msg.data, dtype=numpy.float32)
-        point_cloud = parse_lidarData(x)
+        ###Wiki de FSDS
+        points = numpy.array(np.frombuffer(msg.data, dtype=numpy.float32), dtype=numpy.dtype('f4'))
+        point_cloud = numpy.reshape(points, (int(points.shape[0]/3), 3))
 
         conos=[]
         try:            ###A veces da error de division por cero. El try: es para evitar que crashe
-            conos = final_cone_result_rt(point_cloud)
-        except:
+            conos = final_cone_result_rt(point_cloud)  ###Consultar a Sergio
+        except Exception as e:
+            self.get_logger().error('error')
             pass
             
         self.get_logger().debug(str(len(conos)))
@@ -88,7 +91,7 @@ class Cone_Detection(Node):
             marker.pose.position.z = 0.0
 
             ###Hacer compatible con RVIZ####
-            marker.header.frame_id = "base_footprint" ##El mapa esta en el sistema de referencia Odom no el coche
+            marker.header.frame_id = "fsds/FSCar" ##El mapa esta en el sistema de referencia Odom no el coche
             marker.type = marker.CUBE
             if i==0:  ##En el pimer elemeto se le dice a RVIZ que elimine los registros. Mas info en Wiki RVIZ MarkerArray
                 marker.action = 3  #ELIMINAR TODO 3
@@ -112,18 +115,15 @@ class Cone_Detection(Node):
 
         self.publisher_MarkerArray.publish(markerArray)
 
-def parse_lidarData(point_cloud):       ###Wiki de FSDS
-    points = numpy.array(point_cloud, dtype=numpy.dtype('f4'))
-    return numpy.reshape(points, (int(points.shape[0]/3), 3))
-
 class Publicar_Mapa(Node):
     """Publica el mapa
     """
     def __init__(self):
         super().__init__('Publicar_Mapa')
-
+        #Publicar
         self.publisher_MarkerArray = self.create_publisher(MarkerArray, 'Conos',10)
 
+        #Subscripciones
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)   
 
@@ -131,8 +131,8 @@ class Publicar_Mapa(Node):
             MarkerArray,
             'Conos_raw',
             self.listener_callback,10)
-        self.subscription
 
+        #Iniciar calse Mapa
         self.mapa=Mapa()
 
     def listener_callback(self, msg):
@@ -140,8 +140,8 @@ class Publicar_Mapa(Node):
         try:        ###Generar Objeto de transformada entre Odom y el coche
             t = self.tf_buffer.lookup_transform(
                 'odom',
-                'base_footprint',
-                msg.markers[0].header.stamp) ###rclpy.time.Time()
+                'fsds/FSCar',
+                rclpy.time.Time()) ###rclpy.time.Time()
         except TransformException as ex:
             return
         
@@ -188,7 +188,6 @@ class Publicar_Laser(Node):
             PointCloud2,
             'cloud_in',
             self.listener_callback,10)
-        self.subscription
 
     def listener_callback(self, msg):
         x=np.frombuffer(msg.data, dtype=numpy.float32)
@@ -231,6 +230,50 @@ class Publicar_Laser(Node):
         self.publisher_Laser.publish(laser)
 
 
+class Publicar_Track(Node):
+    def __init__(self):
+        super().__init__('Publicar_Laser')
+        #Publicar
+        self.publisher_Laser = self.create_publisher(MarkerArray, 'Track',10)
+        #Subscripcion
+        self.subscription = self.create_subscription(
+            Track,
+            '/testing_only/track',
+            self.listener_callback,10)
+
+    def listener_callback(self, msg):
+        Cone_list = MarkerArray()
+
+        print(msg)
+"""
+        i=0
+        for cono in msg:        ###Mostrar el mapa completo
+            marker = Marker()
+            marker.header.frame_id = "odom" ##El mapa esta en el sistema de referencia Odom no el coche
+            marker.type = marker.CUBE
+            if i==0:  ##En el pimer elemeto se le dice a RVIZ que elimine los registros. Mas info en Wiki RVIZ MarkerArray
+                marker.action = 3  #ELIMINAR TODO 3
+            else:
+                marker.action = marker.ADD  #Añadir marcardo
+
+            marker.scale.x = 0.1
+            marker.scale.y = 0.1
+            marker.scale.z = 0.1
+            marker.color.a = 1.0
+            marker.color.r = 1.0
+            marker.color.g = 1.0
+            marker.color.b = 0.0
+            marker.pose.orientation.w = 1.0
+            marker.pose.position.x = cono.x
+            marker.pose.position.y = cono.y
+            marker.pose.position.z = 0.0
+            marker.id=i
+            i+=1
+
+            markerArray.markers.append(marker)
+
+        self.publisher_MarkerArray.publish(markerArray)"""
+
 """
 Llamadas a Objetos para ROS2
 """
@@ -250,4 +293,10 @@ def cone_laser(args=None):
     rclpy.init(args=args)
 
     nodo_laser = Publicar_Laser()
+    rclpy.spin(nodo_laser)
+
+def publicar_track(args=None):
+    rclpy.init(args=args)
+
+    nodo_laser = Publicar_Track()
     rclpy.spin(nodo_laser)

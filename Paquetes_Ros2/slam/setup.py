@@ -22,7 +22,8 @@ setup(
         'console_scripts': [
             'Cone_Detection = slam.slam:cone_detection',
             'Cone_Laser = slam.slam:cone_laser',
-            'Publicar_Mapa = slam.slam:publicar_mapa'
+            'Publicar_Mapa = slam.slam:publicar_mapa',
+            'Publicar_Track = slam.slam:publicar_track'
         ],
     },
 )
