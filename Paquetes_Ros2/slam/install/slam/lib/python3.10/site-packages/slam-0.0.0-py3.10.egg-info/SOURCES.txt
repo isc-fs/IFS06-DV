@@ -9,6 +9,7 @@ build/slam/slam.egg-info/entry_points.txt
 build/slam/slam.egg-info/requires.txt
 build/slam/slam.egg-info/top_level.txt
 build/slam/slam.egg-info/zip-safe
+launch/slam.launch.py
 resource/slam
 slam/__init__.py
 slam/cone_detection.py

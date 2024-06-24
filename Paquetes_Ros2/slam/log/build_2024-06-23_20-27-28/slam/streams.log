@@ -1,0 +1,28 @@
+[1.467s] Invoking command in '/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam': PYTHONPATH=/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/build/slam/prefix_override:/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base build/slam build --build-base /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/build/slam/build install --record /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/build/slam/install.log --single-version-externally-managed install_data
+[2.142s] running egg_info
+[2.144s] writing build/slam/slam.egg-info/PKG-INFO
+[2.144s] writing dependency_links to build/slam/slam.egg-info/dependency_links.txt
+[2.145s] writing entry points to build/slam/slam.egg-info/entry_points.txt
+[2.145s] writing requirements to build/slam/slam.egg-info/requires.txt
+[2.145s] writing top-level names to build/slam/slam.egg-info/top_level.txt
+[2.152s] reading manifest file 'build/slam/slam.egg-info/SOURCES.txt'
+[2.152s] adding license file 'LICENSE'
+[2.155s] writing manifest file 'build/slam/slam.egg-info/SOURCES.txt'
+[2.155s] running build
+[2.156s] running build_py
+[2.156s] copying slam/mapa.py -> /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/build/slam/build/lib/slam
+[2.157s] running install
+[2.158s] running install_lib
+[2.160s] copying /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/build/slam/build/lib/slam/mapa.py -> /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/python3.10/site-packages/slam
+[2.162s] byte-compiling /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/python3.10/site-packages/slam/mapa.py to mapa.cpython-310.pyc
+[2.164s] running install_data
+[2.164s] running install_egg_info
+[2.171s] removing '/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/python3.10/site-packages/slam-0.0.0-py3.10.egg-info' (and everything under it)
+[2.172s] Copying build/slam/slam.egg-info to /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/python3.10/site-packages/slam-0.0.0-py3.10.egg-info
+[2.173s] running install_scripts
+[2.232s] Installing Cone_Detection script to /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/slam
+[2.232s] Installing Cone_Laser script to /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/slam
+[2.233s] Installing Publicar_Mapa script to /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/slam
+[2.233s] Installing Publicar_Track script to /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/slam
+[2.234s] writing list of installed files to '/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/build/slam/install.log'
+[2.291s] Invoked command in '/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam' returned '0': PYTHONPATH=/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/build/slam/prefix_override:/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base build/slam build --build-base /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/build/slam/build install --record /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/build/slam/install.log --single-version-externally-managed install_data

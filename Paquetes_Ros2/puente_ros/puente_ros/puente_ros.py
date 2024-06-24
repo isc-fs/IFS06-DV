@@ -60,8 +60,9 @@ class LaserScan_stamp(Node):
         self.subscription
 
     def listener_callback(self, laser):
-        laser.header.stamp = self.get_clock().now().to_msg()
-        laser.header.frame_id='base_footprint'
+
+        #laser.header.stamp = self.get_clock().now().to_msg()
+        laser.header.frame_id='fsds/FSCar'
         self.publisher_Laser.publish(laser)
 
 class Publicar_TF(Node):

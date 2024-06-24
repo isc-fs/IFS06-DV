@@ -66,6 +66,17 @@ class Cone_Detection(Node):
             PointCloud2,
             '/lidar/Lidar1',
             self.listener_callback,10)
+        
+        self.subscription_odom = self.create_subscription(
+            Odometry,
+            '/testing_only/odom',
+            self.listener_callback_odom,10)
+        
+        self.odom=Odometry()
+        self.c=[]
+
+    def listener_callback_odom(self, msg):
+        self.odom=msg
 
     def listener_callback(self, msg):
         ###Wiki de FSDS
@@ -81,6 +92,33 @@ class Cone_Detection(Node):
             
         self.get_logger().debug(str(len(conos)))
         markerArray = MarkerArray()
+
+        """self.c.append([self.odom.header.stamp.sec,
+            self.odom.header.stamp.nanosec,
+            self.odom.pose.pose.position.x,
+            self.odom.pose.pose.position.y,
+            self.odom.pose.pose.orientation.x,
+            self.odom.pose.pose.orientation.y,
+            self.odom.pose.pose.orientation.z,
+            self.odom.pose.pose.orientation.w,
+            self.odom.twist.twist.linear.x,
+            self.odom.twist.twist.linear.y,
+            self.odom.twist.twist.angular.x,
+            self.odom.twist.twist.angular.y,
+            self.odom.twist.twist.angular.z,
+            msg.header.stamp.sec,
+            msg.header.stamp.nanosec])
+        
+        for i in range(20):
+            if len(conos)>i:
+                (a,b)=conos[i]
+                self.c[len(self.c)-1].append(a)
+                self.c[len(self.c)-1].append(b)
+            else:
+                self.c[len(self.c)-1].append(0.0)
+                self.c[len(self.c)-1].append(0.0)
+        np.savetxt('datos.txt',numpy.asarray(self.c), delimiter=',')"""
+
         ###Aprovechar el metodo MarkerArray() para mandar resultados de final_cone_result_rt()
         i=0
         for (a,b) in conos:
@@ -95,7 +133,6 @@ class Cone_Detection(Node):
             marker.type = marker.CUBE
             if i==0:  ##En el pimer elemeto se le dice a RVIZ que elimine los registros. Mas info en Wiki RVIZ MarkerArray
                 marker.action = 3  #ELIMINAR TODO 3
-                marker.header.stamp=msg.header.stamp
             else:
                 marker.action = marker.ADD  #Añadir marcardo
 
@@ -141,6 +178,15 @@ class Publicar_Mapa(Node):
             return
         
         markerArray = MarkerArray()
+
+        ###Retroceder tiempo de medicion de lidar 30ms
+        t_ofset=30000000
+        if msg.markers[0].header.stamp.nanosec-t_ofset<0:
+            msg.markers[0].header.stamp.sec=msg.markers[0].header.stamp.sec-1
+            msg.markers[0].header.stamp.nanosec=msg.markers[0].header.stamp.nanosec-t_ofset+1000000000
+        else:
+            msg.markers[0].header.stamp.nanosec=msg.markers[0].header.stamp.nanosec-t_ofset
+
         try:        ###Generar Objeto de transformada entre Odom y el coche
             t = self.tf_buffer.lookup_transform(
                 'odom',
@@ -152,10 +198,10 @@ class Publicar_Mapa(Node):
         for mark in msg.markers:  ###Añadir conos que detectado final_cone_result_rt() a el mapa
             self.mapa.add_cono(mark.pose.position.x, mark.pose.position.y,t)
 
+        self.mapa.actualizar_mapa()
+
         i=0
         for cono in self.mapa.conos:        ###Mostrar el mapa completo
-            if cono.n_visto<2:
-                continue
             marker = Marker()
             marker.header.frame_id = "odom" ##El mapa esta en el sistema de referencia Odom no el coche
             marker.type = marker.CUBE
@@ -192,12 +238,12 @@ class Publicar_Laser(Node):
 
         self.subscription = self.create_subscription(
             PointCloud2,
-            'cloud_in',
+            '/lidar/Lidar1',
             self.listener_callback,10)
 
     def listener_callback(self, msg):
-        x=np.frombuffer(msg.data, dtype=numpy.float32)
-        point_cloud = parse_lidarData(x)
+        points = numpy.array(np.frombuffer(msg.data, dtype=numpy.float32), dtype=numpy.dtype('f4'))
+        point_cloud = numpy.reshape(points, (int(points.shape[0]/3), 3))
 
         conos=[]
         try:
@@ -208,8 +254,15 @@ class Publicar_Laser(Node):
         self.get_logger().error(str(len(conos)))
         laser = LaserScan()
 
-        laser.header.stamp=self.get_clock().now().to_msg()
-        laser.header.frame_id='base_footprint'
+        laser.header.stamp=msg.header.stamp
+        t_ofset=30000000
+        if laser.header.stamp.nanosec-t_ofset<0:
+            laser.header.stamp.sec=laser.header.stamp.sec-1
+            laser.header.stamp.nanosec=laser.header.stamp.nanosec-t_ofset+1000000000
+        else:
+            laser.header.stamp.nanosec=laser.header.stamp.nanosec-t_ofset
+
+        laser.header.frame_id='fsds/FSCar'
 
         laser.angle_min=-math.pi
         laser.angle_max=math.pi
@@ -251,6 +304,10 @@ class Publicar_Track(Node):
         Cone_list = MarkerArray()
 
         i=0
+
+        #c=[(cone.location.x,cone.location.y) for cone in msg.track]
+        #np.savetxt('track.txt',numpy.asarray(c), delimiter=',')
+
         for cone in msg.track:
 
             marker = Marker()

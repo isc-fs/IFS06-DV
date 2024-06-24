@@ -11,7 +11,7 @@ slam_toolbox:
     # ROS Parameters
     odom_frame: odom
     map_frame: map
-    base_frame: base_footprint
+    base_frame: fsds/FSCar
     scan_topic: /Laser_Conos
     use_map_saver: true
     mode: mapping #localization

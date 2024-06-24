@@ -47,9 +47,10 @@ def generate_launch_description():
 
     LASER = Node( #CONVERSION POINTCLOUD A LASERSCAN
         package='pointcloud_to_laserscan', executable='pointcloud_to_laserscan_node',
-        remappings=[('scan_in', 'scan_in'),         ##Remapeo de salidas del paqute de conversion de nuve de puntos a LaserScan para conseguir compativilidad con SlamToolBox
-                    ('scan','scan_pre')],
+        remappings=[('/cloud_in','/lidar/Lidar1',),         ##Remapeo de salidas del paqute de conversion de nuve de puntos a LaserScan para conseguir compativilidad con SlamToolBox
+                   ('scan','scan')],
         name='pointcloud_to_laserscan'
+        #arguments=['--ros-args', '--log-level', 'debug']
     )
 
     LASER_STAMP = Node( #AÑADIR TIME_STAMP A LASERSCAN   ##Si no se hace SlamToolBox no acepta los valores 

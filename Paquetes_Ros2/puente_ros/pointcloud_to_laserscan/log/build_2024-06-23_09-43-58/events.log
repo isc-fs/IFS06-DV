@@ -1,0 +1,276 @@
+[0.000000] (-) TimerEvent: {}
+[0.001456] (pointcloud_to_laserscan) JobQueued: {'identifier': 'pointcloud_to_laserscan', 'dependencies': OrderedDict()}
+[0.002006] (pointcloud_to_laserscan) JobStarted: {'identifier': 'pointcloud_to_laserscan'}
+[0.017280] (pointcloud_to_laserscan) JobProgress: {'identifier': 'pointcloud_to_laserscan', 'progress': 'cmake'}
+[0.018668] (pointcloud_to_laserscan) JobProgress: {'identifier': 'pointcloud_to_laserscan', 'progress': 'build'}
+[0.020375] (pointcloud_to_laserscan) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/build/pointcloud_to_laserscan', '--', '-j20', '-l20'], 'cwd': '/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/build/pointcloud_to_laserscan', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('USER', 'jaime'), ('LC_TIME', 'es_ES.UTF-8'), ('XDG_SESSION_TYPE', 'wayland'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/home/jaime'), ('OLDPWD', '/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros'), ('DESKTOP_SESSION', 'ubuntu'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('LC_MONETARY', 'es_ES.UTF-8'), ('SYSTEMD_EXEC_PID', '2512'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLORTERM', 'truecolor'), ('IM_CONFIG_PHASE', '1'), ('WAYLAND_DISPLAY', 'wayland-0'), ('COLCON_PREFIX_PATH', '/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'jaime'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('USERNAME', 'jaime'), ('TERM', 'xterm-256color'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/home/jaime/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin'), ('SESSION_MANAGER', 'local/jaime-Zenbook:@/tmp/.ICE-unix/1655,unix/jaime-Zenbook:/tmp/.ICE-unix/1655'), ('XDG_MENU_PREFIX', 'gnome-'), ('LC_ADDRESS', 'es_ES.UTF-8'), ('GNOME_TERMINAL_SCREEN', '/org/gnome/Terminal/screen/f5466bb3_6e2e_4e96_aa54_9b92d02519f8'), ('GNOME_SETUP_DISPLAY', ':1'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', ':0'), ('LANG', 'en_US.UTF-8'), ('XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('LC_TELEPHONE', 'es_ES.UTF-8'), ('RMW_IMPLEMENTATION', 'rmw_cyclonedds_cpp'), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/.mutter-Xwaylandauth.UC0QP2'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('GNOME_TERMINAL_SERVICE', ':1.124'), ('SSH_AGENT_LAUNCHER', 'gnome-keyring'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('AMENT_PREFIX_PATH', '/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/install/puente_ros:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('LC_NAME', 'es_ES.UTF-8'), ('QT_ACCESSIBILITY', '1'), ('GDMSESSION', 'ubuntu'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('LC_MEASUREMENT', 'es_ES.UTF-8'), ('LC_IDENTIFICATION', 'es_ES.UTF-8'), ('QT_IM_MODULE', 'ibus'), ('PWD', '/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/build/pointcloud_to_laserscan'), ('LC_ALL', 'en_US.UTF-8'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('XDG_DATA_DIRS', '/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('PYTHONPATH', '/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/install/puente_ros/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('LC_NUMERIC', 'es_ES.UTF-8'), ('LC_PAPER', 'es_ES.UTF-8'), ('COLCON', '1'), ('VTE_VERSION', '6800'), ('CMAKE_PREFIX_PATH', '/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/install/puente_ros:/opt/ros/humble')]), 'shell': False}
+[0.099580] (-) TimerEvent: {}
+[0.139240] (pointcloud_to_laserscan) StdoutLine: {'line': b'[ 20%] Built target laserscan_to_pointcloud_node\n'}
+[0.139844] (pointcloud_to_laserscan) StdoutLine: {'line': b'[ 40%] Built target pointcloud_to_laserscan_node\n'}
+[0.141864] (pointcloud_to_laserscan) StdoutLine: {'line': b'[ 60%] Built target laserscan_to_pointcloud\n'}
+[0.174805] (pointcloud_to_laserscan) StdoutLine: {'line': b'\x1b[35m\x1b[1mConsolidate compiler generated dependencies of target pointcloud_to_laserscan\x1b[0m\n'}
+[0.199728] (-) TimerEvent: {}
+[0.225988] (pointcloud_to_laserscan) StdoutLine: {'line': b'[ 70%] \x1b[32mBuilding CXX object CMakeFiles/pointcloud_to_laserscan.dir/src/pointcloud_to_laserscan_node.cpp.o\x1b[0m\n'}
+[0.299860] (-) TimerEvent: {}
+[0.400365] (-) TimerEvent: {}
+[0.500916] (-) TimerEvent: {}
+[0.601492] (-) TimerEvent: {}
+[0.702016] (-) TimerEvent: {}
+[0.802646] (-) TimerEvent: {}
+[0.903198] (-) TimerEvent: {}
+[1.003765] (-) TimerEvent: {}
+[1.104396] (-) TimerEvent: {}
+[1.204962] (-) TimerEvent: {}
+[1.305639] (-) TimerEvent: {}
+[1.406260] (-) TimerEvent: {}
+[1.506887] (-) TimerEvent: {}
+[1.607432] (-) TimerEvent: {}
+[1.707952] (-) TimerEvent: {}
+[1.808501] (-) TimerEvent: {}
+[1.909139] (-) TimerEvent: {}
+[2.009674] (-) TimerEvent: {}
+[2.110230] (-) TimerEvent: {}
+[2.210861] (-) TimerEvent: {}
+[2.311426] (-) TimerEvent: {}
+[2.412040] (-) TimerEvent: {}
+[2.512808] (-) TimerEvent: {}
+[2.613469] (-) TimerEvent: {}
+[2.714119] (-) TimerEvent: {}
+[2.814651] (-) TimerEvent: {}
+[2.915166] (-) TimerEvent: {}
+[3.015698] (-) TimerEvent: {}
+[3.116453] (-) TimerEvent: {}
+[3.216990] (-) TimerEvent: {}
+[3.317539] (-) TimerEvent: {}
+[3.418104] (-) TimerEvent: {}
+[3.518576] (-) TimerEvent: {}
+[3.619147] (-) TimerEvent: {}
+[3.719619] (-) TimerEvent: {}
+[3.820155] (-) TimerEvent: {}
+[3.920648] (-) TimerEvent: {}
+[4.021164] (-) TimerEvent: {}
+[4.121716] (-) TimerEvent: {}
+[4.222304] (-) TimerEvent: {}
+[4.322862] (-) TimerEvent: {}
+[4.423358] (-) TimerEvent: {}
+[4.523875] (-) TimerEvent: {}
+[4.624322] (-) TimerEvent: {}
+[4.724813] (-) TimerEvent: {}
+[4.825251] (-) TimerEvent: {}
+[4.925814] (-) TimerEvent: {}
+[5.026335] (-) TimerEvent: {}
+[5.126925] (-) TimerEvent: {}
+[5.227432] (-) TimerEvent: {}
+[5.327944] (-) TimerEvent: {}
+[5.428421] (-) TimerEvent: {}
+[5.528954] (-) TimerEvent: {}
+[5.629397] (-) TimerEvent: {}
+[5.729864] (-) TimerEvent: {}
+[5.830379] (-) TimerEvent: {}
+[5.930875] (-) TimerEvent: {}
+[6.031352] (-) TimerEvent: {}
+[6.131827] (-) TimerEvent: {}
+[6.232335] (-) TimerEvent: {}
+[6.332731] (-) TimerEvent: {}
+[6.433137] (-) TimerEvent: {}
+[6.533597] (-) TimerEvent: {}
+[6.634074] (-) TimerEvent: {}
+[6.734600] (-) TimerEvent: {}
+[6.835112] (-) TimerEvent: {}
+[6.935571] (-) TimerEvent: {}
+[7.036015] (-) TimerEvent: {}
+[7.136655] (-) TimerEvent: {}
+[7.237114] (-) TimerEvent: {}
+[7.337562] (-) TimerEvent: {}
+[7.438093] (-) TimerEvent: {}
+[7.538644] (-) TimerEvent: {}
+[7.639100] (-) TimerEvent: {}
+[7.739849] (-) TimerEvent: {}
+[7.840484] (-) TimerEvent: {}
+[7.941021] (-) TimerEvent: {}
+[8.041563] (-) TimerEvent: {}
+[8.142206] (-) TimerEvent: {}
+[8.242841] (-) TimerEvent: {}
+[8.343389] (-) TimerEvent: {}
+[8.443917] (-) TimerEvent: {}
+[8.544477] (-) TimerEvent: {}
+[8.644978] (-) TimerEvent: {}
+[8.745480] (-) TimerEvent: {}
+[8.845973] (-) TimerEvent: {}
+[8.946471] (-) TimerEvent: {}
+[9.047007] (-) TimerEvent: {}
+[9.147598] (-) TimerEvent: {}
+[9.248062] (-) TimerEvent: {}
+[9.348532] (-) TimerEvent: {}
+[9.448993] (-) TimerEvent: {}
+[9.549453] (-) TimerEvent: {}
+[9.649900] (-) TimerEvent: {}
+[9.750470] (-) TimerEvent: {}
+[9.851098] (-) TimerEvent: {}
+[9.951636] (-) TimerEvent: {}
+[10.052067] (-) TimerEvent: {}
+[10.152524] (-) TimerEvent: {}
+[10.253103] (-) TimerEvent: {}
+[10.353625] (-) TimerEvent: {}
+[10.454031] (-) TimerEvent: {}
+[10.554510] (-) TimerEvent: {}
+[10.654971] (-) TimerEvent: {}
+[10.755524] (-) TimerEvent: {}
+[10.856022] (-) TimerEvent: {}
+[10.956477] (-) TimerEvent: {}
+[11.057100] (-) TimerEvent: {}
+[11.157509] (-) TimerEvent: {}
+[11.257953] (-) TimerEvent: {}
+[11.358551] (-) TimerEvent: {}
+[11.459129] (-) TimerEvent: {}
+[11.559721] (-) TimerEvent: {}
+[11.660211] (-) TimerEvent: {}
+[11.760643] (-) TimerEvent: {}
+[11.861150] (-) TimerEvent: {}
+[11.961662] (-) TimerEvent: {}
+[12.062266] (-) TimerEvent: {}
+[12.162802] (-) TimerEvent: {}
+[12.263320] (-) TimerEvent: {}
+[12.363828] (-) TimerEvent: {}
+[12.464362] (-) TimerEvent: {}
+[12.564894] (-) TimerEvent: {}
+[12.665428] (-) TimerEvent: {}
+[12.765867] (-) TimerEvent: {}
+[12.866286] (-) TimerEvent: {}
+[12.966748] (-) TimerEvent: {}
+[13.067240] (-) TimerEvent: {}
+[13.167811] (-) TimerEvent: {}
+[13.268384] (-) TimerEvent: {}
+[13.368930] (-) TimerEvent: {}
+[13.469463] (-) TimerEvent: {}
+[13.570021] (-) TimerEvent: {}
+[13.670467] (-) TimerEvent: {}
+[13.770957] (-) TimerEvent: {}
+[13.871444] (-) TimerEvent: {}
+[13.971925] (-) TimerEvent: {}
+[14.072365] (-) TimerEvent: {}
+[14.172857] (-) TimerEvent: {}
+[14.273365] (-) TimerEvent: {}
+[14.373790] (-) TimerEvent: {}
+[14.474268] (-) TimerEvent: {}
+[14.574831] (-) TimerEvent: {}
+[14.675404] (-) TimerEvent: {}
+[14.775921] (-) TimerEvent: {}
+[14.876549] (-) TimerEvent: {}
+[14.977023] (-) TimerEvent: {}
+[15.077535] (-) TimerEvent: {}
+[15.177966] (-) TimerEvent: {}
+[15.278379] (-) TimerEvent: {}
+[15.378926] (-) TimerEvent: {}
+[15.479506] (-) TimerEvent: {}
+[15.580012] (-) TimerEvent: {}
+[15.680635] (-) TimerEvent: {}
+[15.781143] (-) TimerEvent: {}
+[15.881682] (-) TimerEvent: {}
+[15.982202] (-) TimerEvent: {}
+[16.082835] (-) TimerEvent: {}
+[16.183367] (-) TimerEvent: {}
+[16.283979] (-) TimerEvent: {}
+[16.384525] (-) TimerEvent: {}
+[16.485160] (-) TimerEvent: {}
+[16.585684] (-) TimerEvent: {}
+[16.686352] (-) TimerEvent: {}
+[16.786935] (-) TimerEvent: {}
+[16.887634] (-) TimerEvent: {}
+[16.988225] (-) TimerEvent: {}
+[17.088852] (-) TimerEvent: {}
+[17.189333] (-) TimerEvent: {}
+[17.289898] (-) TimerEvent: {}
+[17.390548] (-) TimerEvent: {}
+[17.491025] (-) TimerEvent: {}
+[17.591597] (-) TimerEvent: {}
+[17.692180] (-) TimerEvent: {}
+[17.792723] (-) TimerEvent: {}
+[17.893310] (-) TimerEvent: {}
+[17.993823] (-) TimerEvent: {}
+[18.094434] (-) TimerEvent: {}
+[18.194947] (-) TimerEvent: {}
+[18.295516] (-) TimerEvent: {}
+[18.396030] (-) TimerEvent: {}
+[18.496777] (-) TimerEvent: {}
+[18.597339] (-) TimerEvent: {}
+[18.697898] (-) TimerEvent: {}
+[18.798325] (-) TimerEvent: {}
+[18.898771] (-) TimerEvent: {}
+[18.999216] (-) TimerEvent: {}
+[19.099694] (-) TimerEvent: {}
+[19.200166] (-) TimerEvent: {}
+[19.300701] (-) TimerEvent: {}
+[19.401148] (-) TimerEvent: {}
+[19.501673] (-) TimerEvent: {}
+[19.602232] (-) TimerEvent: {}
+[19.702688] (-) TimerEvent: {}
+[19.803230] (-) TimerEvent: {}
+[19.903876] (-) TimerEvent: {}
+[20.004333] (-) TimerEvent: {}
+[20.079564] (pointcloud_to_laserscan) StdoutLine: {'line': b'[ 80%] \x1b[32m\x1b[1mLinking CXX shared library libpointcloud_to_laserscan.so\x1b[0m\n'}
+[20.104515] (-) TimerEvent: {}
+[20.205107] (-) TimerEvent: {}
+[20.305606] (-) TimerEvent: {}
+[20.406139] (-) TimerEvent: {}
+[20.506646] (-) TimerEvent: {}
+[20.607153] (-) TimerEvent: {}
+[20.707578] (-) TimerEvent: {}
+[20.807974] (-) TimerEvent: {}
+[20.908608] (-) TimerEvent: {}
+[21.009216] (-) TimerEvent: {}
+[21.109724] (-) TimerEvent: {}
+[21.149918] (pointcloud_to_laserscan) StdoutLine: {'line': b'[ 80%] Built target pointcloud_to_laserscan\n'}
+[21.200290] (pointcloud_to_laserscan) StdoutLine: {'line': b'[ 90%] \x1b[32m\x1b[1mLinking CXX executable dummy_pointcloud_publisher\x1b[0m\n'}
+[21.209967] (-) TimerEvent: {}
+[21.310506] (-) TimerEvent: {}
+[21.411024] (-) TimerEvent: {}
+[21.511471] (-) TimerEvent: {}
+[21.611976] (-) TimerEvent: {}
+[21.682205] (pointcloud_to_laserscan) StdoutLine: {'line': b'[100%] Built target dummy_pointcloud_publisher\n'}
+[21.702412] (pointcloud_to_laserscan) CommandEnded: {'returncode': 0}
+[21.712091] (-) TimerEvent: {}
+[21.773640] (pointcloud_to_laserscan) JobProgress: {'identifier': 'pointcloud_to_laserscan', 'progress': 'install'}
+[21.790716] (pointcloud_to_laserscan) Command: {'cmd': ['/usr/bin/cmake', '--install', '/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/build/pointcloud_to_laserscan'], 'cwd': '/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/build/pointcloud_to_laserscan', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('USER', 'jaime'), ('LC_TIME', 'es_ES.UTF-8'), ('XDG_SESSION_TYPE', 'wayland'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/home/jaime'), ('OLDPWD', '/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros'), ('DESKTOP_SESSION', 'ubuntu'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('LC_MONETARY', 'es_ES.UTF-8'), ('SYSTEMD_EXEC_PID', '2512'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLORTERM', 'truecolor'), ('IM_CONFIG_PHASE', '1'), ('WAYLAND_DISPLAY', 'wayland-0'), ('COLCON_PREFIX_PATH', '/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'jaime'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('USERNAME', 'jaime'), ('TERM', 'xterm-256color'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/home/jaime/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin'), ('SESSION_MANAGER', 'local/jaime-Zenbook:@/tmp/.ICE-unix/1655,unix/jaime-Zenbook:/tmp/.ICE-unix/1655'), ('XDG_MENU_PREFIX', 'gnome-'), ('LC_ADDRESS', 'es_ES.UTF-8'), ('GNOME_TERMINAL_SCREEN', '/org/gnome/Terminal/screen/f5466bb3_6e2e_4e96_aa54_9b92d02519f8'), ('GNOME_SETUP_DISPLAY', ':1'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', ':0'), ('LANG', 'en_US.UTF-8'), ('XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('LC_TELEPHONE', 'es_ES.UTF-8'), ('RMW_IMPLEMENTATION', 'rmw_cyclonedds_cpp'), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/.mutter-Xwaylandauth.UC0QP2'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('GNOME_TERMINAL_SERVICE', ':1.124'), ('SSH_AGENT_LAUNCHER', 'gnome-keyring'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('AMENT_PREFIX_PATH', '/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/install/puente_ros:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('LC_NAME', 'es_ES.UTF-8'), ('QT_ACCESSIBILITY', '1'), ('GDMSESSION', 'ubuntu'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('LC_MEASUREMENT', 'es_ES.UTF-8'), ('LC_IDENTIFICATION', 'es_ES.UTF-8'), ('QT_IM_MODULE', 'ibus'), ('PWD', '/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/build/pointcloud_to_laserscan'), ('LC_ALL', 'en_US.UTF-8'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('XDG_DATA_DIRS', '/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('PYTHONPATH', '/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/install/puente_ros/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('LC_NUMERIC', 'es_ES.UTF-8'), ('LC_PAPER', 'es_ES.UTF-8'), ('COLCON', '1'), ('VTE_VERSION', '6800'), ('CMAKE_PREFIX_PATH', '/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/install/puente_ros:/opt/ros/humble')]), 'shell': False}
+[21.803622] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[21.804011] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Up-to-date: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/lib/pointcloud_to_laserscan/laserscan_to_pointcloud_node\n'}
+[21.804577] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Up-to-date: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/lib/pointcloud_to_laserscan/pointcloud_to_laserscan_node\n'}
+[21.804999] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Up-to-date: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/include\n'}
+[21.805430] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Up-to-date: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/include/pointcloud_to_laserscan\n'}
+[21.805882] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Up-to-date: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/include/pointcloud_to_laserscan/pointcloud_to_laserscan_node.hpp\n'}
+[21.806042] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Up-to-date: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/include/pointcloud_to_laserscan/laserscan_to_pointcloud_node.hpp\n'}
+[21.806163] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Up-to-date: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/include/pointcloud_to_laserscan/visibility_control.h\n'}
+[21.806288] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Up-to-date: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/environment/library_path.sh\n'}
+[21.806483] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Up-to-date: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/environment/library_path.dsv\n'}
+[21.806630] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Up-to-date: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/lib/liblaserscan_to_pointcloud.so\n'}
+[21.806742] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/lib/libpointcloud_to_laserscan.so\n'}
+[21.812202] (-) TimerEvent: {}
+[21.821098] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Set runtime path of "/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/lib/libpointcloud_to_laserscan.so" to ""\n'}
+[21.821454] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/lib/pointcloud_to_laserscan/dummy_pointcloud_publisher\n'}
+[21.822998] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Set runtime path of "/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/lib/pointcloud_to_laserscan/dummy_pointcloud_publisher" to ""\n'}
+[21.823769] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Up-to-date: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/launch\n'}
+[21.824017] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Up-to-date: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/launch/sample_laserscan_to_pointcloud_launch.py\n'}
+[21.824171] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Up-to-date: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/launch/sample_pointcloud_to_laserscan_launch.py\n'}
+[21.824282] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Up-to-date: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/ament_index/resource_index/package_run_dependencies/pointcloud_to_laserscan\n'}
+[21.824382] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Up-to-date: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/ament_index/resource_index/parent_prefix_path/pointcloud_to_laserscan\n'}
+[21.824484] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Up-to-date: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/environment/ament_prefix_path.sh\n'}
+[21.824723] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Up-to-date: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/environment/ament_prefix_path.dsv\n'}
+[21.824821] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Up-to-date: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/environment/path.sh\n'}
+[21.824918] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Up-to-date: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/environment/path.dsv\n'}
+[21.825010] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Up-to-date: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/local_setup.bash\n'}
+[21.825101] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Up-to-date: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/local_setup.sh\n'}
+[21.825198] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Up-to-date: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/local_setup.zsh\n'}
+[21.825285] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Up-to-date: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/local_setup.dsv\n'}
+[21.825372] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/package.dsv\n'}
+[21.825462] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Up-to-date: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/ament_index/resource_index/packages/pointcloud_to_laserscan\n'}
+[21.825553] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Up-to-date: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/ament_index/resource_index/rclcpp_components/pointcloud_to_laserscan\n'}
+[21.825640] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Up-to-date: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/cmake/ament_cmake_export_dependencies-extras.cmake\n'}
+[21.825728] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Up-to-date: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/cmake/ament_cmake_export_include_directories-extras.cmake\n'}
+[21.825825] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Up-to-date: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/cmake/ament_cmake_export_libraries-extras.cmake\n'}
+[21.825923] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Up-to-date: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/cmake/pointcloud_to_laserscanConfig.cmake\n'}
+[21.826098] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Up-to-date: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/cmake/pointcloud_to_laserscanConfig-version.cmake\n'}
+[21.826261] (pointcloud_to_laserscan) StdoutLine: {'line': b'-- Up-to-date: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/package.xml\n'}
+[21.827942] (pointcloud_to_laserscan) CommandEnded: {'returncode': 0}
+[21.912542] (-) TimerEvent: {}
+[21.938913] (pointcloud_to_laserscan) JobEnded: {'identifier': 'pointcloud_to_laserscan', 'rc': 0}
+[21.940775] (-) EventReactorShutdown: {}

@@ -1,0 +1,10 @@
+[01m[K/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/src/pointcloud_to_laserscan_node.cpp:[m[K In constructor ‘[01m[Kpointcloud_to_laserscan::PointCloudToLaserScanNode::PointCloudToLaserScanNode(const rclcpp::NodeOptions&)[m[K’:
+[01m[K/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/src/pointcloud_to_laserscan_node.cpp:68:18:[m[K [01;31m[Kerror: [m[Kexpected ‘[01m[K;[m[K’ before ‘[01m[Kmax_height_[m[K’
+   68 |   min_height_=0.5
+      |                  [01;31m[K^[m[K
+      |                  [32m[K;[m[K
+   69 |   [32m[Kmax_height_[m[K = this->declare_parameter("max_height", std::numeric_limits<double>::max());
+      |   [32m[K~~~~~~~~~~~[m[K     
+gmake[2]: *** [CMakeFiles/pointcloud_to_laserscan.dir/build.make:76: CMakeFiles/pointcloud_to_laserscan.dir/src/pointcloud_to_laserscan_node.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:197: CMakeFiles/pointcloud_to_laserscan.dir/all] Error 2
+gmake: *** [Makefile:146: all] Error 2

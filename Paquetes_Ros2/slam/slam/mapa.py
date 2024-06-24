@@ -28,6 +28,8 @@ from tf2_geometry_msgs import do_transform_point
 from geometry_msgs.msg import Point
 import geometry_msgs
 
+from sklearn.cluster import DBSCAN
+
 def distancia(cono,x,y):
     return numpy.sqrt((cono.x-x)**2 + (cono.y-y)**2)
 
@@ -39,11 +41,10 @@ class Cono():
         self.x=0
         self.y=0
 
-        self.n_visto=0
-
 class Mapa():    ###Mapa de features
     def __init__(self):
         self.conos=[]
+        self.detecciones=[]
 
     def add_cono(self,x,y,t):
         """Añade un cono a el mapa
@@ -58,13 +59,18 @@ class Mapa():    ###Mapa de features
         i=0
         f=False
 
-        cono_nuevo=Cono()               ###Tranformar de un sistema de referencia del coche a odom
+        ###Tranformar de un sistema de referencia del coche a odom
         point_source = Point(x=x, y=y, z=0.0)
         point_source=do_transform_point(geometry_msgs.msg.PointStamped(point=point_source),t)
-        cono_nuevo.x=point_source.point.x
-        cono_nuevo.y=point_source.point.y
+        cono=[]
+        cono.append(point_source.point.x)
+        cono.append(point_source.point.y)
+        self.detecciones.append(cono)
+
+        if len(self.detecciones)>1500:
+            self.detecciones.pop(0)
         
-        for cono in self.conos:  
+        """for cono in self.conos:  
             if(distancia(cono,cono_nuevo.x,cono_nuevo.y)<0.1):
                 cono.n_visto+=1
                 f=True
@@ -77,5 +83,35 @@ class Mapa():    ###Mapa de features
             cono_nuevo.n_visto+=1
             if len(self.conos)>100:              ###Maximo numero de conos permitidos para evitar que se crashe si se le va la pinza
                 self.conos.pop(0)
-            self.conos.append(cono_nuevo)
-            
+            self.conos.append(cono_nuevo)"""
+
+    def actualizar_mapa(self):
+        clust_model = DBSCAN(eps=0.3, min_samples=5)
+        labels = clust_model.fit_predict(self.detecciones)
+        """separated_data = [
+            numpy.array(self.detecciones[labels == label]) for label in numpy.unique(labels)
+        ]"""
+
+        deteciones_separadas=[]
+        #print(max(labels))
+        for i in range(150):
+            deteciones_separadas.append([])
+        i=0
+        for label in labels:
+            deteciones_separadas[label].append(self.detecciones[i])
+            i=i+1
+
+
+        self.conos=[]
+        for deteciones_cono in deteciones_separadas:
+            if len(deteciones_cono)==0:
+                continue
+            x_avr=0
+            y_avr=0
+            for detecion in deteciones_cono:
+                x_avr=x_avr+detecion[0]
+                y_avr=y_avr+detecion[1]
+            c=Cono()
+            c.x=x_avr/len(deteciones_cono)
+            c.y=y_avr/len(deteciones_cono)
+            self.conos.append(c)

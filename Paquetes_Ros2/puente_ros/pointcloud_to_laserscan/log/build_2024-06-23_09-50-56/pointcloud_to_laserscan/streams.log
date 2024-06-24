@@ -1,0 +1,23 @@
+[0.022s] Invoking command in '/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/build/pointcloud_to_laserscan': CMAKE_PREFIX_PATH=/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/install/puente_ros:/opt/ros/humble /usr/bin/cmake --build /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/build/pointcloud_to_laserscan -- -j20 -l20
+[0.124s] [ 20%] Built target pointcloud_to_laserscan_node
+[0.124s] [ 40%] Built target laserscan_to_pointcloud_node
+[0.131s] [ 60%] Built target laserscan_to_pointcloud
+[0.160s] [35m[1mConsolidate compiler generated dependencies of target pointcloud_to_laserscan[0m
+[0.210s] [ 70%] [32mBuilding CXX object CMakeFiles/pointcloud_to_laserscan.dir/src/pointcloud_to_laserscan_node.cpp.o[0m
+[5.197s] [01m[K/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/src/pointcloud_to_laserscan_node.cpp:[m[K In member function ‘[01m[Kvoid pointcloud_to_laserscan::PointCloudToLaserScanNode::cloudCallback(sensor_msgs::msg::PointCloud2_<std::allocator<void> >::ConstSharedPtr)[m[K’:
+[5.197s] [01m[K/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/src/pointcloud_to_laserscan_node.cpp:158:60:[m[K [01;31m[Kerror: [m[Kexpected ‘[01m[K;[m[K’ before ‘[01m[Kscan_msg[m[K’
+[5.198s]   158 |     scan_msg->header.stamp.sec=scan_msg->header.stamp.sec-1
+[5.198s]       |                                                            [01;31m[K^[m[K
+[5.198s]       |                                                            [32m[K;[m[K
+[5.198s]   159 |     [32m[Kscan_msg[m[K->header.stamp.nanosec=scan_msg->header.stamp.nanosec-t_ofset+1000000000
+[5.198s]       |     [32m[K~~~~~~~~[m[K                                                
+[5.198s] [01m[K/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/src/pointcloud_to_laserscan_node.cpp:161:74:[m[K [01;31m[Kerror: [m[Kexpected ‘[01m[K;[m[K’ before ‘[01m[K}[m[K’ token
+[5.198s]   161 |     scan_msg->header.stamp.nanosec=scan_msg->header.stamp.nanosec-t_ofset
+[5.198s]       |                                                                          [01;31m[K^[m[K
+[5.198s]       |                                                                          [32m[K;[m[K
+[5.198s]   162 |   [32m[K}[m[K
+[5.198s]       |   [32m[K~[m[K                                                                       
+[7.301s] gmake[2]: *** [CMakeFiles/pointcloud_to_laserscan.dir/build.make:76: CMakeFiles/pointcloud_to_laserscan.dir/src/pointcloud_to_laserscan_node.cpp.o] Error 1
+[7.301s] gmake[1]: *** [CMakeFiles/Makefile2:197: CMakeFiles/pointcloud_to_laserscan.dir/all] Error 2
+[7.301s] gmake: *** [Makefile:146: all] Error 2
+[7.303s] Invoked command in '/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/build/pointcloud_to_laserscan' returned '2': CMAKE_PREFIX_PATH=/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/install/puente_ros:/opt/ros/humble /usr/bin/cmake --build /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/build/pointcloud_to_laserscan -- -j20 -l20

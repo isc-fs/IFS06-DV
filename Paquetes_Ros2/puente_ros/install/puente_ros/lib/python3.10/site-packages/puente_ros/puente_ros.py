@@ -60,8 +60,9 @@ class LaserScan_stamp(Node):
         self.subscription
 
     def listener_callback(self, laser):
-        laser.header.stamp = self.get_clock().now().to_msg()
-        laser.header.frame_id='base_footprint'
+
+        #laser.header.stamp = self.get_clock().now().to_msg()
+        laser.header.frame_id='fsds/FSCar'
         self.publisher_Laser.publish(laser)
 
 class Publicar_TF(Node):
@@ -95,8 +96,6 @@ class Publicar_TF(Node):
         t.transform.rotation.y = odom.pose.pose.orientation.y
         t.transform.rotation.z = odom.pose.pose.orientation.z
         t.transform.rotation.w = odom.pose.pose.orientation.w
-
-        #t.transform.ve
 
         self.tf_broadcaster.sendTransform(t)
 

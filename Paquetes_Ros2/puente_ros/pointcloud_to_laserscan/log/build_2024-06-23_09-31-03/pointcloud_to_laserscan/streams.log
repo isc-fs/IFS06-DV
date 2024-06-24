@@ -1,0 +1,103 @@
+[0.005s] Invoking command in '/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/build/pointcloud_to_laserscan': CMAKE_PREFIX_PATH=/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/install/puente_ros:/opt/ros/humble /usr/bin/cmake /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan -DCMAKE_INSTALL_PREFIX=/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan
+[0.037s] -- The C compiler identification is GNU 11.4.0
+[0.069s] -- The CXX compiler identification is GNU 11.4.0
+[0.073s] -- Detecting C compiler ABI info
+[0.110s] -- Detecting C compiler ABI info - done
+[0.115s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.115s] -- Detecting C compile features
+[0.115s] -- Detecting C compile features - done
+[0.117s] -- Detecting CXX compiler ABI info
+[0.164s] -- Detecting CXX compiler ABI info - done
+[0.169s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.169s] -- Detecting CXX compile features
+[0.169s] -- Detecting CXX compile features - done
+[0.170s] -- Found ament_cmake_auto: 1.3.9 (/opt/ros/humble/share/ament_cmake_auto/cmake)
+[0.260s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[0.381s] -- Found rosidl_generator_c: 3.1.5 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+[0.383s] -- Found rosidl_adapter: 3.1.5 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[0.388s] -- Found rosidl_generator_cpp: 3.1.5 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+[0.395s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.405s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.443s] -- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)
+[0.444s] -- Found rmw_cyclonedds_cpp: 1.3.4 (/opt/ros/humble/share/rmw_cyclonedds_cpp/cmake)
+[0.463s] -- Using RMW implementation 'rmw_cyclonedds_cpp' as default
+[0.468s] -- Looking for pthread.h
+[0.510s] -- Looking for pthread.h - found
+[0.510s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+[0.554s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+[0.555s] -- Found Threads: TRUE  
+[0.979s] -- Found ament_lint_auto: 0.12.11 (/opt/ros/humble/share/ament_lint_auto/cmake)
+[1.000s] -- Added test 'cppcheck' to perform static code analysis on C / C++ code
+[1.000s] -- Configured cppcheck include dirs: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/include
+[1.000s] -- Configured cppcheck exclude dirs and/or files: 
+[1.003s] -- Added test 'cpplint' to check C / C++ code against the Google style
+[1.003s] -- Configured cpplint exclude dirs and/or files: 
+[1.003s] -- Added test 'flake8' to check Python code syntax and style conventions
+[1.004s] -- Added test 'lint_cmake' to check CMake code style
+[1.005s] -- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+[1.008s] -- Added test 'uncrustify' to check C / C++ code style
+[1.008s] -- Configured uncrustify additional arguments: 
+[1.008s] -- Added test 'xmllint' to check XML markup files
+[1.010s] -- Configuring done
+[1.028s] -- Generating done
+[1.029s] -- Build files have been written to: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/build/pointcloud_to_laserscan
+[1.035s] Invoked command in '/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/build/pointcloud_to_laserscan' returned '0': CMAKE_PREFIX_PATH=/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/install/puente_ros:/opt/ros/humble /usr/bin/cmake /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan -DCMAKE_INSTALL_PREFIX=/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan
+[1.037s] Invoking command in '/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/build/pointcloud_to_laserscan': CMAKE_PREFIX_PATH=/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/install/puente_ros:/opt/ros/humble /usr/bin/cmake --build /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/build/pointcloud_to_laserscan -- -j20 -l20
+[1.065s] [ 10%] [32mBuilding CXX object CMakeFiles/laserscan_to_pointcloud_node.dir/rclcpp_components/node_main_laserscan_to_pointcloud_node.cpp.o[0m
+[1.066s] [ 20%] [32mBuilding CXX object CMakeFiles/laserscan_to_pointcloud.dir/src/laserscan_to_pointcloud_node.cpp.o[0m
+[1.066s] [ 30%] [32mBuilding CXX object CMakeFiles/pointcloud_to_laserscan_node.dir/rclcpp_components/node_main_pointcloud_to_laserscan_node.cpp.o[0m
+[3.196s] [ 40%] [32m[1mLinking CXX executable laserscan_to_pointcloud_node[0m
+[3.196s] [ 50%] [32m[1mLinking CXX executable pointcloud_to_laserscan_node[0m
+[3.294s] [ 50%] Built target laserscan_to_pointcloud_node
+[3.296s] [ 50%] Built target pointcloud_to_laserscan_node
+[7.506s] [ 60%] [32m[1mLinking CXX shared library liblaserscan_to_pointcloud.so[0m
+[7.837s] [ 60%] Built target laserscan_to_pointcloud
+[7.849s] [ 70%] [32mBuilding CXX object CMakeFiles/pointcloud_to_laserscan.dir/src/pointcloud_to_laserscan_node.cpp.o[0m
+[13.806s] [ 80%] [32m[1mLinking CXX shared library libpointcloud_to_laserscan.so[0m
+[14.134s] [ 80%] Built target pointcloud_to_laserscan
+[14.145s] [ 90%] [32mBuilding CXX object CMakeFiles/dummy_pointcloud_publisher.dir/src/dummy_pointcloud_publisher.cpp.o[0m
+[16.428s] [100%] [32m[1mLinking CXX executable dummy_pointcloud_publisher[0m
+[16.565s] [100%] Built target dummy_pointcloud_publisher
+[16.576s] Invoked command in '/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/build/pointcloud_to_laserscan' returned '0': CMAKE_PREFIX_PATH=/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/install/puente_ros:/opt/ros/humble /usr/bin/cmake --build /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/build/pointcloud_to_laserscan -- -j20 -l20
+[16.602s] Invoking command in '/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/build/pointcloud_to_laserscan': CMAKE_PREFIX_PATH=/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/install/puente_ros:/opt/ros/humble /usr/bin/cmake --install /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/build/pointcloud_to_laserscan
+[16.607s] -- Install configuration: ""
+[16.607s] -- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/lib/pointcloud_to_laserscan/laserscan_to_pointcloud_node
+[16.607s] -- Set runtime path of "/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/lib/pointcloud_to_laserscan/laserscan_to_pointcloud_node" to ""
+[16.607s] -- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/lib/pointcloud_to_laserscan/pointcloud_to_laserscan_node
+[16.607s] -- Set runtime path of "/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/lib/pointcloud_to_laserscan/pointcloud_to_laserscan_node" to ""
+[16.607s] -- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/include
+[16.607s] -- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/include/pointcloud_to_laserscan
+[16.607s] -- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/include/pointcloud_to_laserscan/pointcloud_to_laserscan_node.hpp
+[16.607s] -- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/include/pointcloud_to_laserscan/laserscan_to_pointcloud_node.hpp
+[16.608s] -- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/include/pointcloud_to_laserscan/visibility_control.h
+[16.608s] -- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/environment/library_path.sh
+[16.608s] -- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/environment/library_path.dsv
+[16.608s] -- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/lib/liblaserscan_to_pointcloud.so
+[16.611s] -- Set runtime path of "/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/lib/liblaserscan_to_pointcloud.so" to ""
+[16.611s] -- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/lib/libpointcloud_to_laserscan.so
+[16.615s] -- Set runtime path of "/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/lib/libpointcloud_to_laserscan.so" to ""
+[16.615s] -- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/lib/pointcloud_to_laserscan/dummy_pointcloud_publisher
+[16.616s] -- Set runtime path of "/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/lib/pointcloud_to_laserscan/dummy_pointcloud_publisher" to ""
+[16.616s] -- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/launch
+[16.617s] -- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/launch/sample_laserscan_to_pointcloud_launch.py
+[16.617s] -- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/launch/sample_pointcloud_to_laserscan_launch.py
+[16.617s] -- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/ament_index/resource_index/package_run_dependencies/pointcloud_to_laserscan
+[16.617s] -- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/ament_index/resource_index/parent_prefix_path/pointcloud_to_laserscan
+[16.617s] -- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/environment/ament_prefix_path.sh
+[16.617s] -- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/environment/ament_prefix_path.dsv
+[16.617s] -- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/environment/path.sh
+[16.617s] -- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/environment/path.dsv
+[16.617s] -- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/local_setup.bash
+[16.617s] -- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/local_setup.sh
+[16.618s] -- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/local_setup.zsh
+[16.618s] -- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/local_setup.dsv
+[16.618s] -- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/package.dsv
+[16.618s] -- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/ament_index/resource_index/packages/pointcloud_to_laserscan
+[16.618s] -- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/ament_index/resource_index/rclcpp_components/pointcloud_to_laserscan
+[16.618s] -- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/cmake/ament_cmake_export_dependencies-extras.cmake
+[16.618s] -- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/cmake/ament_cmake_export_include_directories-extras.cmake
+[16.618s] -- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/cmake/ament_cmake_export_libraries-extras.cmake
+[16.619s] -- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/cmake/pointcloud_to_laserscanConfig.cmake
+[16.619s] -- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/cmake/pointcloud_to_laserscanConfig-version.cmake
+[16.619s] -- Installing: /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/install/pointcloud_to_laserscan/share/pointcloud_to_laserscan/package.xml
+[16.619s] Invoked command in '/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/build/pointcloud_to_laserscan' returned '0': CMAKE_PREFIX_PATH=/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/install/puente_ros:/opt/ros/humble /usr/bin/cmake --install /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/build/pointcloud_to_laserscan
