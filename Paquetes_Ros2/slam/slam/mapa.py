@@ -38,8 +38,10 @@ class Cono():
     Aqui se puenen agregar todas las caracteristicas del cono que se desean rastrear
     """
     def __init__(self):
-        self.x=0
-        self.y=0
+        self.x=0.0
+        self.y=0.0
+
+        self.color=''
 
 class Mapa():    ###Mapa de features
     def __init__(self):
@@ -62,8 +64,9 @@ class Mapa():    ###Mapa de features
         point_source=do_transform_point(geometry_msgs.msg.PointStamped(point=point_source),t)
 
         candidato_detecion=[]
-        candidato_detecion.append(point_source.point.x)
-        candidato_detecion.append(point_source.point.y)
+        candidato_detecion.append(point_source.point.x) #Cordenada x
+        candidato_detecion.append(point_source.point.y) #Cordenada y
+        candidato_detecion.append(y) #Cordenada x rel al coche [x>0 azul izquierda] [x<0 amarillo derecha]
 
         encontrado=False
         for detecion in self.deteciones:
@@ -77,7 +80,7 @@ class Mapa():    ###Mapa de features
         ###Longitud de la lista de detecione determina el tamaño del mapa
         ###200 para competi 500-1000 para test con odom perfecta
         ###1500 o mas para skid pad
-        long_list_deteciones=200
+        long_list_deteciones=1000
         if len(self.deteciones)>long_list_deteciones:  
             for i in range(10):     ###Eliminar de 10 cada vez para minimizar "parpadeo" de las prediciones
                 self.deteciones.pop(0)
@@ -89,7 +92,8 @@ class Mapa():    ###Mapa de features
         """
         ###Modelo de Clustering para conos
         clust_model = DBSCAN(eps=0.5, min_samples=1)  ###min_sample=1 porque hay muy pocos falsos positivos
-        labels = clust_model.fit_predict(self.deteciones)
+        ##Esto habria que optimizarlo
+        labels = clust_model.fit_predict([(x,y) for (x,y,y_rel) in self.deteciones]) ##No incluir y_rel en clustering
 
         deteciones_separadas=[[] for i in range(max(labels)+1)]
         for (i,label) in enumerate(labels):
@@ -102,10 +106,18 @@ class Mapa():    ###Mapa de features
         for deteciones_cono in deteciones_separadas:
             x_avr=0.0
             y_avr=0.0
+            x_rel_avr=0.0
             for detecion in deteciones_cono:
                 x_avr=x_avr+detecion[0]
                 y_avr=y_avr+detecion[1]
+                x_rel_avr=x_rel_avr+detecion[2]
             c=Cono()
             c.x=x_avr/len(deteciones_cono)
             c.y=y_avr/len(deteciones_cono)
+
+            if x_rel_avr/len(deteciones_cono)>0:
+                c.color='Azul'
+            else:
+                c.color='Amarillo'
+
             self.conos.append(c)

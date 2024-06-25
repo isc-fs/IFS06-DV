@@ -93,8 +93,7 @@ class Publicar_Mapa(Node):
 
         self.mapa.actualizar_mapa()
 
-        i=0
-        for cono in self.mapa.conos:        ###Mostrar el mapa completo
+        for (i,cono) in enumerate(self.mapa.conos):        ###Mostrar el mapa completo
             marker = Marker()
             marker.header.frame_id = "odom" ##El mapa esta en el sistema de referencia Odom no el coche
             marker.type = marker.CUBE
@@ -103,19 +102,29 @@ class Publicar_Mapa(Node):
             else:
                 marker.action = marker.ADD  #Añadir marcardo
 
-            marker.scale.x = 0.1
-            marker.scale.y = 0.1
-            marker.scale.z = 0.1
-            marker.color.a = 1.0
-            marker.color.r = 1.0
-            marker.color.g = 1.0
-            marker.color.b = 0.0
+            ##Tamaño de m
+            marker.scale.x = 0.2
+            marker.scale.y = 0.2
+            marker.scale.z = 0.3
+
+            ##Color
+            if cono.color=='Azul':
+                marker.color.r = 0.0
+                marker.color.g = 0.0
+                marker.color.b = 1.0
+                marker.color.a = 1.0
+            else: #Amarillo
+                marker.color.r = 1.0
+                marker.color.g = 1.0
+                marker.color.b = 0.0
+                marker.color.a = 1.0
+
+            ##Posicion
             marker.pose.orientation.w = 1.0
             marker.pose.position.x = cono.x
             marker.pose.position.y = cono.y
             marker.pose.position.z = 0.0
             marker.id=i
-            i+=1
 
             markerArray.markers.append(marker)
 
