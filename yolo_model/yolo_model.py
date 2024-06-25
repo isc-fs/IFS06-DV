@@ -50,7 +50,7 @@ class YOLOModel:
             "unknown_cone": 6,
         }
 
-    def get_camera_parameters(camera_params):
+    def get_camera_parameters(self, camera_params):
         cx = camera_params["width"] / 2
         cy = camera_params["height"] / 2
         denominator = 2 * np.tan(np.deg2rad(camera_params["fov"]) / 2)
