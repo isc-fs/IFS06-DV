@@ -10,11 +10,11 @@ cd ~/Formula-Student-Driverless-Simulator/ros2
 ros2 launch fsds_ros2_bridge fsds_ros2_bridge.launch.py manual_mode:=True
 
 ##Lanzar el otro puente
-source install/setup.sh
-source pointcloud_to_laserscan/install/setup.sh 
+source install/setup.sh & source pointcloud_to_laserscan/install/setup.sh 
 ros2 launch puente_ros puente_ros.launch.py
 
 ##Lanzar Slam
 source fs_msgs/install/setup.sh  && source install/setup.sh
-
-
+ros2 launch slam slam.launch.py
+ros2 run slam Cone_Detection
+ros2 run slam Publicar_Mapa

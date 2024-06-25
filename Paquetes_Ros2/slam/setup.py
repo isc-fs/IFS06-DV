@@ -22,7 +22,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'Cone_Detection = slam.slam:cone_detection',
+            'Cone_Detection = slam.cone_detection_node:cone_detection',
             'Cone_Laser = slam.slam:cone_laser',
             'Publicar_Mapa = slam.slam:publicar_mapa',
             'Publicar_Track = slam.slam:publicar_track'

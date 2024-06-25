@@ -5,6 +5,7 @@
 /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/python3.10/site-packages/slam/slam.py
 /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/python3.10/site-packages/slam/cone_detection.py
 /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/python3.10/site-packages/slam/ground_removal.py
+/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/python3.10/site-packages/slam/cone_detection_node.py
 /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/python3.10/site-packages/slam/__pycache__/ransac.cpython-310.pyc
 /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/python3.10/site-packages/slam/__pycache__/__init__.cpython-310.pyc
 /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/python3.10/site-packages/slam/__pycache__/mapa.cpython-310.pyc
@@ -12,6 +13,7 @@
 /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/python3.10/site-packages/slam/__pycache__/slam.cpython-310.pyc
 /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/python3.10/site-packages/slam/__pycache__/cone_detection.cpython-310.pyc
 /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/python3.10/site-packages/slam/__pycache__/ground_removal.cpython-310.pyc
+/home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/lib/python3.10/site-packages/slam/__pycache__/cone_detection_node.cpython-310.pyc
 /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/share/ament_index/resource_index/packages/slam
 /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/share/slam/package.xml
 /home/jaime/Documents/IFS06-DV/Paquetes_Ros2/slam/install/slam/share/slam/slam.launch.py

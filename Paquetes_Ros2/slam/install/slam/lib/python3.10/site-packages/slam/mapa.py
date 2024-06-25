@@ -30,8 +30,8 @@ import geometry_msgs
 
 from sklearn.cluster import DBSCAN
 
-def distancia(cono,x,y):
-    return numpy.sqrt((cono.x-x)**2 + (cono.y-y)**2)
+def distancia(x_c,y_c,x,y):         ###Distancia entre dos deteciones
+    return numpy.sqrt((x_c-x)**2 + (y_c-y)**2)
 
 class Cono():
     """
@@ -44,70 +44,64 @@ class Cono():
 class Mapa():    ###Mapa de features
     def __init__(self):
         self.conos=[]
-        self.detecciones=[]
+        self.deteciones=[]
 
-    def add_cono(self,x,y,t):
-        """Añade un cono a el mapa
-            Para hacer esto se compueba si el cono que se quiere añadir esta a mas de un metro de otro del mapa
-            si es asi se añade. Si no se apunta que se ha vuelto a ver el otro cono
+    def add_detecion(self,x,y,t):
+        """Añade una detecion al mapa
+            Se consideran dos deteciones iguales si estan a menos de 1 cm.
+            El tamaño de la lista determina la longitud del mapa local. 
 
         Args:
-            x (float): Cordenada en x del cono a añadir
-            y (float): Cordenada en y del cono a añadir
+            x (float): Cordenada en x de la detecion a añadir
+            y (float): Cordenada en y de la detecion a añadir
             t (float): Transformada de la cordenada del coche a la odometria
         """
-        i=0
-        f=False
 
         ###Tranformar de un sistema de referencia del coche a odom
         point_source = Point(x=x, y=y, z=0.0)
         point_source=do_transform_point(geometry_msgs.msg.PointStamped(point=point_source),t)
-        cono=[]
-        cono.append(point_source.point.x)
-        cono.append(point_source.point.y)
-        self.detecciones.append(cono)
 
-        if len(self.detecciones)>1500:
-            self.detecciones.pop(0)
-        
-        """for cono in self.conos:  
-            if(distancia(cono,cono_nuevo.x,cono_nuevo.y)<0.1):
-                cono.n_visto+=1
-                f=True
+        candidato_detecion=[]
+        candidato_detecion.append(point_source.point.x)
+        candidato_detecion.append(point_source.point.y)
+
+        encontrado=False
+        for detecion in self.deteciones:
+            if(distancia(detecion[0],detecion[1],candidato_detecion[0],candidato_detecion[1])<0.01):
+                encontrado=True
                 break
 
-            self.conos[i]=cono
-            i+=1
+        if not encontrado:
+            self.deteciones.append(candidato_detecion)
 
-        if f==False:
-            cono_nuevo.n_visto+=1
-            if len(self.conos)>100:              ###Maximo numero de conos permitidos para evitar que se crashe si se le va la pinza
-                self.conos.pop(0)
-            self.conos.append(cono_nuevo)"""
+        ###Longitud de la lista de detecione determina el tamaño del mapa
+        ###200 para competi 500-1000 para test con odom perfecta
+        ###1500 o mas para skid pad
+        long_list_deteciones=200
+        if len(self.deteciones)>long_list_deteciones:  
+            for i in range(10):     ###Eliminar de 10 cada vez para minimizar "parpadeo" de las prediciones
+                self.deteciones.pop(0)
 
     def actualizar_mapa(self):
-        clust_model = DBSCAN(eps=0.3, min_samples=5)
-        labels = clust_model.fit_predict(self.detecciones)
-        """separated_data = [
-            numpy.array(self.detecciones[labels == label]) for label in numpy.unique(labels)
-        ]"""
+        """Actualiza el mapa.
+            Primero realiza clusterign con las deteciones
+            Segundo calcula la media de cada cluster
+        """
+        ###Modelo de Clustering para conos
+        clust_model = DBSCAN(eps=0.5, min_samples=1)  ###min_sample=1 porque hay muy pocos falsos positivos
+        labels = clust_model.fit_predict(self.deteciones)
 
-        deteciones_separadas=[]
-        #print(max(labels))
-        for i in range(150):
-            deteciones_separadas.append([])
-        i=0
-        for label in labels:
-            deteciones_separadas[label].append(self.detecciones[i])
-            i=i+1
+        deteciones_separadas=[[] for i in range(max(labels)+1)]
+        for (i,label) in enumerate(labels):
+            if label==-1:
+                continue
+            deteciones_separadas[label].append(self.deteciones[i])
 
-
+        ###Calcular media de las deteciones en cada cluster
         self.conos=[]
         for deteciones_cono in deteciones_separadas:
-            if len(deteciones_cono)==0:
-                continue
-            x_avr=0
-            y_avr=0
+            x_avr=0.0
+            y_avr=0.0
             for detecion in deteciones_cono:
                 x_avr=x_avr+detecion[0]
                 y_avr=y_avr+detecion[1]

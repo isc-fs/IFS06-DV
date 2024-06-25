@@ -13,6 +13,7 @@ launch/slam.launch.py
 resource/slam
 slam/__init__.py
 slam/cone_detection.py
+slam/cone_detection_node.py
 slam/ground_removal.py
 slam/mapa.py
 slam/ransac.py
