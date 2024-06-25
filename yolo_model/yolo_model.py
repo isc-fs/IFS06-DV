@@ -16,15 +16,16 @@ class YOLOModel:
             "depth": 0.228,
         },  # Cone dimensions in meters
         camera_parameters={
-            "fx": 1000,
-            "fy": 1000,
-            "cx": 940,
-            "cy": 740,
+            "width": 1280,
+            "height": 720,
+            "fov": 90,
         },  # Default camera parameters
     ) -> None:
         self.model_path = model_path  # Store model path
         self.model = YOLO(model_path)  # Load YOLO model with the specified weights
-        self.camera_parameters = camera_parameters  # Store camera parameters
+        self.camera_parameters = self.get_camera_parameters(
+            camera_parameters
+        )  # Store camera parameters
         self.cone_dimensions = cone_dimensions  # Store cone dimensions
 
         # Define cone classes
@@ -47,6 +48,19 @@ class YOLOModel:
             "large_orange_cone": 4,
             "other_cone": 5,
             "unknown_cone": 6,
+        }
+
+    def get_camera_parameters(camera_params):
+        cx = camera_params["width"] / 2
+        cy = camera_params["height"] / 2
+        denominator = 2 * np.tan(np.deg2rad(camera_params["fov"]) / 2)
+        fx = camera_params["width"] / denominator
+        fy = camera_params["height"] / denominator
+        return {
+            "fx": fx,
+            "fy": fy,
+            "cx": cx,
+            "cy": cy,
         }
 
     def predict(self, image) -> None:
@@ -190,10 +204,9 @@ if __name__ == "__main__":
 
     # Camera parameters
     camera_parameters = {
-        "fx": 1000,
-        "fy": 1000,
-        "cx": 940,
-        "cy": 740,
+        "width": 1280,
+        "height": 720,
+        "fov": 90,
     }
 
     # Cone dimensions in meters
