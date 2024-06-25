@@ -76,8 +76,8 @@ PointCloudToLaserScanNode::PointCloudToLaserScanNode(const rclcpp::NodeOptions &
   use_inf_ = this->declare_parameter("use_inf", true);
 
   //range_max_=10.0;
-  min_height_=0.1;
-  max_height_=5.0;
+  //min_height_=0.1;
+  //max_height_=5.0;
 
   pub_ = this->create_publisher<sensor_msgs::msg::LaserScan>("scan", 10);//rclcpp::SensorDataQoS()
 

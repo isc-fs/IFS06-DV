@@ -46,7 +46,7 @@ def generate_launch_description():
     )
 
     ld.add_action(CONE_DETECTION)
-    #ld.add_action(PUBLICAR_MAPA)
+    ld.add_action(PUBLICAR_MAPA)
     ld.add_action(PUBLICAR_TRACK)
 
     return ld

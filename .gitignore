@@ -52,3 +52,5 @@ Mkfile.old
 dkms.conf
 Paquetes_Ros2/slam/log
 Paquetes_Ros2/slam/fs_msgs
+Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/log
+Paquetes_Ros2/puente_ros/log

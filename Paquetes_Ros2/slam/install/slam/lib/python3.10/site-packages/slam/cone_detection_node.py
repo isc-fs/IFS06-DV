@@ -1,3 +1,16 @@
+"""
+========================
+slam.py (v1.0)
+========================
+
+Elaborado por Jaime Perez para el ISC
+Este nodo va separado del resto de slam para no cargar Numba para cada nodo
+
+Contiene tres nodos:
+1. Cone_Detection: Publica los resultados de final_cone_result_rt() este Nodo se puede mantener incendido y asi no hay que esperar
+    a que compile cada vez que hay que probar. Numba tarda en optimizar el codigo y es tedioso hacerlo cada vez que se quiere probar.
+"""
+
 import sys
 import os
 import time
