@@ -43,12 +43,26 @@ class Cono():
 
         self.color=''
 
+class Detecion():
+    """
+    Aqui se puenen agregar todas las caracteristicas del cono que se desean rastrear
+    """
+    def __init__(self):
+        self.x=0.0
+        self.y=0.0
+
+        self.x_rel=0.0
+        self.y_rel=0.0
+
 class Mapa():    ###Mapa de features
     def __init__(self):
         self.conos=[]
         self.deteciones=[]
 
-    def add_detecion(self,x,y,t):
+        self.track_azul=[]
+        self.track_amarillo=[]
+
+    def add_detecion(self,x,y,t,t_inv):
         """Añade una detecion al mapa
             Se consideran dos deteciones iguales si estan a menos de 1 cm.
             El tamaño de la lista determina la longitud del mapa local. 
@@ -63,14 +77,16 @@ class Mapa():    ###Mapa de features
         point_source = Point(x=x, y=y, z=0.0)
         point_source=do_transform_point(geometry_msgs.msg.PointStamped(point=point_source),t)
 
-        candidato_detecion=[]
-        candidato_detecion.append(point_source.point.x) #Cordenada x
-        candidato_detecion.append(point_source.point.y) #Cordenada y
-        candidato_detecion.append(y) #Cordenada x rel al coche [x>0 azul izquierda] [x<0 amarillo derecha]
+        candidato_detecion=Detecion()
+        candidato_detecion.x=point_source.point.x #Cordenada x
+        candidato_detecion.y=point_source.point.y #Cordenada y
+        candidato_detecion.x_rel=x #Cordenada x rel al coche
+        candidato_detecion.y_rel=y #Cordenada y rel al coche [x>0 azul izquierda] [x<0 amarillo derecha]
 
+        #Solo considerar nueva deteion si esta a mas de 1 cm
         encontrado=False
         for detecion in self.deteciones:
-            if(distancia(detecion[0],detecion[1],candidato_detecion[0],candidato_detecion[1])<0.01):
+            if(distancia(detecion.x,detecion.y,candidato_detecion.x,candidato_detecion.y)<0.01):
                 encontrado=True
                 break
 
@@ -93,7 +109,7 @@ class Mapa():    ###Mapa de features
         ###Modelo de Clustering para conos
         clust_model = DBSCAN(eps=0.5, min_samples=1)  ###min_sample=1 porque hay muy pocos falsos positivos
         ##Esto habria que optimizarlo
-        labels = clust_model.fit_predict([(x,y) for (x,y,y_rel) in self.deteciones]) ##No incluir y_rel en clustering
+        labels = clust_model.fit_predict([(detecion.x,detecion.y) for detecion in self.deteciones]) ##No incluir y_rel en clustering
 
         deteciones_separadas=[[] for i in range(max(labels)+1)]
         for (i,label) in enumerate(labels):
@@ -108,9 +124,9 @@ class Mapa():    ###Mapa de features
             y_avr=0.0
             x_rel_avr=0.0
             for detecion in deteciones_cono:
-                x_avr=x_avr+detecion[0]
-                y_avr=y_avr+detecion[1]
-                x_rel_avr=x_rel_avr+detecion[2]
+                x_avr=x_avr+detecion.x
+                y_avr=y_avr+detecion.y
+                x_rel_avr=x_rel_avr+detecion.y_rel
             c=Cono()
             c.x=x_avr/len(deteciones_cono)
             c.y=y_avr/len(deteciones_cono)
@@ -121,3 +137,67 @@ class Mapa():    ###Mapa de features
                 c.color='Amarillo'
 
             self.conos.append(c)
+
+    def generar_trazas(self,t,t_inv):
+        ###Generar referencias para empezar cadena de trazas
+        ref_azul=-1
+        ref_amarillo=-1
+
+        for (i,cono) in enumerate(self.conos):
+            point_source = Point(x=cono.x, y=cono.y, z=0.0)
+            point_source=do_transform_point(geometry_msgs.msg.PointStamped(point=point_source),t_inv)
+
+            c_x=point_source.point.x
+            c_y=point_source.point.y
+            #if c_x<0:
+                #continue
+
+            ###Elige conos mas cercanos a cada lado del coche. Esos se toman como referencia
+            if c_y>0: #Azul
+                if ref_azul==-1:
+                    ref_azul=i
+                else:
+                    c_r_x=self.conos[ref_azul].x
+                    c_r_y=self.conos[ref_azul].y
+                    if distancia(t.transform.translation.x,t.transform.translation.y,cono.x,cono.y)<distancia(t.transform.translation.x,t.transform.translation.y,c_r_x,c_r_y):
+                        ref_azul=i
+
+            else: #Amarillo
+                if ref_amarillo==-1:
+                    ref_amarillo=i
+                else:
+                    c_r_x=self.conos[ref_amarillo].x
+                    c_r_y=self.conos[ref_amarillo].y
+                    if distancia(t.transform.translation.x,t.transform.translation.y,cono.x,cono.y)<distancia(t.transform.translation.x,t.transform.translation.y,c_r_x,c_r_y):
+                        ref_amarillo=i
+
+        if ref_azul==-1 or ref_amarillo==-1:
+            return -1 #Error si no se pueden encontrar referencias
+
+        self.conos[ref_azul].color='ref'
+        self.conos[ref_amarillo].color='ref'
+
+        link_azul=-1
+        for (i,cono) in enumerate(self.conos):
+            point_source = Point(x=cono.x, y=cono.y, z=0.0)
+            point_source=do_transform_point(geometry_msgs.msg.PointStamped(point=point_source),t_inv)
+
+            c_x=point_source.point.x
+            c_y=point_source.point.y
+            if c_x<0:
+                continue
+
+            if c_y>0: #Azul
+                if link_azul==-1:
+                    link_azul=i
+                else:
+                    c_r_x=self.conos[link_azul].x
+                    c_r_y=self.conos[link_azul].y
+                    if distancia(self.conos[ref_azul].x,self.conos[ref_azul].y,cono.x,cono.y)<distancia(self.conos[ref_azul].x,self.conos[ref_azul].y,c_r_x,c_r_y):
+                        link_azul=i
+            else: #Amarillo
+                pass
+
+        self.conos[link_azul].color='ref'
+
+        ###Completar track

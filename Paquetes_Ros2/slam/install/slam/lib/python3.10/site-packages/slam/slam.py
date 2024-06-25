@@ -88,10 +88,20 @@ class Publicar_Mapa(Node):
         except TransformException as ex:
             return
         
+        try:        ###Generar Objeto de transformada entre coche y odom. Transformada inversa
+            t_inv = self.tf_buffer.lookup_transform(
+                'fsds/FSCar',
+                'odom',
+                msg.markers[0].header.stamp) #Coger tiempo del escaneo para interpolar
+        except TransformException as ex:
+            return
+        
         for mark in msg.markers:  ###Añadir conos que detectado final_cone_result_rt() a el mapa
-            self.mapa.add_detecion(mark.pose.position.x, mark.pose.position.y,t)
+            self.mapa.add_detecion(mark.pose.position.x, mark.pose.position.y,t,t_inv)
 
         self.mapa.actualizar_mapa()
+        self.mapa.generar_trazas(t,t_inv)
+        
 
         for (i,cono) in enumerate(self.mapa.conos):        ###Mostrar el mapa completo
             marker = Marker()
@@ -107,13 +117,23 @@ class Publicar_Mapa(Node):
             marker.scale.y = 0.2
             marker.scale.z = 0.3
 
+            if cono.color=='ref':
+                marker.scale.x = 0.8
+                marker.scale.y = 0.8
+                marker.scale.z = 0.8
+
+                marker.color.r = 1.0
+                marker.color.g = 1.0
+                marker.color.b = 1.0
+                marker.color.a = 1.0
+
             ##Color
             if cono.color=='Azul':
                 marker.color.r = 0.0
                 marker.color.g = 0.0
                 marker.color.b = 1.0
                 marker.color.a = 1.0
-            else: #Amarillo
+            elif cono.color=='Amarillo': #Amarillo
                 marker.color.r = 1.0
                 marker.color.g = 1.0
                 marker.color.b = 0.0
