@@ -92,6 +92,8 @@ class Publicar_Mapa(Node):
             self.mapa.add_detecion(mark.pose.position.x, mark.pose.position.y,t)
 
         self.mapa.actualizar_mapa()
+        self.mapa.generar_trazas(t)
+        
 
         for (i,cono) in enumerate(self.mapa.conos):        ###Mostrar el mapa completo
             marker = Marker()

@@ -121,3 +121,20 @@ class Mapa():    ###Mapa de features
                 c.color='Amarillo'
 
             self.conos.append(c)
+
+    def generar_trazas(self,t):
+        ###Generar referencias
+        ref_azul=-1
+        ref_amarillo=-1
+        for (i,cono) in enumerate(self.conos):
+            if cono.y>0: #Azul
+                if ref_azul==-1:
+                    pass
+                pass
+            else: #Amarillo
+                pass
+
+        t.transform.translation.x
+        t.transform.translation.y
+
+        ###Completar track
