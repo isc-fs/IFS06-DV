@@ -38,6 +38,10 @@ import std_msgs.msg as std_msgs
 from visualization_msgs.msg import Marker
 from visualization_msgs.msg import MarkerArray
 
+from nav_msgs.msg import Path
+from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import Pose
+
 from slam.mapa import *
 
 from fs_msgs.msg import Track, Cone
@@ -53,6 +57,8 @@ class Publicar_Mapa(Node):
         super().__init__('Publicar_Mapa')
         #Publicar
         self.publisher_MarkerArray = self.create_publisher(MarkerArray, 'Conos',10)
+        self.publisher_Path_azul = self.create_publisher(Path, 'Track_azul',10)
+        self.publisher_Path_amarillo = self.create_publisher(Path, 'Track_amarillo',10)
 
         #Subscripciones
         self.tf_buffer = Buffer()
@@ -69,8 +75,6 @@ class Publicar_Mapa(Node):
     def listener_callback(self, msg):
         if len(msg.markers)==0: ###Si no se han detectado conos parar
             return
-        
-        markerArray = MarkerArray()
 
         ###Retroceder tiempo de medicion de lidar 30ms
         t_ofset=30000000
@@ -102,15 +106,22 @@ class Publicar_Mapa(Node):
         self.mapa.actualizar_mapa()
         self.mapa.generar_trazas(t,t_inv)
         
+        markerArray = MarkerArray()
+
+        ###Mostrar Conos con Marker Array###
+        #Eliminar marcadores anterioires
+        marker = Marker()
+        marker.header.frame_id = "odom"
+        marker.type = marker.CUBE
+        marker.action = 3  #ELIMINAR TODO 3
+        marker.id=0
+        markerArray.markers.append(marker)
 
         for (i,cono) in enumerate(self.mapa.conos):        ###Mostrar el mapa completo
             marker = Marker()
             marker.header.frame_id = "odom" ##El mapa esta en el sistema de referencia Odom no el coche
             marker.type = marker.CUBE
-            if i==0:  ##En el pimer elemeto se le dice a RVIZ que elimine los registros. Mas info en Wiki RVIZ MarkerArray
-                marker.action = 3  #ELIMINAR TODO 3
-            else:
-                marker.action = marker.ADD  #Añadir marcardo
+            marker.action = marker.ADD  #Añadir marcardo
 
             ##Tamaño de m
             marker.scale.x = 0.2
@@ -139,14 +150,28 @@ class Publicar_Mapa(Node):
 
             ##Color
             if cono.color=='Azul':
+                marker.scale.x = 0.8
+                marker.scale.y = 0.8
+                marker.scale.z = 0.8
+
                 marker.color.r = 0.0
                 marker.color.g = 0.0
                 marker.color.b = 1.0
                 marker.color.a = 1.0
             elif cono.color=='Amarillo': #Amarillo
+                marker.scale.x = 0.8
+                marker.scale.y = 0.8
+                marker.scale.z = 0.8
+                
                 marker.color.r = 1.0
                 marker.color.g = 1.0
                 marker.color.b = 0.0
+                marker.color.a = 1.0
+
+            elif cono.color=='ns': #No se sabe
+                marker.color.r = 1.0
+                marker.color.g = 1.0
+                marker.color.b = 1.0
                 marker.color.a = 1.0
 
             ##Posicion
@@ -154,11 +179,53 @@ class Publicar_Mapa(Node):
             marker.pose.position.x = cono.x
             marker.pose.position.y = cono.y
             marker.pose.position.z = 0.0
-            marker.id=i
+            marker.id=i+1
 
             markerArray.markers.append(marker)
 
         self.publisher_MarkerArray.publish(markerArray)
+
+        ###Mostrar Track###
+        ###Azul###
+        track=Path()
+        track.header.frame_id= "odom"
+        for (i,pose) in enumerate(self.mapa.track_azul):
+            mark=PoseStamped()
+            mark.header.frame_id= "odom"
+
+            mark.pose.position.x=pose.x
+            mark.pose.position.y=pose.y
+            mark.pose.position.z=0.0
+
+            mark.pose.orientation.x=0.0
+            mark.pose.orientation.y=0.0
+            mark.pose.orientation.z=0.0
+            mark.pose.orientation.w=0.0
+
+            track.poses.append(mark)
+
+        self.publisher_Path_azul.publish(track)
+
+        ###Amarillo###
+        track=Path()
+        track.header.frame_id= "odom"
+        for (i,pose) in enumerate(self.mapa.track_amarillo):
+            mark=PoseStamped()
+            mark.header.frame_id= "odom"
+
+            mark.pose.position.x=pose.x
+            mark.pose.position.y=pose.y
+            mark.pose.position.z=0.0
+
+            mark.pose.orientation.x=0.0
+            mark.pose.orientation.y=0.0
+            mark.pose.orientation.z=0.0
+            mark.pose.orientation.w=0.0
+
+            track.poses.append(mark)
+
+        self.publisher_Path_amarillo.publish(track)
+
 
 class Publicar_Laser(Node):
     """Experimental
