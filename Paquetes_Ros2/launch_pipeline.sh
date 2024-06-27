@@ -19,3 +19,8 @@ ros2 launch slam slam.launch.py
 #Modulos aislados de Slam
 ros2 run slam Cone_Detection
 ros2 run slam Publicar_Mapa
+
+##Path_planning
+source fs_msgs/install/setup.sh  && source install/setup.sh
+ros2 run path_planning Plan_Path
+

@@ -1,0 +1,4 @@
+[console_scripts]
+Control = path_planning.path_planning:control
+Plan_Path = path_planning.path_planning:plan_path
+
