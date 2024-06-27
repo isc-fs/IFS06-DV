@@ -1,0 +1,13 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from fs_msgs/msg/Track.msg
+// generated code does not contain a copyright notice
+
+#include "fs_msgs/msg/Cone.idl"
+
+module fs_msgs {
+  module msg {
+    struct Track {
+      sequence<fs_msgs::msg::Cone> track;
+    };
+  };
+};
