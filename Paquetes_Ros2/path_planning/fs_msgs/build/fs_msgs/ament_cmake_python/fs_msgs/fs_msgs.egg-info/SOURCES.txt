@@ -1,0 +1,6 @@
+setup.py
+fs_msgs/__init__.py
+fs_msgs.egg-info/PKG-INFO
+fs_msgs.egg-info/SOURCES.txt
+fs_msgs.egg-info/dependency_links.txt
+fs_msgs.egg-info/top_level.txt
