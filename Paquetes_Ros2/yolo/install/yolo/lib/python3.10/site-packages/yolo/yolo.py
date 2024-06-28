@@ -69,7 +69,7 @@ class YOLO(Node):
             (a,b)=pred[0]
 
             marker = Marker()
-            marker.pose.position.x = b
+            marker.pose.position.x = b  #Cambiar sistema de referecia para concordar con el del ros
             marker.pose.position.y = -a
             marker.pose.position.z = 0.0
 

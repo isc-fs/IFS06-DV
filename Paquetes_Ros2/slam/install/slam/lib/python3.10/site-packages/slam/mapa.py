@@ -53,6 +53,7 @@ class Cono():
         self.y=0.0
 
         self.color=''
+        self.color_confirmado=''
 
 class Detecion():
     """
@@ -74,6 +75,9 @@ class Mapa():    ###Mapa de features
 
         self.track_azul=[]
         self.track_amarillo=[]
+
+        self.ref_azul_ini=-1
+        self.ref_amarillo_ini=-1
 
     def add_detecion(self,x,y,t,t_inv):
         """Añade una detecion al mapa
@@ -182,10 +186,10 @@ class Mapa():    ###Mapa de features
                     c_x=point_source.point.x
                     c_y=point_source.point.y
                     if color=='Azul':
-                        if c_x<c_x_r+0.1 or c_y<0:
+                        if c_x<c_x_r+0.1 or c_y<-1:
                             continue
                     elif color=='Amarillo':
-                        if c_x<c_x_r+0.1 or c_y>0:
+                        if c_x<c_x_r+0.1 or c_y>1:
                             continue
                     else:
                         print("Color no conocido")
@@ -212,9 +216,8 @@ class Mapa():    ###Mapa de features
             track.append(self.conos[link])
 
         return track
-
-    def generar_trazas(self,t,t_inv):
-        ###Generar referencias para empezar cadena de trazas
+    
+    def generar_ref(self,t,t_inv):
         ref_azul=-1
         ref_amarillo=-1
 
@@ -247,6 +250,14 @@ class Mapa():    ###Mapa de features
                         ref_amarillo=i
 
         if ref_azul==-1 or ref_amarillo==-1:
+            return (-1,-1) #Error si no se pueden encontrar referencias
+        else:
+            return (ref_azul,ref_amarillo)
+
+    def generar_trazas(self,t,t_inv):
+        ###Generar referencias para empezar cadena de trazas
+        ref_azul,ref_amarillo=self.generar_ref(t,t_inv)
+        if ref_azul==-1 or ref_amarillo==-1:
             print("No se encontraron referencias")
             return -1 #Error si no se pueden encontrar referencias
 
@@ -265,11 +276,14 @@ class Mapa():    ###Mapa de features
 
         #Si la ultima conexion es compatida eliminar la peor
         #En los ultimos conos hay tendencia a que ambos tracks coincidan porque pueden no haberse detectado todavia los conos de un lado
-        if distancia(self.track_azul[-1].x,self.track_azul[-1].y,self.track_amarillo[-1].x,self.track_amarillo[-1].y)<0.01:
-            if distancia(self.track_azul[-2].x,self.track_azul[-2].y,self.track_azul[-1].x,self.track_azul[-1].y)>distancia(self.track_amarillo[-2].x,self.track_amarillo[-2].y,self.track_amarillo[-1].x,self.track_amarillo[-1].y):
-                self.track_azul.pop()
-            else:
-                self.track_amarillo.pop()
+        try:
+            if distancia(self.track_azul[-1].x,self.track_azul[-1].y,self.track_amarillo[-1].x,self.track_amarillo[-1].y)<0.01:
+                if distancia(self.track_azul[-2].x,self.track_azul[-2].y,self.track_azul[-1].x,self.track_azul[-1].y)>distancia(self.track_amarillo[-2].x,self.track_amarillo[-2].y,self.track_amarillo[-1].x,self.track_amarillo[-1].y):
+                    self.track_azul.pop()
+                else:
+                    self.track_amarillo.pop()
+        except:
+            pass
 
         track=self.track_azul
         print("Track:")

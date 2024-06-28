@@ -167,7 +167,7 @@ class Control(Node):
         comando=ControlCommand()
 
         ###Control velocidad###
-        comando.throttle=(self.v-3)*(-0.1)  #v_traget=5m/s
+        comando.throttle=(self.v-8)*(-0.1)  #v_traget=2m/s
         comando.brake=0.0
         #print(self.v)
 
@@ -181,12 +181,24 @@ class Control(Node):
             print(ex)
             return
         
-        point_source = Point(x=self.path.poses[1].pose.position.x, y=self.path.poses[1].pose.position.y, z=0.0)
-        point_source=do_transform_point(geometry_msgs.msg.PointStamped(point=point_source),t_inv)
+        if len(self.path.poses)<1:
+            comando.steering=0.0
+            self.publisher_comand.publish(comando)
+            return 0
 
-        comando.steering=point_source.point.y*-0.5
         
+        i=0
+        point_source = Point(x=self.path.poses[i].pose.position.x, y=self.path.poses[i].pose.position.y, z=0.0)
+        point_source=do_transform_point(geometry_msgs.msg.PointStamped(point=point_source),t_inv)
+        while point_source.point.x<0:
+            i=i+1
+            if i>len(self.path.poses)-1:
+                return -1
+            point_source = Point(x=self.path.poses[i].pose.position.x, y=self.path.poses[i].pose.position.y, z=0.0)
+            point_source=do_transform_point(geometry_msgs.msg.PointStamped(point=point_source),t_inv)
 
+        comando.steering=point_source.point.y*-1.0
+        
         print("Publicando comando")
         
         self.publisher_comand.publish(comando)

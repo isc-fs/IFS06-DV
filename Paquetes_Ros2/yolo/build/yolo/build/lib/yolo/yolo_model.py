@@ -124,12 +124,12 @@ class YOLOModel:
         # 3D model points of the cone in the world coordinate system
         pnp_array = np.array(
             [
-                [0, 0, 0],  # Top-left corner
-                [cone_width, cone_height, 0.01],
-                [0, cone_height, 0.01],  # Bottom-left corner
-                [cone_width, 0, 0],  # Top-right corner
-                [cone_width // 2, 0, 0],  # Mid-point of top edge
-                [cone_width // 2, cone_height, 0],  # Mid-point of bottom edge
+                [0, 0, cone_width / 2],  # Top-left corner
+                [cone_width / 2, cone_height, 0],
+                [0, cone_height, cone_width / 2],  # Bottom-left corner
+                [cone_width, 0, cone_width / 2],  # Top-right corner
+                [cone_width / 2, 0, 0],
+                [cone_width, cone_height, cone_width / 2]
             ],
             dtype=float,
         )

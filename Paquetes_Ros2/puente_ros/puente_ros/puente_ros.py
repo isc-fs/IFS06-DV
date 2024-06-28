@@ -39,32 +39,6 @@ from nav_msgs.msg import Odometry
 import sensor_msgs.msg as sensor_msgs
 import std_msgs.msg as std_msgs
 
-class LaserScan_stamp(Node):
-
-    def __init__(self):
-        super().__init__('LaserScan_stamp')
-        #Publicar
-        self.publisher_Laser = self.create_publisher(LaserScan, 'scan',10)
-        #Subscricion
-        qos_profile = QoSProfile(
-            reliability=QoSReliabilityPolicy.RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT,
-            history=QoSHistoryPolicy.RMW_QOS_POLICY_HISTORY_KEEP_LAST,
-            depth=1
-        )
-
-        self.subscription = self.create_subscription(
-            LaserScan,
-            'scan_pre',
-            self.listener_callback,
-            qos_profile=qos_profile)
-        self.subscription
-
-    def listener_callback(self, laser):
-
-        #laser.header.stamp = self.get_clock().now().to_msg()
-        laser.header.frame_id='fsds/FSCar'
-        self.publisher_Laser.publish(laser)
-
 class Publicar_TF(Node):
     def __init__(self):
         super().__init__('Publicar_Odom')
@@ -98,12 +72,6 @@ class Publicar_TF(Node):
         t.transform.rotation.w = odom.pose.pose.orientation.w
 
         self.tf_broadcaster.sendTransform(t)
-
-def laser_stamp(args=None):
-    rclpy.init(args=args)
-
-    Laser_stam = LaserScan_stamp()
-    rclpy.spin(Laser_stam)
 
 def TF(args=None):
     rclpy.init(args=args)

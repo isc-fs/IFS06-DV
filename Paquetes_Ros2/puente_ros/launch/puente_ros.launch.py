@@ -45,7 +45,7 @@ def generate_launch_description():
         arguments=['--ros-args', '--log-level', log]
     )
 
-    LASER = Node( #CONVERSION POINTCLOUD A LASERSCAN
+    """LASER = Node( #CONVERSION POINTCLOUD A LASERSCAN
         package='pointcloud_to_laserscan', executable='pointcloud_to_laserscan_node',
         remappings=[('/cloud_in','/lidar/Lidar1',),         ##Remapeo de salidas del paqute de conversion de nuve de puntos a LaserScan para conseguir compativilidad con SlamToolBox
                    ('scan','scan')],
@@ -59,7 +59,7 @@ def generate_launch_description():
         executable='puente_ros_laser',
         name='puente_ros_laser',
         arguments=['--ros-args', '--log-level', log]
-    )
+    )"""
 
     SLAM_PARAM_FILE = DeclareLaunchArgument(  ##Configurar archivo de parametros SlamToolBox
         'slam_params_file',
@@ -78,10 +78,10 @@ def generate_launch_description():
     )
 
     #ld.add_action(CAMARA)
-    ld.add_action(ODOMETRIA)
+    ld.add_action(ODOMETRIA) #La odometria en la traspormada
     #ld.add_action(LIDAR)
-    ld.add_action(LASER)
-    #ld.add_action(LASER_STAMP)
+    #ld.add_action(LASER) #Esto no funcina
+    #ld.add_action(LASER_STAMP) #Esto tampoco
 
     #ld.add_action(SLAM_PARAM_FILE)  ##SlamToolBox
     #ld.add_action(SLAM_TOOLBOX)
