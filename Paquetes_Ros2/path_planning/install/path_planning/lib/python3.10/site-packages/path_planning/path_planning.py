@@ -167,7 +167,7 @@ class Control(Node):
         comando=ControlCommand()
 
         ###Control velocidad###
-        comando.throttle=(self.v-8)*(-0.1)  #v_traget=2m/s
+        comando.throttle=(self.v-5)*(-0.1)  #v_traget=2m/s
         comando.brake=0.0
         #print(self.v)
 

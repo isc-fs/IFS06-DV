@@ -50,11 +50,20 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+Paquetes_Ros2/puente_ros/__pycache__/
+Paquetes_Ros2/puente_ros/build/
+Paquetes_Ros2/puente_ros/log/
+Paquetes_Ros2/puente_ros/resource/
+Paquetes_Ros2/puente_ros/test/
+
+
 Paquetes_Ros2/slam/log
 Paquetes_Ros2/puente_ros/pointcloud_to_laserscan/log
-Paquetes_Ros2/puente_ros/log/
 Paquetes_Ros2/yolo/log
 Paquetes_Ros2/path_planning/log
 Paquetes_Ros2/slam/fs_msgs/log
 Paquetes_Ros2/path_planning/fs_msgs/log
 
+Paquetes_Ros2/path_planning/build
+Paquetes_Ros2/path_planning/install

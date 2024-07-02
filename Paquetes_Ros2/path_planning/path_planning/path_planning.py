@@ -167,7 +167,7 @@ class Control(Node):
         comando=ControlCommand()
 
         ###Control velocidad###
-        comando.throttle=(self.v-8)*(-0.1)  #v_traget=2m/s
+        comando.throttle=(self.v-5)*(-0.1)  #v_traget=2m/s
         comando.brake=0.0
         #print(self.v)
 
@@ -186,7 +186,6 @@ class Control(Node):
             self.publisher_comand.publish(comando)
             return 0
 
-        
         i=0
         point_source = Point(x=self.path.poses[i].pose.position.x, y=self.path.poses[i].pose.position.y, z=0.0)
         point_source=do_transform_point(geometry_msgs.msg.PointStamped(point=point_source),t_inv)
