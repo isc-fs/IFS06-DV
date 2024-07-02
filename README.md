@@ -26,7 +26,7 @@
 
 ### Coche Real
 
-- Asimilar simuñación coche real ❌
+- Asimilar simulación coche real ❌
 - Decidir que hacer con la cámara ❌
 
 # IFS06 - DRIVERLESS
