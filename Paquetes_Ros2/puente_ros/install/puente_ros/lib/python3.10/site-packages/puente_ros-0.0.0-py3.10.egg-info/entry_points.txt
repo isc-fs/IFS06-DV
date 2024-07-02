@@ -1,4 +1,0 @@
-[console_scripts]
-puente_ros_TF = puente_ros.puente_ros:TF
-puente_ros_laser = puente_ros.puente_ros:laser_stamp
-
