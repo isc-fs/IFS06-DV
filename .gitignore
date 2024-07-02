@@ -52,8 +52,8 @@ Mkfile.old
 dkms.conf
 
 install*
+__pycache__*
 
-Paquetes_Ros2/puente_ros/__pycache__
 Paquetes_Ros2/puente_ros/build
 Paquetes_Ros2/puente_ros/log
 Paquetes_Ros2/puente_ros/resource
