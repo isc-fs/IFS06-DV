@@ -46,6 +46,13 @@ import geometry_msgs
 
 from fs_msgs.msg import ControlCommand
 
+from scipy import interpolate
+
+def frange(x, y, jump):
+  while x < y:
+    yield x
+    x += jump
+
 def gen_mark(x,y):
     mark=PoseStamped()
     mark.header.frame_id= "odom"
@@ -90,15 +97,27 @@ class Plan_Path(Node):
         if len(self.track_azul.poses)>=2 and len(self.track_amarillo.poses)>=2:
             len_min=min((len(self.track_azul.poses),len(self.track_amarillo.poses)))
 
-            track=Path()
-            track.header.frame_id= "odom"
+            puntos_x=[]
+            puntos_y=[]
             for i in range(len_min):
                 x=(self.track_azul.poses[i].pose.position.x+self.track_amarillo.poses[i].pose.position.x)/2
                 y=(self.track_azul.poses[i].pose.position.y+self.track_amarillo.poses[i].pose.position.y)/2
 
-                track.poses.append(gen_mark(x,y))
+                puntos_x.append(x)
+                puntos_y.append(y)
+    
+            try:  ##Intentar interpolar con splines
+                tck,a = interpolate.splprep([puntos_x,puntos_y],s=0.0,k=2)  #s=0 para forzar a que la curva pase por los puntos
+                xnew,ynew= interpolate.splev(numpy.linspace(0,1,50),tck)
+            except:
+                print("error")
+                return
 
-            #print(len(track.poses))
+            track=Path()
+            track.header.frame_id= "odom"
+            for (i,x) in enumerate(xnew):
+                track.poses.append(gen_mark(x,ynew[i]))
+
             self.publisher_path.publish(track)
 
 class Control(Node):
@@ -130,6 +149,13 @@ class Control(Node):
     def listener_callback_v(self,msg):
         self.v=msg.twist.twist.linear.x
 
+def unit_vector(vector):
+    return vector / numpy.linalg.norm(vector)
+
+def angle(v1, v2):
+    v1_u = unit_vector(v1)
+    v2_u = unit_vector(v2)
+    return numpy.arccos(numpy.clip(numpy.dot(v1_u, v2_u), -1.0, 1.0))
 
 class Control(Node):
     def __init__(self):
@@ -196,7 +222,9 @@ class Control(Node):
             point_source = Point(x=self.path.poses[i].pose.position.x, y=self.path.poses[i].pose.position.y, z=0.0)
             point_source=do_transform_point(geometry_msgs.msg.PointStamped(point=point_source),t_inv)
 
-        comando.steering=point_source.point.y*-1.0
+        a=angle((0,1),(point_source.point.x,point_source.point.y))
+        print((a,point_source.point.y))
+        comando.steering=point_source.point.y*-0.8
         
         print("Publicando comando")
         
