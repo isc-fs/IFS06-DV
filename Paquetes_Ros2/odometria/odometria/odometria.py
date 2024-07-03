@@ -22,9 +22,14 @@ import rclpy
 from rclpy.node import Node
 import math
 from nav_msgs.msg import Odometry
-from geometry_msgs.msg import PoseWithCovariance
+from geometry_msgs.msg import PoseWithCovarianceStamped
+from geometry_msgs.msg import Twist
+from std_msgs.msg import Int64
+import time
 
 
+def rotaciones_rueda_a_distancia():
+    pass
 
 
 class PosicionNode(Node):
@@ -33,18 +38,25 @@ class PosicionNode(Node):
 
         self.posicion_x = 0
         self.posicion_y = 0 #Asumimos que parte de estos parámetros
-        self.giro = 0
-        self.lin_vel = 0
+        self.w_rueda_der = 0 #w = Velocidad angular
+        self.w_rueda_izq = 0
+        self.prev_update_time = time.time()
 
-        self.lin_vel_subscriber = self.create_subscription() #buscar topics, creo que son los que tengo en imports
-        self.giro_ruedas_subscriber = self.create_subscription()
+        self.radio_rueda = 10 #Hay que buscar estos datos en el modelo del coche
+        self.distancia_ruedas = 10
 
-    def calcular_nueva_posicion(self,lin_vel:int,giro:int):
-        #aqui usamos la formula diria
+        self.odom_pub = self.create_publisher(Odometry,"odom",10)
+        self.cmd_vel_sub = self.create_subscription(Twist,"cmd_vel",'CALLBACK',10)
+
+        self.rueda_der_subscriber = self.create_subscription(PoseWithCovarianceStamped,'/gss','CALLBACK',10)
+        self.rueda_izq_subscriber = self.create_subscription()
+
+    def calcular_nueva_posicion(self):
+        """Utilizamos: vec_pos = vec_pos_0 + 'matriz'*tiempo
+        Este proceso se hará iterativamente con incrementos de tiempo tan pequeños que W se considera constante.
+        """        
         pass
         
-
-
 def calcular_posicion(args=None):
     rclpy.init(args=args)
     pos_node = PosicionNode()
