@@ -20,6 +20,10 @@ Este nodo se va a encargar de la odometria del coche. A partir del giro de las r
 
 import rclpy
 from rclpy.node import Node
+import math
+from nav_msgs.msg import Odometry
+from geometry_msgs.msg import PoseWithCovariance
+
 
 
 
@@ -27,9 +31,23 @@ class PosicionNode(Node):
     def __init__(self):
         super().__init__('calcular_posicion_node')
 
+        self.posicion_x = 0
+        self.posicion_y = 0 #Asumimos que parte de estos parámetros
+        self.giro = 0
+        self.lin_vel = 0
+
+        self.lin_vel_subscriber = self.create_subscription() #buscar topics, creo que son los que tengo en imports
+        self.giro_ruedas_subscriber = self.create_subscription()
+
+    def calcular_nueva_posicion(self,lin_vel:int,giro:int):
+        #aqui usamos la formula diria
+        pass
+        
+
+
 def calcular_posicion(args=None):
     rclpy.init(args=args)
+    pos_node = PosicionNode()
 
-
-    #rclpy.spin()
+    rclpy.spin(pos_node)
     rclpy.shutdown()
