@@ -45,6 +45,7 @@ from geometry_msgs.msg import Pose
 from slam.mapa import *
 
 from fs_msgs.msg import Track, Cone
+from fs_msgs.srv import Reset
 
 from tf2_ros import TransformException
 from tf2_ros.buffer import Buffer
@@ -68,9 +69,17 @@ class Publicar_Mapa(Node):
             MarkerArray,
             'Conos_raw',
             self.listener_callback,10)
+        
+        #Servicio de reset
+        self.srv = self.create_service(Reset, 'reset', self.add_two_ints_callback)
 
         #Iniciar calse Mapa
         self.mapa=Mapa()
+
+    def add_two_ints_callback(self, request, response):
+        self.mapa=Mapa()
+        self.get_logger().info('Reseteando Mapa')
+        return response
 
     def listener_callback(self, msg):
         if len(msg.markers)==0: ###Si no se han detectado conos parar

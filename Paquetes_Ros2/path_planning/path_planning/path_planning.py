@@ -45,6 +45,7 @@ from geometry_msgs.msg import Point
 import geometry_msgs
 
 from fs_msgs.msg import ControlCommand
+from fs_msgs.srv import Reset
 
 from scipy import interpolate
 
@@ -119,35 +120,6 @@ class Plan_Path(Node):
                 track.poses.append(gen_mark(x,ynew[i]))
 
             self.publisher_path.publish(track)
-
-class Control(Node):
-    def __init__(self):
-        super().__init__('Control')
-        #Publicar
-        self.publisher_comand = self.create_publisher(ControlCommand, '/control_command',10)
-        #Subscricion
-        self.tf_buffer = Buffer()
-        self.tf_listener = TransformListener(self.tf_buffer, self) 
-
-        self.subscription_azul = self.create_subscription(
-            Path,
-            'Path',
-            self.listener_callback,
-            10)
-        self.path=Path()
-        
-        self.subscription_v = self.create_subscription(
-            TwistWithCovarianceStamped,
-            'gss',
-            self.listener_callback_v,
-            10)
-        self.v=0
-
-        #Timer
-        self.timer = self.create_timer(0.1, self.timer_callback)
-    
-    def listener_callback_v(self,msg):
-        self.v=msg.twist.twist.linear.x
 
 def unit_vector(vector):
     return vector / numpy.linalg.norm(vector)
@@ -230,6 +202,20 @@ class Control(Node):
         
         self.publisher_comand.publish(comando)
 
+class Reser_server(Node):
+
+    def __init__(self):
+        super().__init__('Servicio_reset')
+        self.cli = self.create_client(Reset, 'reset')
+        while not self.cli.wait_for_service(timeout_sec=1.0):
+            self.get_logger().info('El sevicio no esta disponible')
+        self.req = Reset.Request()
+
+    def send_request(self):
+        self.future = self.cli.call_async(self.req)
+        rclpy.spin_until_future_complete(self, self.future)
+        return self.future.result()
+
 """
 Llamadas a Objetos para ROS2
 """
@@ -249,6 +235,9 @@ def control(args=None):
 def reiniciar(args=None):
     rclpy.init(args=args)
 
-    Laser_stam = Control()
-    rclpy.spin(Laser_stam)
+    minimal_client = Reser_server()
+    minimal_client.send_request()
+    minimal_client.destroy_node()
+    rclpy.shutdown()
+
 
