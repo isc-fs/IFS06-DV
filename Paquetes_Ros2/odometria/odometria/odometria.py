@@ -23,11 +23,12 @@ import rclpy
 from rclpy.node import Node
 import math
 from nav_msgs.msg import Odometry
-from geometry_msgs.msg import PoseWithCovarianceStamped
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import TwistWithCovarianceStamped, Twist
+from fs_msgs.msg import ControlCommand
 from std_msgs.msg import Int64
 import time
 
+GIRO_MAXIMO_RUEDAS = 90 # Consultar con los datos reales del coche.
 
 class PosicionNode(Node):
     def __init__(self):
@@ -43,6 +44,7 @@ class PosicionNode(Node):
         self.velocidad_angular = 0
         self.posicion_real_x = 0
         self.posicion_real_y = 0
+        self.angulo_giro = 0
         # v en m/s
         self.v_rueda_izq = 0
         self.v_rueda_der = 0
@@ -64,9 +66,14 @@ class PosicionNode(Node):
             self.cmd_vel_callback,
             10)
         self.pos_subscriber = self.create_subscription(
-            PoseWithCovarianceStamped,
+            TwistWithCovarianceStamped,
             '/gss',
             self.pos_callback,
+            10)
+        self.control_command_sub = self.create_subscription(
+            ControlCommand,
+            '/control_command',
+            self.control_command_callback,
             10)
 
     def cmd_vel_callback(self, msg: Twist):
@@ -84,17 +91,25 @@ class PosicionNode(Node):
         self.publicar_odometria()
 
     # No utilizo esta función ya que son datos directos del simulador. Se usará para comparar.
-    def pos_callback(self, msg: PoseWithCovarianceStamped):
+    def pos_callback(self, msg: TwistWithCovarianceStamped):
         """
         Recoge los datos del gss de la posición del coche del simulador.
 
         Args:
-            msg (PoseWithCovarianceStamped): Mensaje con la posición y la covarianza.
+            msg (TwistWithCovarianceStamped): Mensaje con la posición y la covarianza.
         """
-        pos = msg.pose.pose
+        pos = msg.twist.twist
+        self.posicion_real_x = pos.linear.x
+        self.posicion_real_y = pos.linear.y
 
-        self.posicion_real_x = pos.position.x
-        self.posicion_real_y = pos.position.y
+    def control_command_callback(self, msg: ControlCommand):
+        """
+        Recoge el ángulo de las ruedas del coche.
+
+        Args:
+            msg (ControlCommand): Mensaje con el ángulo de las ruedas.
+        """
+        self.angulo_giro = msg.steering * math.radians(GIRO_MAXIMO_RUEDAS)
 
     def estimar_rotaciones_ruedas(self):
         """
@@ -115,13 +130,14 @@ class PosicionNode(Node):
         Se guarda la nueva posición en el eje xy.
         """
         v_media = (self.v_rueda_der + self.v_rueda_izq) / 2
-        w_media = (self.w_rueda_der + self.w_rueda_izq) / 2
 
         self.time_actual = time.time()
         delta_t = self.time_actual - self.time_anterior
         self.time_anterior = time.time()
 
-        delta_theta = w_media * delta_t
+        tasa_giro = (self.velocidad_lineal / self.distancia_ruedas) * math.tan(self.angulo_giro)
+
+        delta_theta = tasa_giro * delta_t
 
         delta_x = v_media * math.cos(self.theta + delta_theta / 2) * delta_t
         delta_y = v_media * math.sin(self.theta + delta_theta / 2) * delta_t
@@ -132,9 +148,10 @@ class PosicionNode(Node):
 
         # Añadido para printear posiciones en testing
 
-        self.get_logger().info(f"Posición estimada: x={self.posicion_x}, y={self.posicion_y}")
-        self.get_logger().info(f"Posición real: x={self.posicion_real_x}, y={self.posicion_real_y}")
-
+        self.get_logger().info(
+            f"Posición estimada: x={self.posicion_x}, y={self.posicion_y}")
+        self.get_logger().info(
+            f"Posición real: x={self.posicion_real_x}, y={self.posicion_real_y}")
 
     def publicar_odometria(self):
         """
@@ -153,11 +170,11 @@ class PosicionNode(Node):
 
         # Convertimos yaw (theta) a cuaternión
 
-        quat = self.convertir_euler_a_cuaternion(0, 0, self.theta)
-        odom.pose.pose.orientation.x = quat[0]
-        odom.pose.pose.orientation.y = quat[1]
-        odom.pose.pose.orientation.z = quat[2]
-        odom.pose.pose.orientation.w = quat[3]
+        [qx, qy, qz, qw] = self.convertir_euler_a_cuaternion(0, 0, self.theta)
+        odom.pose.pose.orientation.x = qx
+        odom.pose.pose.orientation.y = qy
+        odom.pose.pose.orientation.z = qz
+        odom.pose.pose.orientation.w = qw
 
         # Ajustar la velocidad
 
