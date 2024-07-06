@@ -39,6 +39,8 @@ class PosicionNode(Node):
         self.posicion_x = 0
         self.posicion_y = 0
         self.theta = 0
+        self.velocidad_lineal = 0
+        self.velocidad_angular = 0
         # v en m/s
         self.v_rueda_izq = 0
         self.v_rueda_der = 0
@@ -57,12 +59,12 @@ class PosicionNode(Node):
         self.cmd_vel_sub = self.create_subscription(
             Twist,
             'cmd_vel',
-            'CALLBACK',
+            self.cmd_vel_callback,
             10)
         self.pos_subscriber = self.create_subscription(
             PoseWithCovarianceStamped,
             '/gss',
-            'CALLBACK',
+            self.pos_callback,
             10)
 
     def cmd_vel_callback(self, msg: Twist):
@@ -75,6 +77,10 @@ class PosicionNode(Node):
         """
         self.velocidad_lineal = msg.linear.x
         self.velocidad_angular = msg.angular.z
+
+        self.estimar_rotaciones_ruedas()
+        self.calcular_nueva_posicion()
+        self.publicar_odometria()
 
     # No utilizo esta función ya que son datos directos del simulador. Se usará para comparar.
     def pos_callback(self, msg: PoseWithCovarianceStamped):
@@ -89,20 +95,17 @@ class PosicionNode(Node):
         x = pos.position.x
         y = pos.position.y
 
-    def estimar_rotaciones_ruedas(self, velocidad_lineal: float, velocidad_angular: float):
-        """Estima la rotación de cada rueda, dadas una velocidad lineal y angular del coche.
-
-        Args:
-            velocidad_lineal (float): La velocidad lineal del coche recogida del gss.
-            velocidad_angular (float): La velocidad angular del coche recogida del gss.
+    def estimar_rotaciones_ruedas(self):
         """
-        self.v_rueda_izq = velocidad_lineal - \
-            (velocidad_angular * self.distancia_ruedas) / 2
-        self.v_rueda_der = velocidad_lineal + \
-            (velocidad_angular * self.distancia_ruedas) / 2
+        Estima la rotación de cada rueda, dadas una velocidad lineal y angular del coche.
+        """
+        self.v_rueda_izq = self.velocidad_lineal - \
+            (self.velocidad_angular * self.distancia_ruedas) / 2
+        self.v_rueda_der = self.velocidad_lineal + \
+            (self.velocidad_angular * self.distancia_ruedas) / 2
 
-        self.w_rueda_izq = self.v_rueda_izq/self.radio_rueda
-        self.w_rueda_der = self.v_rueda_der/self.radio_rueda
+        self.w_rueda_izq = self.v_rueda_izq / self.radio_rueda
+        self.w_rueda_der = self.v_rueda_der / self.radio_rueda
 
     def calcular_nueva_posicion(self):
         """
@@ -122,9 +125,59 @@ class PosicionNode(Node):
         delta_x = v_media * math.cos(self.theta + delta_theta/2) * delta_t
         delta_y = v_media * math.sin(self.theta + delta_theta/2) * delta_t
 
+        self.theta += delta_theta
         self.posicion_x += delta_x
         self.posicion_y += delta_y
 
+    def publicar_odometria(self):
+        """
+        Publica los datos de odometría en el topic 'odom'.
+        """
+        odom = Odometry()
+        odom.header.stamp = self.get_clock().now().to_msg()
+        odom.header.frame_id = 'odom'
+        odom.child_frame_id = 'base_link'
+
+        # Ajustar la posición
+
+        odom.pose.pose.position.x = self.posicion_x
+        odom.pose.pose.position.y = self.posicion_y
+        odom.pose.pose.position.z = 0.0
+
+        # Convertimos yaw (theta) a cuaternión
+
+        quat = self.convertir_euler_a_cuaternion(0, 0, self.theta)
+        odom.pose.pose.orientation.x = quat[0]
+        odom.pose.pose.orientation.y = quat[1]
+        odom.pose.pose.orientation.z = quat[2]
+        odom.pose.pose.orientation.w = quat[3]
+
+        # Ajustar la velocidad
+
+        odom.twist.twist.linear.x = self.velocidad_lineal
+        odom.twist.twist.angular.z = self.velocidad_angular
+
+        # Publicar
+
+        self.odom_pub.publish(odom)
+
+    def convertir_euler_a_cuaternion(self, roll, pitch, yaw):
+        """
+        Convierte ángulos de Euler a una cuaternión.
+
+        Args:
+            roll (float): Ángulo de rotación alrededor del eje X.
+            pitch (float): Ángulo de rotación alrededor del eje Y.
+            yaw (float): Ángulo de rotación alrededor del eje Z.
+
+        Returns:
+            list: La cuaternión correspondiente [x, y, z, w].
+        """
+        qx = math.sin(roll / 2) * math.cos(pitch / 2) * math.cos(yaw / 2) - math.cos(roll / 2) * math.sin(pitch / 2) * math.sin(yaw / 2)
+        qy = math.cos(roll / 2) * math.sin(pitch / 2) * math.cos(yaw / 2) + math.sin(roll / 2) * math.cos(pitch / 2) * math.sin(yaw / 2)
+        qz = math.cos(roll / 2) * math.cos(pitch / 2) * math.sin(yaw / 2) - math.sin(roll / 2) * math.sin(pitch / 2) * math.cos(yaw / 2)
+        qw = math.cos(roll / 2) * math.cos(pitch / 2) * math.cos(yaw / 2) + math.sin(roll / 2) * math.sin(pitch / 2) * math.sin(yaw / 2)
+        return [qx, qy, qz, qw]
 
 def calcular_posicion(args=None):
     rclpy.init(args=args)
