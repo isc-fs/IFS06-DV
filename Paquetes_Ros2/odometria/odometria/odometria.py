@@ -41,6 +41,8 @@ class PosicionNode(Node):
         self.theta = 0
         self.velocidad_lineal = 0
         self.velocidad_angular = 0
+        self.posicion_real_x = 0
+        self.posicion_real_y = 0
         # v en m/s
         self.v_rueda_izq = 0
         self.v_rueda_der = 0
@@ -72,7 +74,6 @@ class PosicionNode(Node):
         Controla el mensaje de cmd_vel.
 
         Args:
-
             msg (Twist): Mensaje con las velocidades lineal y angular.
         """
         self.velocidad_lineal = msg.linear.x
@@ -92,8 +93,8 @@ class PosicionNode(Node):
         """
         pos = msg.pose.pose
 
-        x = pos.position.x
-        y = pos.position.y
+        self.posicion_real_x = pos.position.x
+        self.posicion_real_y = pos.position.y
 
     def estimar_rotaciones_ruedas(self):
         """
@@ -128,6 +129,12 @@ class PosicionNode(Node):
         self.theta += delta_theta
         self.posicion_x += delta_x
         self.posicion_y += delta_y
+
+        # Añadido para printear posiciones en testing
+
+        self.get_logger().info(f"Posición estimada: x={self.posicion_x}, y={self.posicion_y}")
+        self.get_logger().info(f"Posición real: x={self.posicion_real_x}, y={self.posicion_real_y}")
+
 
     def publicar_odometria(self):
         """
