@@ -5,10 +5,11 @@ odometria.py (v1.0)
 
 Elaborado por Lucía Herraiz y Álvaro Pérez para el ISC
 
-Este nodo se va a encargar de la odometria del coche. A partir del giro de las ruedas y la velocidad lineal estima la posición relativa
- (luego desarrollamos esto jajaj)
+Este nodo se va a encargar de la odometría del coche.
+Utilizamos la velocidad lineal y angular recogida por el GSS (Ground Speed Sensor), estimamos la velocidad y rotación de cada rueda.
+Calculamos la nueva posición en el eje xy tras un intervalo de tiempo.
 
- Posibles errores en el cálculo de la posición relativa: (tener en cuenta para cuando tengamos el coche)
+Posibles errores en el cálculo de la posición relativa: (tener en cuenta para cuando tengamos el coche)
     Los diámetros de las ruedas no son iguales y difieren del diámetro de fábrica.
     Mal alineamiento de las ruedas.
     Resolución discreta (no continua) del encoder.
@@ -75,7 +76,8 @@ class PosicionNode(Node):
         self.velocidad_lineal = msg.linear.x
         self.velocidad_angular = msg.angular.z
 
-    def pos_callback(self, msg: PoseWithCovarianceStamped): # No utilizo esta función ya que son datos directos del simulador. Se usará para comparar.
+    # No utilizo esta función ya que son datos directos del simulador. Se usará para comparar.
+    def pos_callback(self, msg: PoseWithCovarianceStamped):
         """
         Recoge los datos del gss de la posición del coche del simulador.
 
