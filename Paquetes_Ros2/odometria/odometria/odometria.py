@@ -31,7 +31,7 @@ import time
 
 class PosicionNode(Node):
     def __init__(self):
-        super().__init__('calcular_posicion_node')
+        super().__init__('calcular_posicion')
 
         # Asumimos parámetros iniciales
         self.time_anterior = time.time()
@@ -123,8 +123,8 @@ class PosicionNode(Node):
 
         delta_theta = w_media * delta_t
 
-        delta_x = v_media * math.cos(self.theta + delta_theta/2) * delta_t
-        delta_y = v_media * math.sin(self.theta + delta_theta/2) * delta_t
+        delta_x = v_media * math.cos(self.theta + delta_theta / 2) * delta_t
+        delta_y = v_media * math.sin(self.theta + delta_theta / 2) * delta_t
 
         self.theta += delta_theta
         self.posicion_x += delta_x
