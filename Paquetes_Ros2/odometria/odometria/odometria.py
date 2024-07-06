@@ -28,7 +28,10 @@ from fs_msgs.msg import ControlCommand
 from std_msgs.msg import Int64
 import time
 
-GIRO_MAXIMO_RUEDAS = 90 # Consultar con los datos reales del coche.
+# Consultar con los datos reales del coche.
+GIRO_MAXIMO_RUEDAS = 90 
+RADIO_RUEDA = 10
+DISTANCIA_RUEDAS = 10
 
 class PosicionNode(Node):
     def __init__(self):
@@ -51,10 +54,6 @@ class PosicionNode(Node):
         # ω = velocidad angular en radianes
         self.w_rueda_der = 0
         self.w_rueda_izq = 0
-
-        # Hace falta ajustar los datos con el modelo del coche
-        self.radio_rueda = 10
-        self.distancia_ruedas = 10
 
         # Publicación
         self.odom_pub = self.create_publisher(Odometry, 'odom', 10)
@@ -116,12 +115,12 @@ class PosicionNode(Node):
         Estima la rotación de cada rueda, dadas una velocidad lineal y angular del coche.
         """
         self.v_rueda_izq = self.velocidad_lineal - \
-            (self.velocidad_angular * self.distancia_ruedas) / 2
+            (self.velocidad_angular * DISTANCIA_RUEDAS) / 2
         self.v_rueda_der = self.velocidad_lineal + \
-            (self.velocidad_angular * self.distancia_ruedas) / 2
+            (self.velocidad_angular * DISTANCIA_RUEDAS) / 2
 
-        self.w_rueda_izq = self.v_rueda_izq / self.radio_rueda
-        self.w_rueda_der = self.v_rueda_der / self.radio_rueda
+        self.w_rueda_izq = self.v_rueda_izq / RADIO_RUEDA
+        self.w_rueda_der = self.v_rueda_der / RADIO_RUEDA
 
     def calcular_nueva_posicion(self):
         """
@@ -135,7 +134,7 @@ class PosicionNode(Node):
         delta_t = self.time_actual - self.time_anterior
         self.time_anterior = time.time()
 
-        tasa_giro = (self.velocidad_lineal / self.distancia_ruedas) * math.tan(self.angulo_giro)
+        tasa_giro = (self.velocidad_lineal / DISTANCIA_RUEDAS) * math.tan(self.angulo_giro)
 
         delta_theta = tasa_giro * delta_t
 
