@@ -4,12 +4,13 @@ puente_ros.launch.py (v1.0)
 ========================
 
 Elaborado por Jaime Perez para el ISC
-Lanza todo el pipeline a excepcion del simulador y el puente
+Lanza todo el pipeline a excepcion del simulador y el puente y rviz
 Se puede hacer con:
+cd ~/Formula-Student-Driverless-Simulator
 ./FSDS.sh
+source ~/Formula-Student-Driverless-Simulator/ros2/install/setup.sh
 ros2 launch fsds_ros2_bridge fsds_ros2_bridge.launch.py
-
-O con ./full_pipeline_launch.sh
+rviz2
 """
 
 import os
@@ -26,7 +27,7 @@ def generate_launch_description():
     log='info'  #Cambiar a debug para ver frecuencias de publicacion
     ld=LaunchDescription()
 
-    TF_ODOM_COCHE = Node(   #ODOMETRIA
+    TF_ODOM_COCHE = Node(
         package='puente_ros',
         namespace='',
         executable='puente_ros_TF',
@@ -34,7 +35,7 @@ def generate_launch_description():
         arguments=['--ros-args', '--log-level', log]
     )
 
-    SLAM_CONE_DETECTION = Node(   #Detecion de conos
+    SLAM_CONE_DETECTION = Node(
         package='slam',
         namespace='',
         executable='Cone_Detection',
@@ -42,7 +43,7 @@ def generate_launch_description():
         arguments=['--ros-args', '--log-level', log]
     )
 
-    SLAM_PUBLICAR_MAPA = Node( #Generar y publicar el mapa
+    SLAM_PUBLICAR_MAPA = Node(
         package='slam',
         namespace='',
         executable='Publicar_Mapa',
@@ -50,7 +51,7 @@ def generate_launch_description():
         arguments=['--ros-args', '--log-level', log]
     )
 
-    SLAM_PUBLICAR_TRACK = Node( #Genera MarkerArry de posicion real de los conos del circuito
+    SLAM_PUBLICAR_TRACK = Node(
         package='slam',
         namespace='',
         executable='Publicar_Track',
@@ -58,7 +59,7 @@ def generate_launch_description():
         arguments=['--ros-args', '--log-level', log]
     )
 
-    PATH_PLANING = Node( #CAMARA
+    PATH_PLANING = Node(
         package='path_planning',
         namespace='',
         executable='Plan_Path',
@@ -66,7 +67,7 @@ def generate_launch_description():
         arguments=['--ros-args', '--log-level', log]
     )
 
-    CONTROL = Node( #CAMARA
+    CONTROL = Node(
         package='control',
         namespace='',
         executable='Control',
