@@ -27,5 +27,4 @@ ros2 run yolo Yolo
 ##Path_planning
 source fs_msgs/install/setup.sh  && source install/setup.sh
 ros2 run path_planning Plan_Path
-ros2 run path_planning Control
 ros2 run path_planning Reset

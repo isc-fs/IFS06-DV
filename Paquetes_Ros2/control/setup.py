@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 import os
 from glob import glob
 
-package_name = 'path_planning'
+package_name = 'control'
 
 setup(
     name=package_name,
@@ -18,12 +18,11 @@ setup(
     maintainer='jaime',
     maintainer_email='jaimeperezgil21@gmail.com',
     description='TODO: Package description',
-    license='Apache-2.0',
+    license='TODO: License declaration',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'Plan_Path = path_planning.path_planning:plan_path',
-            'Reset = path_planning.path_planning:reiniciar',
+            'Control = control.control:control',
         ],
     },
 )

@@ -16,6 +16,8 @@ import time
 import numpy
 import cv2 as cv
 
+from math import atan2, pi, sqrt
+
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSHistoryPolicy
@@ -47,7 +49,10 @@ import geometry_msgs
 from fs_msgs.msg import ControlCommand
 from fs_msgs.srv import Reset
 
+from transforms3d.euler import quat2euler
+
 from scipy import interpolate
+from sklearn.neighbors import KDTree
 
 def frange(x, y, jump):
   while x < y:
@@ -121,106 +126,6 @@ class Plan_Path(Node):
 
             self.publisher_path.publish(track)
 
-def unit_vector(vector):
-    return vector / numpy.linalg.norm(vector)
-
-def angle(v1, v2):
-    v1_u = unit_vector(v1)
-    v2_u = unit_vector(v2)
-    return numpy.arccos(numpy.clip(numpy.dot(v1_u, v2_u), -1.0, 1.0))
-
-millis = lambda: int(round(time.time() * 1000))
-
-class Control(Node):
-    def __init__(self):
-        super().__init__('Control')
-        #Publicar
-        self.publisher_comand = self.create_publisher(ControlCommand, '/control_command',10)
-        #Subscricion
-        self.tf_buffer = Buffer()
-        self.tf_listener = TransformListener(self.tf_buffer, self) 
-
-        self.subscription_azul = self.create_subscription(
-            Path,
-            'Path',
-            self.listener_callback,
-            10)
-        self.path=Path()
-        
-        self.subscription_v = self.create_subscription(
-            TwistWithCovarianceStamped,
-            'gss',
-            self.listener_callback_v,
-            10)
-        
-        self.subscription_posicion = self.create_subscription(
-            Odometry,
-            '/testing_only/odom',              ##Mensaje de Odometria---Mas adelante cambiar a estimacion VREL
-            self.listener_callback_odom,
-            10)
-
-        #Timer
-        self.timer = self.create_timer(1.0/40, self.timer_callback)   #Ejecutar a 40Hz (como minimo)
-
-        #Vars
-        self.v=0
-        self.t_ant=0
-        self.r_ant=0
-        self.v_lat=0
-
-    def listener_callback_v(self,msg):
-        self.v=msg.twist.twist.linear.x
-
-    def listener_callback(self,msg):
-        self.path=msg
-
-    def listener_callback_odom(self,msg):
-        #msg=Odometry()
-        self.v_lat=msg.twist.twist.linear.y
-
-    def timer_callback(self):
-        comando=ControlCommand()
-
-        ###Control velocidad###
-        comando.throttle=(self.v-5)*(-0.1)  #v_traget=2m/s
-        comando.brake=0.0
-        #print(self.v)
-
-        ###Control steering###
-        try:        ###Generar Objeto de transformada entre Odom y el coche
-            t_inv = self.tf_buffer.lookup_transform(
-                'fsds/FSCar',
-                'odom',
-                rclpy.time.Time()) ###Revisar tiempo
-        except TransformException as ex:
-            print(ex)
-            return
-        
-        if len(self.path.poses)<1:
-            comando.steering=0.0
-            self.publisher_comand.publish(comando)
-            return 0
-
-        i=0
-        point_source = Point(x=self.path.poses[i].pose.position.x, y=self.path.poses[i].pose.position.y, z=0.0)
-        point_source=do_transform_point(geometry_msgs.msg.PointStamped(point=point_source),t_inv)
-        while point_source.point.x<0:
-            i=i+1
-            if i>len(self.path.poses)-1:
-                return -1
-            point_source = Point(x=self.path.poses[i].pose.position.x, y=self.path.poses[i].pose.position.y, z=0.0)
-            point_source=do_transform_point(geometry_msgs.msg.PointStamped(point=point_source),t_inv)
-
-        ###Dos controladores P en cascada
-        setpoint=point_source.point.y*-1.8
-        comando.steering=(self.v_lat-setpoint)*-5.0
-        
-        print((point_source.point.y,self.v_lat-setpoint))
-
-        print("Publicando comando")
-        
-        self.publisher_comand.publish(comando)
-
 class Reser_server(Node):
 
     def __init__(self):
@@ -243,12 +148,6 @@ def plan_path(args=None):
     rclpy.init(args=args)
 
     Laser_stam = Plan_Path()
-    rclpy.spin(Laser_stam)
-
-def control(args=None):
-    rclpy.init(args=args)
-
-    Laser_stam = Control()
     rclpy.spin(Laser_stam)
 
 def reiniciar(args=None):
