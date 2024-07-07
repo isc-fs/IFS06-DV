@@ -129,6 +129,8 @@ def angle(v1, v2):
     v2_u = unit_vector(v2)
     return numpy.arccos(numpy.clip(numpy.dot(v1_u, v2_u), -1.0, 1.0))
 
+millis = lambda: int(round(time.time() * 1000))
+
 class Control(Node):
     def __init__(self):
         super().__init__('Control')
@@ -150,16 +152,31 @@ class Control(Node):
             'gss',
             self.listener_callback_v,
             10)
-        self.v=0
+        
+        self.subscription_posicion = self.create_subscription(
+            Odometry,
+            '/testing_only/odom',              ##Mensaje de Odometria---Mas adelante cambiar a estimacion VREL
+            self.listener_callback_odom,
+            10)
 
         #Timer
-        self.timer = self.create_timer(0.1, self.timer_callback)
-    
+        self.timer = self.create_timer(1.0/40, self.timer_callback)   #Ejecutar a 40Hz (como minimo)
+
+        #Vars
+        self.v=0
+        self.t_ant=0
+        self.r_ant=0
+        self.v_lat=0
+
     def listener_callback_v(self,msg):
         self.v=msg.twist.twist.linear.x
 
     def listener_callback(self,msg):
         self.path=msg
+
+    def listener_callback_odom(self,msg):
+        #msg=Odometry()
+        self.v_lat=msg.twist.twist.linear.y
 
     def timer_callback(self):
         comando=ControlCommand()
@@ -194,10 +211,12 @@ class Control(Node):
             point_source = Point(x=self.path.poses[i].pose.position.x, y=self.path.poses[i].pose.position.y, z=0.0)
             point_source=do_transform_point(geometry_msgs.msg.PointStamped(point=point_source),t_inv)
 
-        a=angle((0,1),(point_source.point.x,point_source.point.y))
-        print((a,point_source.point.y))
-        comando.steering=point_source.point.y*-0.8
+        ###Dos controladores P en cascada
+        setpoint=point_source.point.y*-1.8
+        comando.steering=(self.v_lat-setpoint)*-5.0
         
+        print((point_source.point.y,self.v_lat-setpoint))
+
         print("Publicando comando")
         
         self.publisher_comand.publish(comando)
