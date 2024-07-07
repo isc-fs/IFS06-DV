@@ -54,11 +54,6 @@ from sklearn.neighbors import KDTree
 def unit_vector(vector):
     return vector / numpy.linalg.norm(vector)
 
-def angle(v1, v2):
-    v1_u = unit_vector(v1)
-    v2_u = unit_vector(v2)
-    return numpy.arccos(numpy.clip(numpy.dot(v1_u, v2_u), -1.0, 1.0))
-
 millis = lambda: int(round(time.time() * 1000))
 
 def wrap_to_pi(angle: float) -> float:  # in rads

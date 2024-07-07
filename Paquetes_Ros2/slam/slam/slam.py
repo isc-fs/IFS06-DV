@@ -71,13 +71,14 @@ class Publicar_Mapa(Node):
             self.listener_callback,10)
         
         #Servicio de reset
-        self.srv = self.create_service(Reset, 'reset', self.add_two_ints_callback)
+        self.srv = self.create_service(Reset, 'reset', self.reset_callback)
 
         #Iniciar calse Mapa
         self.mapa=Mapa()
 
-    def add_two_ints_callback(self, request, response):
-        self.mapa=Mapa()
+    def reset_callback(self, request, response):
+        self.mapa.conos=[]
+        self.mapa.deteciones=[]
         self.get_logger().info('Reseteando Mapa')
         return response
 

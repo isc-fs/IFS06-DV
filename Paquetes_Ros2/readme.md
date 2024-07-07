@@ -39,8 +39,8 @@ Esto es until durante le proceso de resarrolo. Por ejemplo: Si estoy desarrollan
 
 Con este workflow se ahora mucho tiempo.
 
-## Ventajas y Consideraciones
+## Otras cosas importantes
 1. Ya no es necesario añadir fs_msgs a cada paquete
 2. Solo hay que hacer `source` una vez
 3. Los comandos de `launch_pipeline.sh` siguen funcionando igual.
-4. Es como lo hacen los equipos pro.
+4. Se puede reiniciar el simulador sin apagar y volver a encender con `ros2 run path_planning Reset`

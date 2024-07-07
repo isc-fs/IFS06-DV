@@ -127,6 +127,9 @@ def ransac2(data, m=3, prob=0.999, threshold=None, max_iter=15000):
     def_coefs = None
 
     while iters < k:
+        if iters>50:
+            break   ###Esto aregla el problema de que cuando se reinica el sim se queda atascado
+
         points_ind = np.random.choice(data_size, m, replace=False)
         points = A[points_ind]
         # Se calcula el hiperplano con producto vectorial en vez de svd (numba no lo ejecuta bien con svd)
