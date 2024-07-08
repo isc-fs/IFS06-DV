@@ -34,8 +34,17 @@ from slam.cone_detection import *
 
 from fs_msgs.msg import Track, Cone
 
+from rclpy.qos import QoSDurabilityPolicy, QoSHistoryPolicy, QoSProfile, QoSReliabilityPolicy
+
+QOS_LATEST = QoSProfile(
+    reliability=QoSReliabilityPolicy.BEST_EFFORT,
+    history=QoSHistoryPolicy.KEEP_LAST,
+    depth=1,
+    durability=QoSDurabilityPolicy.VOLATILE,
+)
+
 class Cone_Detection(Node):
-    """Publica los resultados de final_cone_result_rt() este Nodo se puede mantener incendido y asi no hay que esperar
+    """Publica los resultados de final_cone_result_rt() este Nodo se puede mantener encendido y asi no hay que esperar
     a que compile cada vez que hay que probar
     """
     def __init__(self):
@@ -46,24 +55,15 @@ class Cone_Detection(Node):
         self.subscription = self.create_subscription(
             PointCloud2,
             '/lidar/Lidar1',
-            self.listener_callback,10)
+            self.listener_callback,QOS_LATEST)
         
-        self.subscription_odom = self.create_subscription(
-            Odometry,
-            '/testing_only/odom',
-            self.listener_callback_odom,10)
-        
-        self.odom=Odometry()
-        self.c=[]
-
-    def listener_callback_odom(self, msg):
-        self.odom=msg
+        self.n_conos=0
 
     def listener_callback(self, msg):
         ###Wiki de FSDS
         points = numpy.array(np.frombuffer(msg.data, dtype=numpy.float32), dtype=numpy.dtype('f4'))
         point_cloud = numpy.reshape(points, (int(points.shape[0]/3), 3))
-
+        
         conos=[]
         try:            ###A veces da error de division por cero. El try: es para evitar que crashe
             conos = final_cone_result_rt(point_cloud)  ###Consultar a Sergio
@@ -73,32 +73,6 @@ class Cone_Detection(Node):
             
         self.get_logger().debug(str(len(conos)))
         markerArray = MarkerArray()
-
-        """self.c.append([self.odom.header.stamp.sec,
-            self.odom.header.stamp.nanosec,
-            self.odom.pose.pose.position.x,
-            self.odom.pose.pose.position.y,
-            self.odom.pose.pose.orientation.x,
-            self.odom.pose.pose.orientation.y,
-            self.odom.pose.pose.orientation.z,
-            self.odom.pose.pose.orientation.w,
-            self.odom.twist.twist.linear.x,
-            self.odom.twist.twist.linear.y,
-            self.odom.twist.twist.angular.x,
-            self.odom.twist.twist.angular.y,
-            self.odom.twist.twist.angular.z,
-            msg.header.stamp.sec,
-            msg.header.stamp.nanosec])
-        
-        for i in range(20):
-            if len(conos)>i:
-                (a,b)=conos[i]
-                self.c[len(self.c)-1].append(a)
-                self.c[len(self.c)-1].append(b)
-            else:
-                self.c[len(self.c)-1].append(0.0)
-                self.c[len(self.c)-1].append(0.0)
-        np.savetxt('datos.txt',numpy.asarray(self.c), delimiter=',')"""
 
         ###Aprovechar el metodo MarkerArray() para mandar resultados de final_cone_result_rt()
         i=0
