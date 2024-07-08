@@ -72,6 +72,7 @@ def generate_launch_description():
         namespace='',
         executable='Control',
         name='control',
+        prefix=["bash -c 'sleep 20; $0 $@' "],    ###Esperar 20seg a que numba compile
         arguments=['--ros-args', '--log-level', log]
     )
 
