@@ -64,10 +64,10 @@ class PosicionNode(Node):
         self.odom_pub = self.create_publisher(Odometry, 'odom', 10)
 
         # Suscripciones
-        self.pos_subscriber = self.create_subscription(
+        self.gss_subscriber = self.create_subscription(
             TwistWithCovarianceStamped,
             '/gss',
-            self.pos_callback,
+            self.gss_callback,
             10)
         self.control_command_sub = self.create_subscription(
             ControlCommand,
@@ -75,12 +75,12 @@ class PosicionNode(Node):
             self.control_command_callback,
             10)
 
-    def pos_callback(self, msg: TwistWithCovarianceStamped):
+    def gss_callback(self, msg: TwistWithCovarianceStamped):
         """
-        Recoge los datos del gss de la posición del coche del simulador.
+        Recoge los datos del gss de la velocidad del coche del simulador.
 
         Args:
-            msg (TwistWithCovarianceStamped): Mensaje con la posición y la covarianza.
+            msg (TwistWithCovarianceStamped): Mensaje con la velocidad y la covarianza.
         """
         self.velocidad_angular = msg.twist.twist.angular.z
         self.velocidad_lineal = msg.twist.twist.linear.x
