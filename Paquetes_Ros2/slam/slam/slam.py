@@ -130,29 +130,24 @@ class Publicar_Mapa(Node):
         for (i,cono) in enumerate(self.mapa.conos):        ###Mostrar el mapa completo
             marker = Marker()
             marker.header.frame_id = "odom" ##El mapa esta en el sistema de referencia Odom no el coche
-            marker.type = marker.CUBE
+            marker.type = marker.MESH_RESOURCE
             marker.action = marker.ADD  #Añadir marcardo
 
             ##Tamaño de m
-            marker.scale.x = 0.2
-            marker.scale.y = 0.2
-            marker.scale.z = 0.3
+            marker.scale.x = 1.0
+            marker.scale.y = 1.0
+            marker.scale.z = 1.0
+
+            #Hay que incluir la referencia en setup.py para que colcon añada al ejecutable la carpeta de meches
+            marker.mesh_resource='package://slam/meshes/any_small.dae'
 
             if cono.color=='ref':
-                marker.scale.x = 0.8
-                marker.scale.y = 0.8
-                marker.scale.z = 0.8
-
                 marker.color.r = 1.0
                 marker.color.g = 1.0
                 marker.color.b = 1.0
                 marker.color.a = 1.0
 
             if cono.color=='cont':
-                marker.scale.x = 0.8
-                marker.scale.y = 0.8
-                marker.scale.z = 0.8
-
                 marker.color.r = 1.0
                 marker.color.g = 0.0
                 marker.color.b = 0.0
@@ -160,19 +155,11 @@ class Publicar_Mapa(Node):
 
             ##Color
             if cono.color=='Azul':
-                marker.scale.x = 0.8
-                marker.scale.y = 0.8
-                marker.scale.z = 0.8
-
                 marker.color.r = 0.0
                 marker.color.g = 0.0
                 marker.color.b = 1.0
                 marker.color.a = 1.0
             elif cono.color=='Amarillo': #Amarillo
-                marker.scale.x = 0.8
-                marker.scale.y = 0.8
-                marker.scale.z = 0.8
-                
                 marker.color.r = 1.0
                 marker.color.g = 1.0
                 marker.color.b = 0.0

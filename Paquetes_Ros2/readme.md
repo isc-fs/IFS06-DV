@@ -19,11 +19,9 @@ Una vez que los paquetes estan compilados. Lanzar el pipeline:
 2. Arrancar el simulador `./FSDS.sh` e iniciarlo pulsando "Run simulation"
 3. En un nuevo terminal: Ejecutar `source ~/Formula-Student-Driverless-Simulator/ros2/install/setup.sh`
 4. Lanzar el puente ros `ros2 launch fsds_ros2_bridge fsds_ros2_bridge.launch.py`
-5. En un tercer terminal abrir RVIZ Ejecutando `rviz2`
-6. Cargar el archivo de configuracion Pulsando. File->Open Config y seleciona el archivo .rviz que esta en la carpeta 'Paquetes_Ros2'
-7. En otro terminal: Colocarse en la carpeta de Paquetes_Ros2. Es decir en la que esta este archivo
-8. Lanzar el pipeline Ejecutando `source install/setup.sh `
-9. Y a continuacion `ros2 launch full_pipeline.py`
+5. En otro terminal: Colocarse en la carpeta de Paquetes_Ros2. Es decir en la que esta este archivo
+6. Lanzar el pipeline Ejecutando `source install/setup.sh `
+7. Y a continuacion `ros2 launch full_pipeline.py`
 
 Este proceso debe repetirse cada vez que se quiera lanzar el pipeline.
 Pero solo se debe volver a compilar si se modifica el codigo

@@ -14,6 +14,7 @@ rviz2
 """
 
 import os
+from pathlib import Path
 
 from launch import LaunchDescription
 from ament_index_python.packages import get_package_share_directory
@@ -26,6 +27,14 @@ from launch import actions
 def generate_launch_description():
     log='info'  #Cambiar a debug para ver frecuencias de publicacion
     ld=LaunchDescription()
+
+    RVIZ = Node(
+        package='rviz2',
+        namespace='',
+        executable='rviz2',
+        name='rviz2',
+        arguments=['-d' + os.path.join(Path().absolute(), 'rviz_isc_config_v2.rviz')]
+    )
 
     TF_ODOM_COCHE = Node(
         package='puente_ros',
@@ -76,6 +85,7 @@ def generate_launch_description():
         arguments=['--ros-args', '--log-level', log]
     )
 
+    ld.add_action(RVIZ)
     ld.add_action(TF_ODOM_COCHE)
     ld.add_action(SLAM_CONE_DETECTION)
     ld.add_action(SLAM_PUBLICAR_MAPA)
