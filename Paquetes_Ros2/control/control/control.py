@@ -12,7 +12,7 @@ import time
 import numpy
 import cv2 as cv
 
-from math import atan2, pi, sqrt
+from math import cos, sin
 
 import rclpy
 from rclpy.node import Node
@@ -49,19 +49,12 @@ from transforms3d.euler import quat2euler
 
 from scipy import interpolate
 from sklearn.neighbors import KDTree
-#import sklearn
-
-def unit_vector(vector):
-    return vector / numpy.linalg.norm(vector)
-
-millis = lambda: int(round(time.time() * 1000))
-
-def wrap_to_pi(angle: float) -> float:  # in rads
-    return (angle + pi) % (2 * pi) - pi
+from control.utils import *
 
 class Control(Node):
     def __init__(self):
         super().__init__('Control')
+        self.init_params()
         #Publicar
         self.publisher_comand = self.create_publisher(ControlCommand, '/control_command',10)
         self.publisher_target = self.create_publisher(Marker, '/debug/target_point',10)
@@ -91,12 +84,29 @@ class Control(Node):
         #Timer
         self.timer = self.create_timer(1.0/40, self.timer_callback)   #Ejecutar a 40Hz (como minimo)
 
-        #Vars
         self.v=0
-        self.t_ant=0
-        self.r_ant=0
-        self.v_lat=0
-        self.lookahead=3.0
+        self.derv_ang=Derivada()
+        self.derv_vel=Derivada()
+
+    def init_params(self):
+        self.declare_parameter("Kp_ang", 1.5)
+        self.declare_parameter("Kd_ang", 1)           ###Esta ganacia aplifican ruido. Poner a 0 durante pruebas de odom
+        self.declare_parameter("lookahead", 3.0)
+        self.declare_parameter("max_steering_ang", 25.0)
+
+        self.declare_parameter("Kp_vel", 0.1)
+        self.declare_parameter("Kd_vel", 0.03)           ###Esta ganacia aplifican ruido. Poner a 0 durante pruebas de odom
+        self.declare_parameter("vel_max", 8.0)
+        self.declare_parameter("vel_min", 4.0)
+
+        self.Kp_ang = self.get_parameter("Kp_ang").value
+        self.Kd_ang = self.get_parameter("Kd_ang").value
+        self.Kp_vel = self.get_parameter("Kp_ang").value
+        self.Kd_vel = self.get_parameter("Kd_ang").value
+        self.lookahead= self.get_parameter("lookahead").value
+        self.v_max=self.get_parameter("vel_max").value
+        self.v_min=self.get_parameter("vel_min").value
+        self.max_steering_ang=self.get_parameter("max_steering_ang").value
 
     def listener_callback_v(self,msg):
         self.v=msg.twist.twist.linear.x
@@ -110,11 +120,6 @@ class Control(Node):
 
     def timer_callback(self):
         comando=ControlCommand()
-
-        ###Control velocidad###
-        comando.throttle=(self.v-7)*(-0.1)  #v_traget=2m/s
-        comando.brake=0.0
-        #print(self.v)
 
         ###Control steering###
         try:        ###Generar Objeto de transformada entre Odom y el coche
@@ -145,15 +150,16 @@ class Control(Node):
         )[2]
         
         posicion_cg=[t.transform.translation.x,t.transform.translation.y,yaw]
+        posicion=self.get_pos_eje_delantero(posicion_cg)
 
-        target=self.get_target(posicion_cg)
+        target=self.get_target(posicion)
         if target==-1:
-            print("Publicando comando")
+            print("Publicando comando solo recto")
+            comando.throttle=(self.v-self.v_min)*(-0.1)  #v_traget=2m/s
             self.publisher_comand.publish(comando)
             return
         
-        comando.steering=self.comando_volate_cal(posicion_cg,target)
-        
+        #Publicar el target como marcador de rviz verde
         marker = Marker()
         marker.header.frame_id = "odom" ##El mapa esta en el sistema de referencia Odom no el coche
         marker.type = marker.CUBE
@@ -178,13 +184,18 @@ class Control(Node):
             self.publisher_comand.publish(comando)
             return 0
 
-        ###Dos controladores P en cascada
-        #setpoint=point_source.point.y*-1.8
-        #comando.steering=(self.v_lat-setpoint)*-5.0
-        
-        #print((point_source.point.y,self.v_lat-setpoint))
+        ang_volante=self.comando_volate_cal(posicion,target)
+        comando.steering=ang_volante/self.max_steering_ang
+        v_setpoiny=self.calc_velocidad(ang_volante)
 
-        print("Publicando comando")
+        ###Control velocidad###
+        v_error=-(self.v-v_setpoiny)
+        if v_error>0:
+            comp=v_error*self.Kp_vel+self.derv_vel.cal(v_error)*self.Kd_vel
+            comando.throttle=min(comp,0.5)   #Limitar la aceleracion a a la mitad de la potencia
+        else:   #La frenada se puede mejorar pero con la simulacion
+            comando.brake=min(v_error*(-0.1),0.3)  #Limitar la frenada para no bloquear
+            pass
         
         self.publisher_comand.publish(comando)
 
@@ -210,57 +221,50 @@ class Control(Node):
         for i in range(len(indexes_raw)):
             if distances_raw[i] < self.lookahead:
                 continue
-            # Distances are sorted, so once we get here just grab everything.
             indexes = indexes_raw[i:]
             distances = distances_raw[i:]
             break
 
-        rvwp_dist = float("inf")
-        rvwp_index = None
+        dist = float("inf")
+        index = None
         for i in range(len(indexes)):
             index = indexes[i]
             p = path_xy[index]
             d = distances[i]
 
-            # get angle to check if the point is in front of the car
-            ang = self.angle(close, p)
+            ang = angle(close, p)
             error = wrap_to_pi(pos[2] - ang)
-            if numpy.pi / 2 > error > -numpy.pi / 2 and d < rvwp_dist:
-                rvwp_dist = d
-                rvwp_index = index
+            if numpy.pi / 2 > error > -numpy.pi / 2 and d < dist:
+                dist = d
+                index = index
 
-        if rvwp_index is None or rvwp_index == close_index:
+        if index is None or index == close_index:
             self.get_logger().warn("No se ha encontrado un punto a la distancia deseada")
+            index = close_index
             return -1
-            """path_points_count = len(self.path) - 1
-            fallback_point = close_index + self.fallback_path_points_offset
-            if fallback_point > path_points_count:
-                rvwp_index = abs(path_points_count - fallback_point)
-            else:
-                rvwp_index = fallback_point"""
 
 
-        return (path_xy[rvwp_index][0],path_xy[rvwp_index][1])
+        return (path_xy[index][0],path_xy[index][1])
+    
+    def get_pos_eje_delantero(self, pos_cg):
 
-    def angle(self,p1, p2) -> float:
-        """
-        Retrieve angle between two points
-        * param p1: [x,y] coords of point 1
-        * param p2: [x,y] coords of point 2
-        * return: angle in rads
-        """
-        x_disp = p2[0] - p1[0]
-        y_disp = p2[1] - p1[1]
-        return atan2(y_disp, x_disp)
+        x_axle = pos_cg[0] + cos(pos_cg[2]) * 0.5
+        y_axle = pos_cg[1] + sin(pos_cg[2]) * 0.5
+
+        return [x_axle, y_axle, pos_cg[2]]
     
     def comando_volate_cal(self,pos,ref):
-        des_heading_ang = self.angle(pos[:2], [ref[0], ref[1]])
-        error = wrap_to_pi(pos[2] - des_heading_ang)
-        angulo_deseado=numpy.rad2deg(error)
-        print(angulo_deseado)
-        steering = angulo_deseado * 1.8 #+angulo_deseado**3 *0.3
-        steering=steering/25
+        ang_deseado = angle(pos[:2], [ref[0], ref[1]])
+        error = wrap_to_pi(pos[2] - ang_deseado)
+        ang_volante=numpy.rad2deg(error)
+        steering = ang_volante * self.Kp_ang + self.derv_ang.cal(ang_volante)*self.Kd_ang
+        self.t_ant=millis()
+        self.a_ant=ang_volante
         return steering
+     
+    def calc_velocidad(self, ang_volante) -> float:
+        vel = self.v_min + max((self.v_max - self.v_min) * (1 - (abs(ang_volante) / self.max_steering_ang) ** 2), 0)
+        return vel
 
 """
 Llamadas a Objetos para ROS2
