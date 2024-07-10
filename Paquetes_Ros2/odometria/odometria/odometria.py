@@ -8,7 +8,7 @@ Elaborado por Lucía Herraiz y Álvaro Pérez para el ISC
 IMPORTANTE: Este código funciona con datos recogidos solamente en el eje X, es decir, la velocidad lineal solo tiene componente X.
 
 Este nodo se va a encargar de la odometría del coche.
-Utilizamos la velocidad lineal y angular recogida por el GSS (Ground Speed Sensor) y el ángulo de rotación de las ruedas. 
+Utilizamos la velocidad lineal y angular recogida por el gss (ground speed sensor) y el ángulo de rotación de las ruedas. 
 Estimamos la velocidad y rotación de cada rueda.
 Calculamos la nueva posición en el eje xy tras un intervalo de tiempo.
 
@@ -20,6 +20,9 @@ Posibles errores en el cálculo de la posición relativa: (tener en cuenta para 
     · Desplazamiento en suelos desnivelados.
     · Desplazamiento sobre objetos inesperados que se encuentren en el suelo.
     · Patinaje de las ruedas.
+
+Asunciones:
+    · El punto de referencia cogido está en el centro de las ruedas delanteras, ya que son las ruedas directrices.
 """
 
 import rclpy
@@ -34,7 +37,8 @@ import time
 # Retocar si hiciese falta
 GIRO_MAXIMO_RUEDAS = 25  # en grados º
 RADIO_RUEDA = 0.20  # en metros
-DISTANCIA_RUEDAS = 0.80  # en metros
+DISTANCIA_RUEDAS_PARALELAS = 0.80  # en metros
+DISTANCIA_RUEDAS_LONGITUDINAL = 1.20 # en metros
 
 # Conversiones necesarias
 GIRO_MAXIMO_RUEDAS = math.radians(GIRO_MAXIMO_RUEDAS)
@@ -47,24 +51,19 @@ class PosicionNode(Node):
         # Asumimos parámetros iniciales
         self.time_anterior = time.time()
         self.time_actual = time.time()
-        self.posicion_x = 0
-        self.posicion_y = 0
+        self.posicion_x = 0 # en metros
+        self.posicion_y = 0 # en metros
+        self.theta = 0 # en radianes
+        self.delta = 0 # en radianes
+        self.delta_anterior = 0 # en radianes
+        self.v = 0 # en m/s
+        self.v_x = 0 # en m/s
+        self.v_y = 0 # en m/s
+        # Parámetros para testing (simulador)
         self.posicion_real_x = 0
         self.posicion_real_y = 0
-        self.v_x = 0
-        self.v_y = 0
-        self.v_real_x = 0
-        self.v_real_y = 0
-        self.theta = 0
-        self.velocidad_lineal = 0
-        self.velocidad_angular = 0
-        self.angulo_giro = 0
-        # v en m/s
-        self.v_rueda_izq = 0
-        self.v_rueda_der = 0
-        # ω = velocidad angular en radianes
-        self.w_rueda_der = 0
-        self.w_rueda_izq = 0
+        self.velocidad_real_x = 0
+        self.velocidad_real_y = 0
 
         # Publicación
         self.odom_pub = self.create_publisher(Odometry, 'odom', 10)
@@ -88,16 +87,15 @@ class PosicionNode(Node):
     def gss_callback(self, msg: TwistWithCovarianceStamped):
         """
         Recoge los datos del gss de la velocidad del coche del simulador.
+        Se mandan los datos actualizados al coche con la tasa de refresco del gss.
 
         Args:
             msg (TwistWithCovarianceStamped): Mensaje con la velocidad y la covarianza.
         """
-        self.velocidad_angular = msg.twist.twist.angular.z
-        self.velocidad_lineal = msg.twist.twist.linear.x
+        self.v = msg.twist.twist.linear.x
 
-        self.estimar_rotaciones_ruedas()
-        self.calcular_nueva_posicion()
-        self.publicar_odometria()
+        self.calcular_estados()
+        self.launch_debugger()
 
     def control_command_callback(self, msg: ControlCommand):
         """
@@ -106,64 +104,64 @@ class PosicionNode(Node):
         Args:
             msg (ControlCommand): Mensaje con el ángulo de las ruedas.
         """
-        self.angulo_giro = msg.steering * GIRO_MAXIMO_RUEDAS
+        self.delta = msg.steering * GIRO_MAXIMO_RUEDAS
 
     def odom_callback(self, msg: Odometry):
+        """
+        Recoge la posición y velocidad reales del simulador.
 
+        Args:
+            msg (ControlCommand): Mensaje con el ángulo de las ruedas.
+        """
         self.posicion_real_x = msg.pose.pose.position.x
         self.posicion_real_y = msg.pose.pose.position.y
-        self.v_real_x = msg.twist.twist.linear.x
-        self.v_real_y = msg.twist.twist.linear.y
+        self.velocidad_real_x = msg.twist.twist.linear.x
+        self.velocidad_real_y = msg.twist.twist.linear.y
 
-    def estimar_rotaciones_ruedas(self):
+    def calcular_modelo(self) -> list:
         """
-        Estima la rotación de cada rueda, dadas una velocidad lineal y angular del coche.
+        Calcula los diferenciales de x, y, theta, delta.
+
+        Returns:
+            list: Devuelve una lista con los datos necesarios para calcular los estados.
         """
-        self.v_rueda_izq = self.velocidad_lineal - \
-            (self.velocidad_angular * DISTANCIA_RUEDAS) / 2
-        self.v_rueda_der = self.velocidad_lineal + \
-            (self.velocidad_angular * DISTANCIA_RUEDAS) / 2
-
-        self.w_rueda_izq = self.v_rueda_izq / RADIO_RUEDA
-        self.w_rueda_der = self.v_rueda_der / RADIO_RUEDA
-
-    def calcular_nueva_posicion(self):
-        """
-        Calculamos la distancia recorrida por el coche utilizando la ω (velocidad angular).
-
-        Se guarda la nueva posición en el eje xy.
-        """
-        # Velocidad media del coche
-        v_media = (self.v_rueda_der + self.v_rueda_izq) / 2
-
-        # Calculamos Δt
+        # Calcular el delta de tiempo
         self.time_actual = time.time()
         delta_t = self.time_actual - self.time_anterior
         self.time_anterior = time.time()
 
-        # Calculamos la tasa de giro del coche
-        tasa_giro = (self.velocidad_lineal / DISTANCIA_RUEDAS) * \
-            math.tan(self.angulo_giro)
-        
-        # Cálculo de δθ
-        delta_theta = tasa_giro * delta_t
+        # Calcular la tasa de cambio del ángulo de dirección
+        ddelta = (self.delta - self.delta_anterior) / delta_t
+        self.delta_anterior = self.delta
 
-        # Variación en los ejes X e Y
-        delta_x = v_media * math.cos(self.theta + delta_theta / 2) * delta_t
-        delta_y = v_media * math.sin(self.theta + delta_theta / 2) * delta_t
-        self.v_x = v_media * math.cos(self.theta + delta_theta / 2)
-        self.v_y = v_media * math.sin(self.theta + delta_theta / 2)
+        # Calcular la tasa de cambio de las posiciones y el ángulo
+        dx = self.v * math.cos(self.theta + self.delta)
+        dy = self.v * math.sin(self.theta + self.delta)
+        dtheta = self.v * math.sin(self.delta) / DISTANCIA_RUEDAS_LONGITUDINAL
 
-        # Se guardan las nuevas posiciones y ángulo absolutos
-        self.theta += delta_theta
-        self.posicion_x += delta_x
-        self.posicion_y += delta_y
+        return [dx, dy, dtheta, ddelta, delta_t]
 
-        # Añadido para printear posiciones en testing
-        # self.get_logger().info(
-        #     f"Posición estimada: x={self.posicion_x}, y={self.posicion_y}")
-        self.get_logger().info(
-            f"Velocidad: x={self.v_real_x - self.v_x}, y={self.v_real_y - self.v_y}")
+    def calcular_estados(self):
+        """
+        Actualiza las variables de estado utilizando los cálculos del modelo.
+        """
+        [dx, dy, dtheta, ddelta, delta_t] = self.calcular_modelo()
+
+        # Actualizar las variables de estado
+        self.posicion_x += (dx * delta_t)
+        self.posicion_y += (dy * delta_t)
+        self.theta += (dtheta * delta_t)
+        self.delta += (ddelta * delta_t)
+
+        # Guardar velocidades para debuggear
+        self.v_x = dx
+        self.v_y = dy
+
+    def launch_debugger(self):
+        """
+        Ejecuta un print en terminal para comparar velocidades reales y estimadas.
+        """
+        self.get_logger().info(f"Velocidad: x={self.velocidad_real_x - self.v_x}, y={self.velocidad_real_y - self.v_y}")
 
     def publicar_odometria(self):
         """
@@ -187,8 +185,7 @@ class PosicionNode(Node):
         odom.pose.pose.orientation.w = qw
 
         # Ajustar la velocidad
-        odom.twist.twist.linear.x = self.velocidad_lineal
-        odom.twist.twist.angular.z = self.velocidad_angular
+        odom.twist.twist.linear.x = self.v
 
         # Publicar
         self.odom_pub.publish(odom)
