@@ -87,10 +87,10 @@ def generate_launch_description():
 
     ld.add_action(RVIZ)
     ld.add_action(TF_ODOM_COCHE)
-    ld.add_action(SLAM_CONE_DETECTION)
-    ld.add_action(SLAM_PUBLICAR_MAPA)
+    #ld.add_action(SLAM_CONE_DETECTION)
+    #ld.add_action(SLAM_PUBLICAR_MAPA)
     #ld.add_action(SLAM_PUBLICAR_TRACK)    #Para ver posicion real de los conos
-    ld.add_action(PATH_PLANING)
-    ld.add_action(CONTROL)
+    #ld.add_action(PATH_PLANING)
+    #ld.add_action(CONTROL)
 
     return ld
