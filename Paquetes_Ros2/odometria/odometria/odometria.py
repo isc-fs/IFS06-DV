@@ -22,7 +22,7 @@ Posibles errores en el cálculo de la posición relativa: (tener en cuenta para 
     · Patinaje de las ruedas.
 
 Asunciones:
-    · El punto de referencia cogido está en el centro de las ruedas delanteras, ya que son las ruedas directrices.
+    · El punto de referencia cogido está en el centro del coche, ya que el simulador coge todas las referencias desde ese punto.
 """
 
 import rclpy
@@ -39,6 +39,7 @@ GIRO_MAXIMO_RUEDAS = 25  # en grados º
 RADIO_RUEDA = 0.20  # en metros
 DISTANCIA_RUEDAS_PARALELAS = 0.80  # en metros
 DISTANCIA_RUEDAS_LONGITUDINAL = 1.20 # en metros
+DISTANCIA_RUEDAS_TRASERAS_CENTRO_COCHE = 0.78 # en metros
 
 # Conversiones necesarias
 GIRO_MAXIMO_RUEDAS = math.radians(GIRO_MAXIMO_RUEDAS)
@@ -55,10 +56,7 @@ class PosicionNode(Node):
         self.posicion_y = 0 # en metros
         self.theta = 0 # en radianes
         self.delta = 0 # en radianes
-        self.delta_anterior = 0 # en radianes
-        self.v = 0 # en m/s
-        self.v_x = 0 # en m/s
-        self.v_y = 0 # en m/s
+
         # Parámetros para testing (simulador)
         self.posicion_real_x = 0
         self.posicion_real_y = 0
@@ -120,38 +118,36 @@ class PosicionNode(Node):
 
     def calcular_modelo(self) -> list:
         """
-        Calcula los diferenciales de x, y, theta, delta.
+        Calcula los diferenciales de x, y, theta.
 
         Returns:
             list: Devuelve una lista con los datos necesarios para calcular los estados.
         """
-        # Calcular el delta de tiempo
-        self.time_actual = time.time()
-        delta_t = self.time_actual - self.time_anterior
-        self.time_anterior = time.time()
+        # Calcular el ángulo de movimiento del coche (beta)
+        beta = math.atan2(DISTANCIA_RUEDAS_TRASERAS_CENTRO_COCHE * math.tan(self.delta), DISTANCIA_RUEDAS_LONGITUDINAL)
 
-        # Calcular la tasa de cambio del ángulo de dirección
-        ddelta = (self.delta - self.delta_anterior) / delta_t
-        self.delta_anterior = self.delta
+        # Calcular los cambios de posición y ángulo del coche respecto de la posición inicial
+        dx = self.v * math.cos(beta + self.theta)
+        dy = self.v * math.sin(beta + self.theta)
+        dtheta = (self.v / DISTANCIA_RUEDAS_LONGITUDINAL) * math.tan(self.delta)
 
-        # Calcular la tasa de cambio de las posiciones y el ángulo
-        dx = self.v * math.cos(self.theta + self.delta)
-        dy = self.v * math.sin(self.theta + self.delta)
-        dtheta = self.v * math.sin(self.delta) / DISTANCIA_RUEDAS_LONGITUDINAL
-
-        return [dx, dy, dtheta, ddelta, delta_t]
+        return [dx, dy, dtheta]
 
     def calcular_estados(self):
         """
         Actualiza las variables de estado utilizando los cálculos del modelo.
         """
-        [dx, dy, dtheta, ddelta, delta_t] = self.calcular_modelo()
+        [dx, dy, dtheta] = self.calcular_modelo()
+        
+        # Calcular el delta de tiempo
+        self.time_actual = time.time()
+        delta_t = self.time_actual - self.time_anterior
+        self.time_anterior = self.time_actual
 
         # Actualizar las variables de estado
         self.posicion_x += (dx * delta_t)
         self.posicion_y += (dy * delta_t)
         self.theta += (dtheta * delta_t)
-        self.delta += (ddelta * delta_t)
 
         # Guardar velocidades para debuggear
         self.v_x = dx
@@ -162,6 +158,7 @@ class PosicionNode(Node):
         Ejecuta un print en terminal para comparar velocidades reales y estimadas.
         """
         self.get_logger().info(f"Velocidad: x={self.velocidad_real_x - self.v_x}, y={self.velocidad_real_y - self.v_y}")
+        # self.get_logger().info(f"Ángulo: {self.theta}")
 
     def publicar_odometria(self):
         """
@@ -177,7 +174,7 @@ class PosicionNode(Node):
         odom.pose.pose.position.y = self.posicion_y
         odom.pose.pose.position.z = 0.0
 
-        # Convertimos yaw (theta) a cuaternión
+        # Convertir yaw (theta) a cuaternión
         [qx, qy, qz, qw] = convertir_euler_a_cuaternion(0, 0, self.theta)
         odom.pose.pose.orientation.x = qx
         odom.pose.pose.orientation.y = qy
