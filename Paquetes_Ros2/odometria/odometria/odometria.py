@@ -84,6 +84,7 @@ class PosicionNode(Node):
         """
         self.velocidad_angular = msg.twist.twist.angular.z
         self.velocidad_lineal = msg.twist.twist.linear.x
+        self.estimar_rotaciones_ruedas()
 
     def control_command_callback(self, msg: ControlCommand):
         """
@@ -105,6 +106,7 @@ class PosicionNode(Node):
 
         self.w_rueda_izq = self.v_rueda_izq / RADIO_RUEDA
         self.w_rueda_der = self.v_rueda_der / RADIO_RUEDA
+        self.calcular_nueva_posicion()
 
     def calcular_nueva_posicion(self):
         """
@@ -139,6 +141,8 @@ class PosicionNode(Node):
         # Añadido para printear posiciones en testing
         self.get_logger().info(
             f"Posición estimada: x={self.posicion_x}, y={self.posicion_y}")
+        
+        self.publicar_odometria()
 
     def publicar_odometria(self):
         """
@@ -189,6 +193,7 @@ class PosicionNode(Node):
         qw = math.cos(roll / 2) * math.cos(pitch / 2) * math.cos(yaw / 2) + \
             math.sin(roll / 2) * math.sin(pitch / 2) * math.sin(yaw / 2)
         return [qx, qy, qz, qw]
+
 
 
 def calcular_posicion(args=None):
