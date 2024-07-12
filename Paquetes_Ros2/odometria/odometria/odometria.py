@@ -40,7 +40,7 @@ RADIO_RUEDA = 0.20  # en metros
 DISTANCIA_RUEDAS_PARALELAS = 0.80  # en metros
 DISTANCIA_RUEDAS_LONGITUDINAL = 1.20 # en metros
 DISTANCIA_RUEDAS_TRASERAS_CENTRO_COCHE = 0.78 # en metros
-
+DISTANCIA_RFRON_CENTRO_GRAV = 0.6 #en metros (suponiendo que está en el centro)
 # Conversiones necesarias
 GIRO_MAXIMO_RUEDAS = math.radians(GIRO_MAXIMO_RUEDAS)
 
@@ -129,7 +129,8 @@ class PosicionNode(Node):
         # Calcular los cambios de posición y ángulo del coche respecto de la posición inicial
         dx = self.v * math.cos(beta + self.theta)
         dy = self.v * math.sin(beta + self.theta)
-        dtheta = (self.v / DISTANCIA_RUEDAS_LONGITUDINAL) * math.tan(self.delta)
+        beta = math.atan(DISTANCIA_RFRON_CENTRO_GRAV * math.tan(self.delta) / DISTANCIA_RUEDAS_LONGITUDINAL)
+        dtheta = (self.v / DISTANCIA_RUEDAS_LONGITUDINAL) * math.tan(self.delta) * math.cos(beta)
 
         return [dx, dy, dtheta]
 
