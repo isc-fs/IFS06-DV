@@ -40,8 +40,6 @@ RADIO_RUEDA = 0.20  # en metros
 DISTANCIA_RUEDAS_PARALELAS = 0.80  # en metros
 DISTANCIA_RUEDAS_LONGITUDINAL = 1.20 # en metros
 DISTANCIA_RUEDAS_TRASERAS_CENTRO_COCHE = 0.78 # en metros
-# Conversiones necesarias
-GIRO_MAXIMO_RUEDAS = math.radians(GIRO_MAXIMO_RUEDAS)
 
 
 class PosicionNode(Node):
@@ -101,7 +99,9 @@ class PosicionNode(Node):
         Args:
             msg (ControlCommand): Mensaje con el ángulo de las ruedas.
         """
-        self.delta = msg.steering * GIRO_MAXIMO_RUEDAS
+        self.delta = math.radians(msg.steering * GIRO_MAXIMO_RUEDAS)
+
+        # print(msg.steering)
 
     def odom_callback(self, msg: Odometry):
         """
@@ -123,12 +123,12 @@ class PosicionNode(Node):
             list: Devuelve una lista con los datos necesarios para calcular los estados.
         """
         # Calcular el ángulo de movimiento del coche (beta)
-        beta = math.atan2(DISTANCIA_RUEDAS_TRASERAS_CENTRO_COCHE * math.tan(self.delta), DISTANCIA_RUEDAS_LONGITUDINAL)
-        beta2 = math.atan(DISTANCIA_RUEDAS_TRASERAS_CENTRO_COCHE * math.tan(self.delta) / DISTANCIA_RUEDAS_LONGITUDINAL)
+        beta = math.atan(DISTANCIA_RUEDAS_TRASERAS_CENTRO_COCHE * math.tan(self.delta) / DISTANCIA_RUEDAS_LONGITUDINAL)
+
         # Calcular los cambios de posición y ángulo del coche respecto de la posición inicial
         dx = self.v * math.cos(beta + self.theta)
         dy = self.v * math.sin(beta + self.theta)
-        dtheta = (self.v / DISTANCIA_RUEDAS_LONGITUDINAL) * math.tan(self.delta) * math.cos(beta2)
+        dtheta = (self.v / DISTANCIA_RUEDAS_TRASERAS_CENTRO_COCHE) * math.sin(beta) 
 
         return [dx, dy, dtheta]
 
@@ -156,7 +156,7 @@ class PosicionNode(Node):
         """
         Ejecuta un print en terminal para comparar velocidades reales y estimadas.
         """
-        self.get_logger().info(f"Velocidad: x={self.velocidad_real_x - self.v_x}, y={self.velocidad_real_y - self.v_y}")
+        # self.get_logger().info(f"Velocidad: x={self.velocidad_real_x - self.v_x}, y={self.velocidad_real_y - self.v_y}")
         # self.get_logger().info(f"Ángulo: {self.theta}")
 
     def publicar_odometria(self):
