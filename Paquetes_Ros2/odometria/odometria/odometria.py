@@ -124,11 +124,11 @@ class PosicionNode(Node):
         """
         # Calcular el ángulo de movimiento del coche (beta)
         beta = math.atan2(DISTANCIA_RUEDAS_TRASERAS_CENTRO_COCHE * math.tan(self.delta), DISTANCIA_RUEDAS_LONGITUDINAL)
-
+        beta2 = math.atan(DISTANCIA_RUEDAS_TRASERAS_CENTRO_COCHE * math.tan(self.delta) / DISTANCIA_RUEDAS_LONGITUDINAL)
         # Calcular los cambios de posición y ángulo del coche respecto de la posición inicial
         dx = self.v * math.cos(beta + self.theta)
         dy = self.v * math.sin(beta + self.theta)
-        dtheta = (self.v / DISTANCIA_RUEDAS_LONGITUDINAL) * math.tan(self.delta) * math.cos(beta)
+        dtheta = (self.v / DISTANCIA_RUEDAS_LONGITUDINAL) * math.tan(self.delta) * math.cos(beta2)
 
         return [dx, dy, dtheta]
 
