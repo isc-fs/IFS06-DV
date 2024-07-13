@@ -96,7 +96,7 @@ def generate_launch_description():
         name='ekf_filter_node',
         output='screen',
         parameters=[robot_localization_file_path, 
-        {'use_sim_time': use_sim_time}]
+        {'use_sim_time': use_sim_time}]            #parametros declarados en el inicio 
     )
 
     ld.add_action(RVIZ)
