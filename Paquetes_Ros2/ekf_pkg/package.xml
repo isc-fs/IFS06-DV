@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>ekf_node</name>
+  <name>ekf_pkg</name>
   <version>3.0.0</version>
   <description>Extended Kalman Filter del paquete robot_localization</description>
   <maintainer email="lucia.herraizcano@gmail.com">lucia</maintainer>
