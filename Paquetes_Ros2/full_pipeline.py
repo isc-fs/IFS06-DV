@@ -29,8 +29,9 @@ def generate_launch_description():
     log='info'  #Cambiar a debug para ver frecuencias de publicacion
     ld=LaunchDescription()
 
-    pkg_share = FindPackageShare(package='basic_mobile_robot').find('basic_mobile_robot')
-    robot_localization_file_path = os.path.join(pkg_share, 'config/ekf.yaml') 
+    #pkg_share = FindPackageShare(package='efk_node').find('efk_node')
+    #robot_localization_file_path = os.path.join(pkg_share, 'config/ekf.yaml') 
+    robot_localization_file_path = os.path.join(Path().absolute(), 'ekf.yaml')
     use_sim_time = LaunchConfiguration('use_sim_time')
 
     # Declara el'use_sim_time' launch argument del efk node
@@ -39,6 +40,15 @@ def generate_launch_description():
         default_value='false',
         description='Use simulation (Gazebo) clock if true'
     ))
+
+    EKF_NODE = Node(
+        package='robot_localization',
+        executable='ekf_node',
+        name='ekf_filter_node',
+        output='screen',
+        parameters=[robot_localization_file_path,
+        {'use_sim_time': use_sim_time}]           #parametros declarados en el inicio 
+    ) 
 
     RVIZ = Node(
         package='rviz2',
@@ -95,15 +105,6 @@ def generate_launch_description():
         name='control',
         prefix=["bash -c 'sleep 20; $0 $@' "],    ###Esperar 20seg a que numba compile
         arguments=['--ros-args', '--log-level', log]
-    )
-
-    EKF_NODE = Node(
-        package='robot_localization',
-        executable='ekf_node',
-        name='ekf_filter_node',
-        output='screen',
-        parameters=[robot_localization_file_path, 
-        {'use_sim_time': use_sim_time}]            #parametros declarados en el inicio 
     )
 
     ld.add_action(RVIZ)
