@@ -33,6 +33,13 @@ def generate_launch_description():
     robot_localization_file_path = os.path.join(pkg_share, 'config/ekf.yaml') 
     use_sim_time = LaunchConfiguration('use_sim_time')
 
+    # Declara el'use_sim_time' launch argument del efk node
+    ld.add_action(DeclareLaunchArgument(
+        'use_sim_time',
+        default_value='false',
+        description='Use simulation (Gazebo) clock if true'
+    ))
+
     RVIZ = Node(
         package='rviz2',
         namespace='',
