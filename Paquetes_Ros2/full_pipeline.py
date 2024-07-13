@@ -23,10 +23,15 @@ from launch.substitutions import (AndSubstitution, LaunchConfiguration,NotSubsti
 from launch.actions import (DeclareLaunchArgument, EmitEvent, LogInfo,RegisterEventHandler)
 from launch_ros.actions import Node
 from launch import actions
+from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
     log='info'  #Cambiar a debug para ver frecuencias de publicacion
     ld=LaunchDescription()
+
+    pkg_share = FindPackageShare(package='basic_mobile_robot').find('basic_mobile_robot')
+    robot_localization_file_path = os.path.join(pkg_share, 'config/ekf.yaml') 
+    use_sim_time = LaunchConfiguration('use_sim_time')
 
     RVIZ = Node(
         package='rviz2',
@@ -85,6 +90,15 @@ def generate_launch_description():
         arguments=['--ros-args', '--log-level', log]
     )
 
+    EKF_NODE = Node(
+        package='robot_localization',
+        executable='ekf_node',
+        name='ekf_filter_node',
+        output='screen',
+        parameters=[robot_localization_file_path, 
+        {'use_sim_time': use_sim_time}]
+    )
+
     ld.add_action(RVIZ)
     ld.add_action(TF_ODOM_COCHE)
     ld.add_action(SLAM_CONE_DETECTION)
@@ -92,5 +106,6 @@ def generate_launch_description():
     #ld.add_action(SLAM_PUBLICAR_TRACK)    #Para ver posicion real de los conos
     ld.add_action(PATH_PLANING)
     ld.add_action(CONTROL)
+    ld.add_action(EKF_NODE)
 
     return ld
