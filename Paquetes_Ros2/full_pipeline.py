@@ -29,9 +29,9 @@ def generate_launch_description():
     log='info'  #Cambiar a debug para ver frecuencias de publicacion
     ld=LaunchDescription()
 
-    #pkg_share = FindPackageShare(package='efk_node').find('efk_node')
-    #robot_localization_file_path = os.path.join(pkg_share, 'config/ekf.yaml') 
-    robot_localization_file_path = os.path.join(Path().absolute(), 'ekf.yaml')
+    pkg_share = FindPackageShare(package='efk_node').find('efk_node')
+    robot_localization_file_path = os.path.join(pkg_share, 'config/ekf.yaml') 
+    #robot_localization_file_path = os.path.join(Path().absolute(), 'ekf.yaml')
     use_sim_time = LaunchConfiguration('use_sim_time')
 
     # Declara el'use_sim_time' launch argument del efk node
