@@ -23,10 +23,24 @@ from launch.substitutions import (AndSubstitution, LaunchConfiguration,NotSubsti
 from launch.actions import (DeclareLaunchArgument, EmitEvent, LogInfo,RegisterEventHandler)
 from launch_ros.actions import Node
 from launch import actions
+from launch_ros.substitutions import FindPackageShare
+
 
 def generate_launch_description():
     log='info'  #Cambiar a debug para ver frecuencias de publicacion
     ld=LaunchDescription()
+
+    pkg_share = FindPackageShare(package='ekf_package').find('ekf_package')
+    robot_localization_file_path = os.path.join(pkg_share, 'config/ekf.yaml') 
+
+    EKF_NODE = Node(
+        package='robot_localization',
+        executable='ekf_node',
+        name='ekf_filter_node',
+        output='screen',
+        arguments=['--ros-args', '--log-level', log],
+        parameters=[robot_localization_file_path]   #parametros declarados en el inicio 
+    ) 
 
     RVIZ = Node(
         package='rviz2',
@@ -92,5 +106,6 @@ def generate_launch_description():
     #ld.add_action(SLAM_PUBLICAR_TRACK)    #Para ver posicion real de los conos
     ld.add_action(PATH_PLANING)
     ld.add_action(CONTROL)
+    ld.add_action(EKF_NODE)
 
     return ld
