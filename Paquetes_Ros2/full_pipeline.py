@@ -25,20 +25,20 @@ from launch_ros.actions import Node
 from launch import actions
 from launch_ros.substitutions import FindPackageShare
 
+
 def generate_launch_description():
     log='info'  #Cambiar a debug para ver frecuencias de publicacion
     ld=LaunchDescription()
 
-    #pkg_share = FindPackageShare(package='efk_node').find('efk_node')
-    #robot_localization_file_path = os.path.join(pkg_share, 'config/ekf.yaml') 
-    robot_localization_file_path = os.path.join(Path().absolute(), '/ekf_pkg/config/ekf.yaml')
+    pkg_share = FindPackageShare(package='ekf_package').find('ekf_package')
+    robot_localization_file_path = os.path.join(pkg_share, 'config/ekf.yaml') 
     use_sim_time = LaunchConfiguration('use_sim_time')
 
     # Declara el'use_sim_time' launch argument del efk node
     ld.add_action(DeclareLaunchArgument(
         'use_sim_time',
         default_value='false',
-        description='Use simulation (Gazebo) clock if true'
+        description='Use simulation clock if true'
     ))
 
     EKF_NODE = Node(
@@ -47,7 +47,7 @@ def generate_launch_description():
         name='ekf_filter_node',
         output='screen',
         parameters=[robot_localization_file_path,
-        {'use_sim_time': use_sim_time}]           #parametros declarados en el inicio 
+        {'use_sim_time': use_sim_time}  ]         #parametros declarados en el inicio 
     ) 
 
     RVIZ = Node(
