@@ -32,22 +32,15 @@ def generate_launch_description():
 
     pkg_share = FindPackageShare(package='ekf_package').find('ekf_package')
     robot_localization_file_path = os.path.join(pkg_share, 'config/ekf.yaml') 
-    use_sim_time = LaunchConfiguration('use_sim_time')
-
-    # Declara el'use_sim_time' launch argument del efk node
-    ld.add_action(DeclareLaunchArgument(
-        'use_sim_time',
-        default_value='false',
-        description='Use simulation clock if true'
-    ))
 
     EKF_NODE = Node(
         package='robot_localization',
         executable='ekf_node',
         name='ekf_filter_node',
         output='screen',
-        parameters=[robot_localization_file_path,
-        {'use_sim_time': use_sim_time}  ]         #parametros declarados en el inicio 
+        arguments=['--ros-args', '--log-level', log],
+        parameters=[robot_localization_file_path]
+        #{'use_sim_time': use_sim_time}    ]       #parametros declarados en el inicio 
     ) 
 
     RVIZ = Node(
