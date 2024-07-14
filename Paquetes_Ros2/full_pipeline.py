@@ -39,8 +39,7 @@ def generate_launch_description():
         name='ekf_filter_node',
         output='screen',
         arguments=['--ros-args', '--log-level', log],
-        parameters=[robot_localization_file_path]
-        #{'use_sim_time': use_sim_time}    ]       #parametros declarados en el inicio 
+        parameters=[robot_localization_file_path]   #parametros declarados en el inicio 
     ) 
 
     RVIZ = Node(
