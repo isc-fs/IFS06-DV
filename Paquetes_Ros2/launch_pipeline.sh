@@ -31,3 +31,9 @@ ros2 run path_planning Reset
 
 source install/setup.sh
 ros2 run control Control
+
+##compilar solo un paquete
+colcon build --packages-select coche_urdf
+ros2 launch coche_urdf coche_urdf.launch.py
+
+##

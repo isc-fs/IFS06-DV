@@ -24,6 +24,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'Publicar_comado = coche_urdf.coche_urdf:publicar_joint_state',
         ],
     },
 )

@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<robot name="qev-3d" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!--  Get the parameters  -->
+  <xacro:property name="base_frame" default="fsds/FSCar"/>
+  <xacro:property name="display_car" default="true"/>
+  <xacro:property name="chassis_link" default="chassis_viz"/>
+
+  <xacro:property name="degrees_90" value="1.5708"/>
+  <xacro:property name="M_PI" value="3.1415926535897931" />
+
+  <xacro:property name="steering_limit" default="0.436"/>
+  <xacro:property name="wheel_diameter" value="0.4064"/>
+  <xacro:property name="elevacion_coche" value="0.20"/>
+  <xacro:property name="wheel_width" value="0.2"/>
+  <xacro:property name="chassis_width" value="1.45"/>
+  <xacro:property name="wheelbase" value="1.57"/>
+  <xacro:property name="wheelbase_ofset" value="0.038"/>
+
+  <link name="${base_frame}"/>
+
+  <joint name="${chassis_link}_joint" type="fixed">
+    <parent link="${base_frame}"/>
+    <child link="${chassis_link}"/>
+    <!-- Wheel height off ground -->
+    <origin xyz="0 0 0"
+            rpy="0 0 0"/>
+    <axis xyz="1 0 0"/>
+  </joint>
+    
+  <link name="${chassis_link}">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="file://$(find coche_urdf)/meshes/body_x.dae"/>
+      </geometry>
+    </visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </link>
+
+  <xacro:macro name="wheel" params="lr_prefix fr_prefix">
+    <link name="${lr_prefix}_${fr_prefix}_wheel">
+      <visual>
+        <origin xyz="0 0 0" rpy="${degrees_90} 0 0"/>
+        <geometry>
+          <mesh filename="file://$(find coche_urdf)/meshes/fr_x.dae"/>
+        </geometry>
+      </visual>
+    </link>
+  </xacro:macro>
+
+  <xacro:macro name="joint_rear" params="lr_prefix lr_mulit r fr_prefix">
+    <joint name="${lr_prefix}_${fr_prefix}_wheel_joint" type="fixed">
+      <axis xyz="0 1 0"/>
+      <limit lower="0" upper="10" effort="10000000" velocity="1000000"/>
+      <origin xyz="${(-1 * wheelbase / 2)+wheelbase_ofset}
+                  ${lr_mulit * ((chassis_width - wheel_width) / 2)}
+                  ${elevacion_coche}"
+              rpy="${r} 0 0"/>
+      <parent link="${chassis_link}"/>
+      <child link="${lr_prefix}_${fr_prefix}_wheel"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:wheel lr_prefix="left" fr_prefix="rear"/>
+  <xacro:joint_rear lr_prefix="left" lr_mulit="1" r="${2*degrees_90}" fr_prefix="rear"/>
+
+  <xacro:wheel lr_prefix="right" fr_prefix="rear"/>
+  <xacro:joint_rear lr_prefix="right" lr_mulit="-1" r="0" fr_prefix="rear"/>
+
+  <xacro:macro name="front_wheel" params="lr_prefix r lr_reflect">
+    <link name="${lr_prefix}_steering_hinge"/>
+
+    <joint name="front_${lr_prefix}_wheel_joint" type="fixed">
+      <origin xyz="${(wheelbase / 2)+wheelbase_ofset}
+                   ${lr_reflect * ((chassis_width - wheel_width) / 2)}
+                   ${elevacion_coche}"
+              rpy="${r} 0 0"/>
+      <parent link="${chassis_link}"/>
+      <child link="${lr_prefix}_steering_hinge"/>
+      <axis xyz="0 1 0"/>
+      <limit lower="0" upper="0" effort="100" velocity="500"/>
+    </joint>
+
+    <joint name="${lr_prefix}_steering_hinge_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <parent link="${lr_prefix}_steering_hinge"/>
+      <child link="${lr_prefix}_front_wheel"/>
+      <axis xyz="0 0 1"/>
+      <limit lower="${-1*steering_limit}" upper="${steering_limit}" effort="10" velocity="10"/>
+    </joint>
+  </xacro:macro>
+  
+  <xacro:wheel lr_prefix="left" fr_prefix="front"/>
+  <xacro:front_wheel lr_prefix="left" lr_reflect="1" r="${2*degrees_90}"/>
+
+  <xacro:wheel lr_prefix="right" fr_prefix="front"/>
+  <xacro:front_wheel lr_prefix="right" lr_reflect="-1" r="0"/>
+</robot>

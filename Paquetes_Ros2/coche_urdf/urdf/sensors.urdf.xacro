@@ -11,12 +11,12 @@
     <link name="${name}_base_link">
       <visual>
         <geometry>
-          <mesh filename="file://$(find vehicle_urdf)/meshes/VLP16_base_1.dae" />
+          <mesh filename="file://$(find coche_urdf)/meshes/VLP16_base_1.dae" />
         </geometry>
       </visual>
       <visual>
         <geometry>
-          <mesh filename="file://$(find vehicle_urdf)/meshes/VLP16_base_2.dae" />
+          <mesh filename="file://$(find coche_urdf)/meshes/VLP16_base_2.dae" />
         </geometry>
       </visual>
     </link>
@@ -32,7 +32,7 @@
       <visual>
         <origin xyz="0 0 -0.0377" />
         <geometry>
-          <mesh filename="file://$(find vehicle_urdf)/meshes/VLP16_scan.dae" />
+          <mesh filename="file://$(find coche_urdf)/meshes/VLP16_scan.dae" />
         </geometry>
       </visual>
     </link>

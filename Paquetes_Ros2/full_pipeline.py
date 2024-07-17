@@ -20,9 +20,10 @@ from launch import LaunchDescription
 from ament_index_python.packages import get_package_share_directory
 from launch_ros.actions import LifecycleNode
 from launch.substitutions import (AndSubstitution, LaunchConfiguration,NotSubstitution)
-from launch.actions import (DeclareLaunchArgument, EmitEvent, LogInfo,RegisterEventHandler)
-from launch_ros.actions import Node
+from launch.actions import (DeclareLaunchArgument, EmitEvent, LogInfo,RegisterEventHandler, IncludeLaunchDescription)
 from launch import actions
+from launch_ros.actions import Node
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 def generate_launch_description():
     log='info'  #Cambiar a debug para ver frecuencias de publicacion
@@ -85,6 +86,12 @@ def generate_launch_description():
         arguments=['--ros-args', '--log-level', log]
     )
 
+    L_URDF=IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('coche_urdf'),"coche_urdf.launch.py")
+        )
+    )
+
     ld.add_action(RVIZ)
     ld.add_action(TF_ODOM_COCHE)
     ld.add_action(SLAM_CONE_DETECTION)
@@ -92,5 +99,6 @@ def generate_launch_description():
     #ld.add_action(SLAM_PUBLICAR_TRACK)    #Para ver posicion real de los conos
     ld.add_action(PATH_PLANING)
     ld.add_action(CONTROL)
+    ld.add_action(L_URDF)
 
     return ld

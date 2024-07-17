@@ -91,12 +91,12 @@ class Control(Node):
     def init_params(self):
         self.declare_parameter("Kp_ang", 1.5)
         self.declare_parameter("Kd_ang", 1)           ###Esta ganacia aplifican ruido. Poner a 0 durante pruebas de odom
-        self.declare_parameter("lookahead", 3.0)
+        self.declare_parameter("lookahead", 2.0)
         self.declare_parameter("max_steering_ang", 25.0)
 
         self.declare_parameter("Kp_vel", 0.1)
         self.declare_parameter("Kd_vel", 0.03)           ###Esta ganacia aplifican ruido. Poner a 0 durante pruebas de odom
-        self.declare_parameter("vel_max", 8.0)
+        self.declare_parameter("vel_max", 6.0)
         self.declare_parameter("vel_min", 4.0)
 
         self.Kp_ang = self.get_parameter("Kp_ang").value
