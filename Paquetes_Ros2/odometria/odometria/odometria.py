@@ -3,7 +3,7 @@
 odometria.py (v1.0)
 ========================
 
-Elaborado por Lucía Herraiz y Álvaro Pérez para el ISC
+Elaborado por Álvaro Pérez y Lucía Herraiz para el ISC
 
 IMPORTANTE: Este código funciona con datos recogidos solamente en el eje X, es decir, la velocidad lineal solo tiene componente X.
 
@@ -31,7 +31,6 @@ import math
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import TwistWithCovarianceStamped
 from fs_msgs.msg import ControlCommand
-from std_msgs.msg import Int64
 import time
 
 # Retocar si hiciese falta
@@ -91,6 +90,7 @@ class PosicionNode(Node):
 
         self.calcular_estados()
         self.launch_debugger()
+        self.calcular_posicion()
 
     def control_command_callback(self, msg: ControlCommand):
         """
@@ -100,8 +100,6 @@ class PosicionNode(Node):
             msg (ControlCommand): Mensaje con el ángulo de las ruedas.
         """
         self.delta = math.radians(msg.steering * GIRO_MAXIMO_RUEDAS)
-
-        # print(msg.steering)
 
     def odom_callback(self, msg: Odometry):
         """
@@ -156,7 +154,7 @@ class PosicionNode(Node):
         """
         Ejecuta un print en terminal para comparar velocidades reales y estimadas.
         """
-        # self.get_logger().info(f"Velocidad: x={self.velocidad_real_x - self.v_x}, y={self.velocidad_real_y - self.v_y}")
+        self.get_logger().info(f"Velocidad: x={self.velocidad_real_x - self.v_x}, y={self.velocidad_real_y - self.v_y}")
         # self.get_logger().info(f"Ángulo: {self.theta}")
 
     def publicar_odometria(self):
@@ -209,8 +207,10 @@ def convertir_euler_a_cuaternion(roll, pitch, yaw):
     return [qx, qy, qz, qw]
 
 def calcular_posicion(args=None):
+    print("Hola")
     rclpy.init(args=args)
     pos_node = PosicionNode()
+    print("Hola")
 
     rclpy.spin(pos_node)
     rclpy.shutdown()
