@@ -58,6 +58,7 @@ class Control(Node):
         #Publicar
         self.publisher_comand = self.create_publisher(ControlCommand, '/control_command',10)
         self.publisher_target = self.create_publisher(Marker, '/debug/target_point',10)
+        self.publisher_close = self.create_publisher(Marker, '/debug/close_point',10)
         #Subscricion
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self) 
@@ -89,14 +90,14 @@ class Control(Node):
         self.derv_vel=Derivada()
 
     def init_params(self):
-        self.declare_parameter("Kp_ang", 1.5)
+        self.declare_parameter("Kp_ang", 1.8)
         self.declare_parameter("Kd_ang", 1)           ###Esta ganacia aplifican ruido. Poner a 0 durante pruebas de odom
-        self.declare_parameter("lookahead", 2.0)
+        self.declare_parameter("lookahead", 3.0)
         self.declare_parameter("max_steering_ang", 25.0)
 
         self.declare_parameter("Kp_vel", 0.1)
         self.declare_parameter("Kd_vel", 0.03)           ###Esta ganacia aplifican ruido. Poner a 0 durante pruebas de odom
-        self.declare_parameter("vel_max", 6.0)
+        self.declare_parameter("vel_max", 10.0)
         self.declare_parameter("vel_min", 4.0)
 
         self.Kp_ang = self.get_parameter("Kp_ang").value
@@ -152,12 +153,15 @@ class Control(Node):
         posicion_cg=[t.transform.translation.x,t.transform.translation.y,yaw]
         posicion=self.get_pos_eje_delantero(posicion_cg)
 
-        target=self.get_target(posicion)
-        if target==-1:
+        a=self.get_target(posicion,t)
+        if a==-1:
             print("Publicando comando solo recto")
             comando.throttle=(self.v-self.v_min)*(-0.1)  #v_traget=2m/s
             self.publisher_comand.publish(comando)
             return
+        
+        target=(a[0],a[1])
+        close=(a[2],a[3])
         
         #Publicar el target como marcador de rviz verde
         marker = Marker()
@@ -178,6 +182,26 @@ class Control(Node):
         marker.id=0
 
         self.publisher_target.publish(marker)
+
+        #Publicar el close como marcador de rviz verde
+        marker = Marker()
+        marker.header.frame_id = "odom" ##El mapa esta en el sistema de referencia Odom no el coche
+        marker.type = marker.CUBE
+        marker.action = marker.ADD
+        marker.scale.x = 0.5
+        marker.scale.y = 0.5
+        marker.scale.z = 0.5
+        marker.color.a = 1.0
+        marker.color.r = 1.0
+        marker.color.g = 1.0
+        marker.color.b = 0.0
+        marker.pose.orientation.w = 1.0
+        marker.pose.position.x = close[0]
+        marker.pose.position.y = close[1]
+        marker.pose.position.z = 0.0
+        marker.id=0
+
+        self.publisher_close.publish(marker)
         
         if len(self.path.poses)<1:
             comando.steering=0.0
@@ -199,7 +223,7 @@ class Control(Node):
         
         self.publisher_comand.publish(comando)
 
-    def get_target(self,pos):
+    def get_target(self,pos,t_inv):
 
         path_xy = [[p.pose.position.x, p.pose.position.y] for p in self.path.poses]
 
@@ -211,6 +235,7 @@ class Control(Node):
         close = path_xy[close_index] if close_index is not None else pos
         if close_index is None:
             self.get_logger().warn("No se puedo encontrar el punto mas cercano al coche")
+            return -1
 
         indexes_raw, distances_raw = kdtree.query_radius(
             [close], r=self.lookahead * 2, return_distance=True, sort_results=True
@@ -228,15 +253,16 @@ class Control(Node):
         dist = float("inf")
         index = None
         for i in range(len(indexes)):
-            index = indexes[i]
-            p = path_xy[index]
+            ind = indexes[i]
+            
+            p = path_xy[ind]
             d = distances[i]
 
             ang = angle(close, p)
             error = wrap_to_pi(pos[2] - ang)
             if numpy.pi / 2 > error > -numpy.pi / 2 and d < dist:
                 dist = d
-                index = index
+                index = ind
 
         if index is None or index == close_index:
             self.get_logger().warn("No se ha encontrado un punto a la distancia deseada")
@@ -244,7 +270,7 @@ class Control(Node):
             return -1
 
 
-        return (path_xy[index][0],path_xy[index][1])
+        return (path_xy[index][0],path_xy[index][1],path_xy[close_index][0],path_xy[close_index][1])
     
     def get_pos_eje_delantero(self, pos_cg):
 

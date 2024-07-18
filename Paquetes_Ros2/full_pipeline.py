@@ -92,13 +92,26 @@ def generate_launch_description():
         )
     )
 
+    BENCHMARK_SLAM = Node(
+        package='slam',
+        namespace='',
+        executable='BenchMark_Slam',
+        name='BenchMark_Slam',
+        prefix=["bash -c 'sleep 5; $0 $@' "],    ###Esperar 20seg a que numba compile
+        arguments=['--ros-args', '--log-level', log]
+    )
+
+    ld.add_action(SLAM_PUBLICAR_TRACK)    #Para ver posicion real de los conos
+    
     ld.add_action(RVIZ)
     ld.add_action(TF_ODOM_COCHE)
     ld.add_action(SLAM_CONE_DETECTION)
+    ld.add_action(BENCHMARK_SLAM)
     ld.add_action(SLAM_PUBLICAR_MAPA)
-    #ld.add_action(SLAM_PUBLICAR_TRACK)    #Para ver posicion real de los conos
+    
     ld.add_action(PATH_PLANING)
     ld.add_action(CONTROL)
     ld.add_action(L_URDF)
+    
 
     return ld
