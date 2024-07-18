@@ -19,11 +19,12 @@ from pathlib import Path
 from launch import LaunchDescription
 from ament_index_python.packages import get_package_share_directory
 from launch_ros.actions import LifecycleNode
-from launch.substitutions import (AndSubstitution, LaunchConfiguration,NotSubstitution,FindPackageShare)
+from launch.substitutions import (AndSubstitution, LaunchConfiguration,NotSubstitution)
 from launch.actions import (DeclareLaunchArgument, EmitEvent, LogInfo,RegisterEventHandler, IncludeLaunchDescription)
 from launch import actions
 from launch_ros.actions import Node
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
