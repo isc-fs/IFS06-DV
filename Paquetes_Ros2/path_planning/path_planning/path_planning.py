@@ -114,7 +114,7 @@ class Plan_Path(Node):
     
             try:  ##Intentar interpolar con splines
                 tck,a = interpolate.splprep([puntos_x,puntos_y],s=0.0,k=2)  #s=0 para forzar a que la curva pase por los puntos
-                xnew,ynew= interpolate.splev(numpy.linspace(0,1,50),tck)
+                xnew,ynew= interpolate.splev(numpy.linspace(0,1,100),tck)
             except:
                 print("error")
                 return

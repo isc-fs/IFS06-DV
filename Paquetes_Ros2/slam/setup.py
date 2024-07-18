@@ -24,7 +24,7 @@ setup(
     entry_points={
         'console_scripts': [
             'Cone_Detection = slam.cone_detection_node:cone_detection',
-            'Cone_Laser = slam.slam:cone_laser',
+            'BenchMark_Slam = slam.slam:BenchMark_Slam',
             'Publicar_Mapa = slam.slam:publicar_mapa',
             'Publicar_Track = slam.slam:publicar_track'
         ],

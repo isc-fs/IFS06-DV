@@ -223,68 +223,6 @@ class Publicar_Mapa(Node):
 
         self.publisher_Path_amarillo.publish(track)
 
-
-class Publicar_Laser(Node):
-    """Experimental
-    """
-    def __init__(self):
-        super().__init__('Publicar_Laser')
-
-        self.publisher_Laser = self.create_publisher(LaserScan, 'Laser_Conos',10)
-
-        self.subscription = self.create_subscription(
-            PointCloud2,
-            '/lidar/Lidar1',
-            self.listener_callback,10)
-
-    def listener_callback(self, msg):
-        points = numpy.array(np.frombuffer(msg.data, dtype=numpy.float32), dtype=numpy.dtype('f4'))
-        point_cloud = numpy.reshape(points, (int(points.shape[0]/3), 3))
-
-        conos=[]
-        try:
-            conos = final_cone_result_rt(point_cloud)
-        except:
-            pass
-            
-        self.get_logger().error(str(len(conos)))
-        laser = LaserScan()
-
-        laser.header.stamp=msg.header.stamp
-        t_ofset=30000000
-        if laser.header.stamp.nanosec-t_ofset<0:
-            laser.header.stamp.sec=laser.header.stamp.sec-1
-            laser.header.stamp.nanosec=laser.header.stamp.nanosec-t_ofset+1000000000
-        else:
-            laser.header.stamp.nanosec=laser.header.stamp.nanosec-t_ofset
-
-        laser.header.frame_id='fsds/FSCar'
-
-        laser.angle_min=-math.pi
-        laser.angle_max=math.pi
-        laser.angle_increment=(math.pi*2)/360.0
-
-        laser.range_min=0.0
-        laser.range_max=float('inf')
-
-        laser.scan_time=0.03333333507180214
-
-        #self.get_logger().error(str(len(laser.ranges)))
-
-        for i in range(361):
-            laser.ranges.append(float('inf'))
-        
-        for (a,b) in conos:
-            (a,b)=rect2polars(a,b)
-            i=round(math.degrees(b))
-            print(i)
-            i+=180
-            if(i<360 and i>0):
-                laser.ranges[i]=a
-        
-        self.publisher_Laser.publish(laser)
-
-
 class Publicar_Track(Node):
     def __init__(self):
         super().__init__('Publicar_Laser')
@@ -298,12 +236,7 @@ class Publicar_Track(Node):
 
     def listener_callback(self, msg):
         Cone_list = MarkerArray()
-
         i=0
-
-        #c=[(cone.location.x,cone.location.y) for cone in msg.track]
-        #np.savetxt('track.txt',numpy.asarray(c), delimiter=',')
-
         for cone in msg.track:
 
             marker = Marker()
@@ -333,6 +266,37 @@ class Publicar_Track(Node):
         self.publisher_MarkerArray.publish(Cone_list)
         print(len(Cone_list.markers))
 
+class BenchMark(Node):
+    def __init__(self):
+        super().__init__('BenchMark_Slam')
+
+        self.subscription = self.create_subscription(
+            MarkerArray,
+            'Conos',
+            self.listener_callback,10)
+        self.len_conos=0
+        
+        self.subscription = self.create_subscription(
+            MarkerArray,
+            'Track',
+            self.listener_callback_track,10)
+        self.len_conos=0
+
+    def listener_callback_track(self, msg):
+        #Cone_list = MarkerArray()
+        self.len_conos=len(msg.markers)
+        
+        """for cone in msg.track:
+            cone.location.x
+            cone.location.y"""
+
+    def listener_callback(self, msg):
+        #self.get_logger().info('n_detectados')
+        #self.get_logger().info(str(len(msg.markers)))
+        #self.get_logger().info('n_real')
+        #self.get_logger().info(str(self.len_conos))
+        pass
+
 """
 Llamadas a Objetos para ROS2
 """
@@ -343,11 +307,11 @@ def publicar_mapa(args=None):
     mapa = Publicar_Mapa()
     rclpy.spin(mapa)
 
-def cone_laser(args=None):
+def BenchMark_Slam(args=None):
     rclpy.init(args=args)
 
-    nodo_laser = Publicar_Laser()
-    rclpy.spin(nodo_laser)
+    BenchMark_slam = BenchMark()
+    rclpy.spin(BenchMark_slam)
 
 def publicar_track(args=None):
     rclpy.init(args=args)

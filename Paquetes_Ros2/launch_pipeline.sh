@@ -31,3 +31,13 @@ ros2 run path_planning Reset
 
 source install/setup.sh
 ros2 run control Control
+
+##compilar solo un paquete
+colcon build --packages-select coche_urdf
+ros2 launch coche_urdf coche_urdf.launch.py
+
+##full pipeline
+ros2 launch full_pipeline.py
+
+##foxglob bridge
+ros2 launch foxglove_bridge foxglove_bridge_launch.xml

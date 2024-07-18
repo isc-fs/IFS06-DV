@@ -1,0 +1,88 @@
+
+
+   
+
+    <xacro:macro name="front_wheel_l" params="lr_prefix lr_reflect">
+      <link name="${lr_prefix}_steering_hinge"/>
+
+      <joint name="${lr_prefix}_steering_hinge_joint" type="fixed">
+        <origin xyz="0 0 0"
+                rpy="0 0 0"/>
+        <parent link="${chassis_link}"/>
+        <child link="${lr_prefix}_steering_hinge"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="${-1*steering_limit}" upper="${steering_limit}" effort="10000000" velocity="1000000"/>
+      </joint>
+
+      <joint name="front_${lr_prefix}_wheel_joint" type="fixed">
+        <origin xyz="${wheelbase / 2}
+                     ${lr_reflect * ((chassis_width - wheel_width) / 2)}
+                     ${elevacion_coche}"
+                rpy="${2*degrees_90} 0 0"/>
+        <parent link="${lr_prefix}_steering_hinge"/>
+        <child link="${lr_prefix}_front_wheel"/>
+        <axis xyz="0 1 0"/>
+        <limit lower="0" upper="0" effort="10000000" velocity="1000000"/>
+      </joint>
+
+      <xacro:wheel lr_prefix="${lr_prefix}" fr_prefix="front"/>
+    </xacro:macro>
+
+    <!-- Description of how a rear wheel is connected to the ch-->
+    <xacro:macro name="rear_wheel" params="lr_prefix lr_reflect">
+      <joint name="rear_${lr_prefix}_wheel_joint" type="fixed">
+        <origin xyz="${-1 * wheelbase / 2}
+                     ${lr_reflect * ((chassis_width - wheel_width) / 2)}
+                     ${elevacion_coche}"
+                rpy="0 0 0"/>
+        <parent link="${chassis_link}"/>
+        <child link="${lr_prefix}_rear_wheel"/>
+        <axis xyz="0 1 0"/>
+        <limit lower="0" upper="0" effort="10000000" velocity="1000000"/>
+      </joint>
+
+      <xacro:wheel lr_prefix="${lr_prefix}" fr_prefix="rear"/>
+    </xacro:macro>
+
+    <xacro:macro name="rear_wheel_l" params="lr_prefix lr_reflect">
+      <joint name="rear_${lr_prefix}_wheel_joint" type="fixed">
+        <origin xyz="${-1 * wheelbase / 2}
+                     ${lr_reflect * ((chassis_width - wheel_width) / 2)}
+                     ${elevacion_coche}"
+                rpy="${2*degrees_90} 0 0"/>
+        <parent link="${chassis_link}"/>
+        <child link="${lr_prefix}_rear_wheel"/>
+        <axis xyz="0 1 0"/>
+        <limit lower="0" upper="0" effort="10000000" velocity="1000000"/>
+      </joint>
+
+      <xacro:wheel lr_prefix="${lr_prefix}" fr_prefix="rear"/>
+    </xacro:macro>
+
+    <!-- Add the wheels 
+    <xacro:front_wheel_l lr_prefix="left" lr_reflect="1"/>
+    <xacro:front_wheel lr_prefix="right" lr_reflect="-1"/>
+
+    <xacro:rear_wheel_l lr_prefix="left" lr_reflect="1" />
+    <xacro:rear_wheel lr_prefix="right" lr_reflect="-1" />-->
+  </xacro:macro>
+
+
+
+
+
+
+
+
+
+  <joint name="rear_right_wheel_joint" type="fixed">
+    <origin xyz="${-1 * wheelbase / 2}
+                  ${-1 * ((chassis_width - wheel_width) / 2)}
+                  ${elevacion_coche}"
+            rpy="${2*degrees_90} 0 0"/>
+    <parent link="${chassis_link}"/>
+    <child link="right_rear_wheel"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="0" upper="0" effort="10000000" velocity="1000000"/>
+    <xacro:wheel lr_prefix="right" fr_prefix="rear"/>
+  </joint>

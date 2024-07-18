@@ -113,7 +113,7 @@ class Mapa():    ###Mapa de features
         ###Longitud de la lista de detecione determina el tamaño del mapa
         ###200 para competi 500-1000 para test con odom perfecta
         ###1500 o mas para skid pad
-        long_list_deteciones=1000
+        long_list_deteciones=5000
         if len(self.deteciones)>long_list_deteciones:  
             for i in range(10):     ###Eliminar de 10 cada vez para minimizar "parpadeo" de las prediciones
                 self.deteciones.pop(0)
@@ -156,7 +156,7 @@ class Mapa():    ###Mapa de features
         terminar=0 ##Para asegurar que no sigue hasta el infinito
         while True:
             terminar=terminar+1  #En teoria nunca se ejecuta
-            if terminar>20:
+            if terminar>10:
                 print("terminando")
                 break
 
