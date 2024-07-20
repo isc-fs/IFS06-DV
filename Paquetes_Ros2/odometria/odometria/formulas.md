@@ -32,6 +32,10 @@ El primer paso puede ser omitido en la explicación ya que es programar el códi
 
 ### Segunda Fase
 
+Calculamos la velocidad $v$ a partir de $v_x$ utilizando el ángulo $\theta$:
+
+$$v = \dfrac{v_x}{\cos{(\beta + \theta)}}$$
+
 Calculamos los diferenciales de cada estado:
 
 - $dx = v \cdot \cos{(\beta + \theta)}$
