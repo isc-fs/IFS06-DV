@@ -1,0 +1,23 @@
+
+Circuito 1 TraningMap
+N_conos_real    N_conos_detectados      N_TruePositive      N_FalseNegative     N_FalsePositive
+196             197                     196                 000                 1
+196             197                     196                 000                 1
+196             198                     196                 000                 2
+196             202                     196                 000                 6
+196             210                     196                 000                 14
+
+Segun se ensucia el track mas oscila y se confunde el coche lo cual acentua la imprecision del mapa local
+
+Circuito 1 CompetitionMap
+N_conos_real    N_conos_detectados      N_TruePositive      N_FalseNegative     N_FalsePositive
+174             195                     174                 000                 21
+174             177                     174                 000                 3
+174             181                     174                 000                 7
+174             177                     174                 000                 3
+174             192                     174                 000                 18
+174             188                     174                 000                 14
+
+Sesgo 0.085341
+Varianza 0.344
+

@@ -20,6 +20,7 @@ import math
 
 import rclpy
 from rclpy.node import Node
+from rclpy.impl import rcutils_logger
 
 from tf2_ros import TransformException
 from tf2_ros.buffer import Buffer
@@ -79,6 +80,13 @@ class Mapa():    ###Mapa de features
         self.ref_azul_ini=-1
         self.ref_amarillo_ini=-1
 
+        self.track=[]       #BenchMarcking
+        self.med_sesgo=0.0
+        self.n_med_sesgo=0
+        self.med_varianza=0.0
+        self.n_med_varianza=0
+
+
     def add_detecion(self,x,y,t,t_inv):
         """Añade una detecion al mapa
             Se consideran dos deteciones iguales si estan a menos de 1 cm.
@@ -136,6 +144,7 @@ class Mapa():    ###Mapa de features
 
         ###Calcular media de las deteciones en cada cluster
         self.conos=[]
+        logger = rcutils_logger.RcutilsLogger(name="mapa") ##Bencmark
         for deteciones_cono in deteciones_separadas:
             x_avr=0.0
             y_avr=0.0
@@ -151,6 +160,31 @@ class Mapa():    ###Mapa de features
             c.color='ns'
 
             self.conos.append(c)
+
+            ###Menchmark###
+            #logger.info("Hello World")
+            dis=100.0
+            c_x=0
+            c_y=0
+            for (x,y) in self.track:
+                d=math.sqrt((x-c.x)**2+(y-c.y)**2)
+                if d<dis:
+                    dis=d
+                    c_x=x
+                    c_y=y
+            d=math.sqrt((c_x-c.x)**2+(c_y-c.y)**2)
+            if d<3:
+                self.med_sesgo=self.med_sesgo+d
+                self.n_med_sesgo=self.n_med_sesgo+1
+
+                sum=0.0
+                for detecion in deteciones_cono:
+                    sum=sum+math.sqrt((detecion.x-c.x)**2+(detecion.y-c.y)**2)
+                self.med_varianza=self.med_varianza+sum
+                self.n_med_varianza=self.n_med_varianza+1
+
+        logger.info("Sesgo  "+str(self.med_sesgo/self.n_med_sesgo))
+        logger.info("Varianza  "+str(self.med_varianza/self.n_med_varianza))
 
     def generar_track(self,track,t,t_inv,color):
         terminar=0 ##Para asegurar que no sigue hasta el infinito

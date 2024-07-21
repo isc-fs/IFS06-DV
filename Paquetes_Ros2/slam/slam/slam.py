@@ -70,6 +70,12 @@ class Publicar_Mapa(Node):
             'Conos_raw',
             self.listener_callback,10)
         
+        self.subscription = self.create_subscription(
+            MarkerArray,
+            'Track',
+            self.listener_callback_track,10)
+        self.track=[]
+        
         #Servicio de reset
         self.srv = self.create_service(Reset, 'reset', self.reset_callback)
 
@@ -81,6 +87,11 @@ class Publicar_Mapa(Node):
         self.mapa.deteciones=[]
         self.get_logger().info('Reseteando Mapa')
         return response
+    
+    def listener_callback_track(self, msg):     ##Menchamrk
+        for cone in msg.markers:
+            self.track.append((cone.pose.position.x,cone.pose.position.y))
+        self.mapa.track=self.track
 
     def listener_callback(self, msg):
         if len(msg.markers)==0: ###Si no se han detectado conos parar
@@ -233,11 +244,17 @@ class Publicar_Track(Node):
             Track,
             '/testing_only/track',
             self.listener_callback,10)
+        self.r_msg=Track()
 
+        #Timer
+        self.timer = self.create_timer(5, self.timer_callback)
     def listener_callback(self, msg):
+        self.r_msg=msg
+
+    def timer_callback(self):
         Cone_list = MarkerArray()
         i=0
-        for cone in msg.track:
+        for cone in self.r_msg.track:
 
             marker = Marker()
             marker.header.frame_id = "odom" ##El mapa esta en el sistema de referencia Odom no el coche
