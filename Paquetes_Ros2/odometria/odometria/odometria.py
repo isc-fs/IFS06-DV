@@ -101,13 +101,12 @@ class PosicionNode(Node):
             msg (ControlCommand): Mensaje con el ángulo de las ruedas.
         """
 
-        if msg.steering > 1: msg.steering = 1.0
+        if msg.steering > 1.0: msg.steering = 1.0
 
-        if msg.steering < -1: msg.steering = -1.0
-
-        print(msg.steering)
+        if msg.steering < -1.0: msg.steering = -1.0
 
         self.delta = math.radians(msg.steering * GIRO_MAXIMO_RUEDAS)
+        print(msg.steering * GIRO_MAXIMO_RUEDAS)
 
     def odom_callback(self, msg: Odometry):
         """
