@@ -1,5 +1,34 @@
 ![ISC Logo](http://iscracingteam.com/wp-content/uploads/2022/03/Picture5.jpg)
 
+# Roadmap
+
+### Odometría
+
+- Odometría con GPS 🛠️ (Lucía y Álvaro)
+
+### Simulador
+
+- Reset server (simulador) ❌
+- Importar modelo 3D coche rviz2 ❌
+- Reducir FOV LiDAR C++ ❌
+- LiDAR detectar colores ❌
+
+### Path Planning
+
+- Mejorar detección de carriles ❌
+- Dar memoria ❌
+- Interpolar Path ✅
+
+### Control
+
+- Mejorar Control Velocidad ❌
+- Mejorar Control Giro ❌
+
+### Coche Real
+
+- Asimilar simulación coche real ❌
+- Decidir que hacer con la cámara ❌
+
 # IFS06 - DRIVERLESS
 
 Repositorio para el departamento de Driverless del IFS06 de la temporada 2023/2024.
@@ -17,4 +46,3 @@ Repositorio para el departamento de Driverless del IFS06 de la temporada 2023/20
 3. Clona este repositorio en tu ordenador utilizando las URLs:
     * SSH: `git@github.com:isc-fs/IFS06-DV.git`
     * HTTPS: `https://github.com/isc-fs/IFS06-DV.git`
-
