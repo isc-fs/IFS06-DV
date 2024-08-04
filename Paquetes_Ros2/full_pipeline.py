@@ -126,6 +126,6 @@ def generate_launch_description():
     ld.add_action(PATH_PLANING)
     ld.add_action(CONTROL)
     ld.add_action(L_URDF)
-    #ld.add_action(EKF_NODE)
+    ld.add_action(EKF_NODE)
 
     return ld
