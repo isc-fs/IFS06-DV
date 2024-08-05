@@ -31,7 +31,7 @@ ekf_filter_node:
         #map_frame: world              # Defaults to "map" if unspecified
         odom_frame: odom            # Defaults to "odom" if unspecified
         base_link_frame: fsds/FSCar  # Defaults to "base_link" ifunspecified
-        world_frame: world           # Defaults to the value ofodom_frame if unspecified
+        world_frame: map         # Defaults to the value ofodom_frame if unspecified
 
         odom0: testing_only/odom
         odom0_config: [true,  true,  true,
