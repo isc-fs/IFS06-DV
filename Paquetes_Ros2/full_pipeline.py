@@ -31,17 +31,17 @@ def generate_launch_description():
     log='info'  #Cambiar a debug para ver frecuencias de publicacion
     ld=LaunchDescription()
 
-    pkg_share = FindPackageShare(package='ekf_package').find('ekf_package')
-    robot_localization_file_path = os.path.join(pkg_share, 'config/ekf.yaml') 
+    #pkg_share = FindPackageShare(package='ekf_package').find('ekf_package')
+    #robot_localization_file_path = os.path.join(pkg_share, 'config/ekf.yaml') 
 
-    EKF_NODE = Node(
+    """EKF_NODE = Node(
         package='robot_localization',
         executable='ekf_node',
         name='ekf_filter_node',
         output='screen',
         arguments=['--ros-args', '--log-level', log],
         parameters=[robot_localization_file_path]   #parametros declarados en el inicio 
-    ) 
+    ) """
 
     RVIZ = Node(
         package='rviz2',
