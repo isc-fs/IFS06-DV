@@ -1,3 +1,18 @@
+"""
+========================
+ekf.yaml (v1.0)
+========================
+
+Elaborado por Lucia Herraiz Cano para el ISC
+Contiene la configuración del nodo (extended Kalman filter node). Instrucciones para instalarlo correctamente:
+
+        1. sudo apt install ros-humble-robot-localization 
+        2. cd IFS06-DV/Paquetes_Ros2/ekf_package
+        3. colcon build
+"""
+
+
+
 ### ekf config file ###
 ekf_filter_node:
     ros__parameters:
