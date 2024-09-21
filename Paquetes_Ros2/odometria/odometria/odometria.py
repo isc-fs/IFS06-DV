@@ -1,30 +1,3 @@
-"""
-========================
-odometria.py (v1.0)
-========================
-
-Elaborado por Álvaro Pérez y Lucía Herraiz para el ISC 
-
-IMPORTANTE: Este código funciona con datos recogidos solamente en el eje X, es decir, la velocidad lineal solo tiene componente X.
-
-Este nodo se va a encargar de la odometría del coche.
-Utilizamos la velocidad lineal y angular recogida por el gss (ground speed sensor) y el ángulo de rotación de las ruedas. 
-Estimamos la velocidad y rotación de cada rueda.
-Calculamos la nueva posición en el eje xy tras un intervalo de tiempo.
-
-Posibles errores en el cálculo de la posición relativa: (tener en cuenta para cuando tengamos el coche)
-    · Los diámetros de las ruedas no son iguales y difieren del diámetro de fábrica.
-    · Mal alineamiento de las ruedas.
-    · Resolución discreta (no continua) del encoder.
-    · La tasa de muestreo del encoder es discreta.
-    · Desplazamiento en suelos desnivelados.
-    · Desplazamiento sobre objetos inesperados que se encuentren en el suelo.
-    · Patinaje de las ruedas.
-
-Asunciones:
-    · El punto de referencia cogido está en el centro del coche, ya que el simulador coge todas las referencias desde ese punto.
-"""
-
 import rclpy
 from rclpy.node import Node
 import math
@@ -33,36 +6,39 @@ from geometry_msgs.msg import TwistWithCovarianceStamped
 from fs_msgs.msg import ControlCommand
 import time
 
-# Retocar si hiciese falta
+# Constantes
 GIRO_MAXIMO_RUEDAS = 25  # en grados º 25
 RADIO_RUEDA = 0.20  # en metros 0.20
 DISTANCIA_RUEDAS_PARALELAS = 1.00  # en metros 0.80
-DISTANCIA_RUEDAS_LONGITUDINAL = 1.20 # en metros 1.20
-DISTANCIA_RUEDAS_TRASERAS_CENTRO_COCHE = 0.77 # en metros 0.78
+DISTANCIA_RUEDAS_LONGITUDINAL = 1.20  # en metros 1.20
+DISTANCIA_RUEDAS_TRASERAS_CENTRO_COCHE = 0.77  # en metros 0.78
 
 
 class PosicionNode(Node):
     def __init__(self):
         super().__init__('calcular_posicion')
 
-        # Asumimos parámetros iniciales
+        # Parámetros Iniciales
         self.time_anterior = time.time()
         self.time_actual = time.time()
-        self.posicion_x = 0 # en metros
-        self.posicion_y = 0 # en metros
-        self.theta = 0 # en radianes
-        self.delta = 0 # en radianes
+        self.posicion_x = 0  # en metros
+        self.posicion_y = 0  # en metros
+        self.theta = 0  # en radianes
+        self.delta = 0  # en radianes
 
-        # Parámetros para testing (simulador)
+        # Inicializar variables para recoger datos del simulador
         self.posicion_real_x = 0
         self.posicion_real_y = 0
         self.velocidad_real_x = 0
         self.velocidad_real_y = 0
 
-        # Publicación
+        # Flag Modo Debug
+        self.debug_mode = True  # True si se quiere debugear
+
+        # Publisher
         self.odom_pub = self.create_publisher(Odometry, 'odom', 10)
 
-        # Suscripciones
+        # Subscriptions
         self.gss_subscriber = self.create_subscription(
             TwistWithCovarianceStamped,
             '/gss',
@@ -73,10 +49,10 @@ class PosicionNode(Node):
             '/control_command',
             self.control_command_callback,
             10)
-        self.odom_sub = self.create_subscription(Odometry, 
-            'testing_only/odom',
-            self.odom_callback,
-            10)
+        self.odom_sub = self.create_subscription(Odometry,
+                                                 'testing_only/odom',
+                                                 self.odom_callback,
+                                                 10)
 
     def gss_callback(self, msg: TwistWithCovarianceStamped):
         """
@@ -91,7 +67,8 @@ class PosicionNode(Node):
         self.time_actual = time.time()
 
         self.calcular_estados()
-        self.launch_debugger()
+        if self.debug_mode:
+            self.debug()
 
     def control_command_callback(self, msg: ControlCommand):
         """
@@ -101,90 +78,51 @@ class PosicionNode(Node):
             msg (ControlCommand): Mensaje con el ángulo de las ruedas.
         """
 
-        if msg.steering > 1: msg.steering = 1.0
+        if msg.steering > 1:
+            msg.steering = 1.0
 
-        if msg.steering < -1: msg.steering = -1.0
-
-        print(msg.steering)
+        if msg.steering < -1:
+            msg.steering = -1.0
 
         self.delta = math.radians(msg.steering * GIRO_MAXIMO_RUEDAS)
+
+        if self.debug_mode:
+            self.debug()
 
     def odom_callback(self, msg: Odometry):
         """
         Recoge la posición y velocidad reales del simulador.
 
         Args:
-            msg (ControlCommand): Mensaje con el ángulo de las ruedas.
+            msg (Odometry): Mensaje con la posición y velocidad.
         """
         self.posicion_real_x = msg.pose.pose.position.x
         self.posicion_real_y = msg.pose.pose.position.y
         self.velocidad_real_x = msg.twist.twist.linear.x
         self.velocidad_real_y = msg.twist.twist.linear.y
 
-    def calcular_modelo(self) -> list:
-        """
-        Calcula los diferenciales de x, y, theta.
-
-        Returns:
-            list: Devuelve una lista con los datos necesarios para calcular los estados.
-        """
-        # Calcular el ángulo de movimiento del coche (beta)
-        beta = math.atan(DISTANCIA_RUEDAS_TRASERAS_CENTRO_COCHE * math.tan(self.delta) / DISTANCIA_RUEDAS_LONGITUDINAL)
-
-        # Calcular la velocidad v
-        self.v = self.v_x / math.cos(beta + self.theta)
-
-        # Calcular los cambios de posición y ángulo del coche respecto de la posición inicial
-        dx = self.v * math.cos(beta + self.theta)
-        dy = self.v * math.sin(beta + self.theta)
-        dtheta = (self.v / DISTANCIA_RUEDAS_TRASERAS_CENTRO_COCHE) * math.sin(beta) 
-
-        self.v_y = dy
-
-        return [dx, dy, dtheta]
+        if self.debug_mode:
+            self.debug()
 
     def calcular_estados(self):
         """
-        Actualiza las variables de estado utilizando los cálculos del modelo.
+        Calcula los estados del coche basados en la velocidad y el ángulo de las ruedas.
         """
-        [dx, dy, dtheta] = self.calcular_modelo()
-        
-        # Calcular el delta de tiempo
-        delta_t = self.time_actual - self.time_anterior
+        delta_time = self.time_actual - self.time_anterior
         self.time_anterior = self.time_actual
 
-        # Actualizar las variables de estado
-        self.posicion_x += (dx * delta_t)
-        self.posicion_y += (dy * delta_t)
-        self.theta += (dtheta * delta_t)
+        # Actualizar posición y orientación
+        self.posicion_x += self.v_x * delta_time * math.cos(self.theta)
+        self.posicion_y += self.v_x * delta_time * math.sin(self.theta)
+        self.theta += self.delta * delta_time
 
-
-    def launch_debugger(self):
-        """
-        Ejecuta un print en terminal para comparar velocidades reales y estimadas.
-        """
-        # self.get_logger().info(f"Velocidad: x={self.velocidad_real_x - self.v_x}, y={self.velocidad_real_y - self.v_y}")
-        # self.get_logger().info(f"Ángulo: {math.degrees(self.theta)}")
-        # print(math.degrees(self.delta))
-        # print(f"Velocidad: x={self.velocidad_real_x - self.v_x}, y={self.velocidad_real_y - self.v_y}")
-
-
-    def publicar_odometria(self):
-        """
-        Publica los datos de odometría en el topic 'odom'.
-        """
+        # Convertir Euler angles to quaternion
+        [qx, qy, qz, qw] = convertir_euler_a_cuaternion(0, 0, self.theta)
         odom = Odometry()
         odom.header.stamp = self.get_clock().now().to_msg()
         odom.header.frame_id = 'odom'
-        odom.child_frame_id = 'base_link'
-
-        # Ajustar la posición
         odom.pose.pose.position.x = self.posicion_x
         odom.pose.pose.position.y = self.posicion_y
-        odom.pose.pose.position.z = 0.0
-
-        # Convertir yaw (theta) a cuaternión
-        [qx, qy, qz, qw] = convertir_euler_a_cuaternion(0, 0, self.theta)
         odom.pose.pose.orientation.x = qx
         odom.pose.pose.orientation.y = qy
         odom.pose.pose.orientation.z = qz
@@ -195,6 +133,36 @@ class PosicionNode(Node):
 
         # Publicar
         self.odom_pub.publish(odom)
+
+        if self.debug_mode:
+            self.debug()
+
+    def debug(self):
+        """
+        Función de debug para registrar valores y verificar posibles errores.
+        """
+        self.get_logger().info(f"Tiempo actual: {self.time_actual}")
+        self.get_logger().info(f"Tiempo anterior: {self.time_anterior}")
+        self.get_logger().info(
+            f"Delta time: {self.time_actual - self.time_anterior}")
+        self.get_logger().info(
+            f"Posición: ({self.posicion_x}, {self.posicion_y})")
+        self.get_logger().info(f"Orientación (theta): {self.theta}")
+        self.get_logger().info(f"Ángulo de dirección (delta): {self.delta}")
+        self.get_logger().info(f"Velocidad lineal (v_x): {self.v_x}")
+        self.get_logger().info(
+            f"Posición real: ({self.posicion_real_x}, {self.posicion_real_y})")
+        self.get_logger().info(
+            f"Velocidad real: ({self.velocidad_real_x}, {self.velocidad_real_y})")
+
+        # Verificar posibles errores
+        if self.time_actual < self.time_anterior:
+            self.get_logger().error("Error: time_actual es menor que time_anterior")
+        if not (-math.pi <= self.theta <= math.pi):
+            self.get_logger().error("Error: theta está fuera de los límites")
+        if not (-math.pi <= self.delta <= math.pi):
+            self.get_logger().error("Error: delta está fuera de los límites")
+
 
 def convertir_euler_a_cuaternion(roll, pitch, yaw):
     """
@@ -217,6 +185,7 @@ def convertir_euler_a_cuaternion(roll, pitch, yaw):
     qw = math.cos(roll / 2) * math.cos(pitch / 2) * math.cos(yaw / 2) + \
         math.sin(roll / 2) * math.sin(pitch / 2) * math.sin(yaw / 2)
     return [qx, qy, qz, qw]
+
 
 def calcular_posicion(args=None):
     rclpy.init(args=args)
